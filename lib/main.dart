@@ -1,0 +1,151 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fortfitness/screens/auth/auth_selection.dart';
+import 'package:fortfitness/utils/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'components/progress_indicator.dart';
+import 'constants/strings.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      useInheritedMediaQuery: true,
+      child: MaterialApp(
+        title: 'Fort Fitness',
+        theme: ThemeData(
+          primarySwatch: Colors.orange,
+          useMaterial3: true,
+          fontFamily: 'Work Sans',
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          pageTransitionsTheme: const PageTransitionsTheme(builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          }),
+          scaffoldBackgroundColor: AppColors.whiteColor,
+          colorScheme: ColorScheme.fromSwatch()
+              .copyWith(primary: AppColors.primaryColor, secondary: AppColors.whiteColor),
+        ),
+        home: const SplashScreen(),
+      ),
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  double padValue = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    initialization();
+  }
+
+  void initialization() async {
+    await Future.delayed(const Duration(microseconds: 1));
+    FlutterNativeSplash.remove();
+
+    setState(() {
+      padValue = 25.sp;
+    });
+    Timer(const Duration(seconds: 3), () => afterFirstLayout(context));
+  }
+
+  void afterFirstLayout(BuildContext context) => checkFirstSeen();
+
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Navigator.pushAndRemoveUntil(
+        context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var query = MediaQuery.of(context).size;
+    return Scaffold(
+      body: Container(
+        height: query.height,
+        width: query.width,
+        decoration:  const BoxDecoration(
+            image: DecorationImage(image: AssetImage(ImageString.imgSplash), fit: BoxFit.fill)),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(height: query.height * 0.23),
+              AnimatedPadding(
+                duration: const Duration(seconds: 1),
+                padding: EdgeInsets.symmetric(vertical: padValue),
+                curve: Curves.easeInOut,
+                child: Image.asset(ImageString.imgLogo, fit: BoxFit.fill, width: 0.6.sw),
+              ),
+              const Spacer(),
+              AnimatedPadding(
+                duration: const Duration(seconds: 1),
+                padding: EdgeInsets.symmetric(vertical: padValue),
+                curve: Curves.easeInOut,
+                child: SpinKitCircle(
+                  color: AppColors.whiteColor,
+                  size: 80.0,
+                )
+              ),
+              SizedBox(height: query.height * 0.03,),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FadePageRoute<T> extends MaterialPageRoute<T> {
+  FadePageRoute({
+    required WidgetBuilder builder,
+    RouteSettings? settings,
+  }) : super(
+    builder: builder,
+    settings: settings,
+  );
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 1200);
+
+  @override
+  Widget buildTransitions(
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child,
+      ) {
+    if (settings.name == "/auth") {
+      return child;
+    }
+
+    return FadeTransition(
+      opacity: animation,
+      child: child,
+    );
+  }
+}
+
