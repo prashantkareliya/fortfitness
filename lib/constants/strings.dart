@@ -16,6 +16,7 @@ class LabelString {
   static const String labelNotAc = "Don’t have account?";
   static const String labelNotAc1 = "Don’t have an account? ";
   static const String labelForgotPassword = "Forgot Password";
+  static const String alreadyAccount = "Already have a account? ";
 
 }
 
@@ -23,6 +24,10 @@ class LabelString {
 class ButtonString {
   static const String btnSignUp = "Sign Up";
   static const String btnSignIn = "Sign In";
+  static const String btnSubmit = "Submit";
+  static const String btnEnter = "Enter";
+  static const String btnClaimNow = "Claim Now";
+  static const String btnResetPassword = "Reset Password";
 }
 
 //Image path Strings
@@ -33,11 +38,13 @@ class ImageString {
   static const String imgLine = "assets/images/line.png";
   static const String imgLogo5 = "assets/images/logo5.png";
   static const String imgGymBoyGirl = "assets/images/gymboygirl.png";
+  static const String imgPassword = "assets/images/password.png";
 
 
   //icons directory
   static const String icSignIn = "assets/icons/signin.png";
   static const String icSignUp = "assets/icons/signup.png";
+  static const String icClaimNow = "assets/icons/claim.png";
 }
 
 class LottieString {
@@ -45,6 +52,7 @@ class LottieString {
 }
 
 class SvgImageString {
+  static const String icPassword = "assets/icons/password.png";
 
 }
 

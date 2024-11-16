@@ -1,13 +1,18 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/constants/strings.dart';
+import 'package:fortfitness/screens/auth/sign_up/sign_up_screen.dart';
+import 'package:fortfitness/screens/dashboard/dashboard_screen.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/custom_button.dart';
 import '../../../components/headerText.dart';
 import '../../../utils/app_colors.dart';
+import '../reset_password/reset_password.dart';
 
 InputDecoration kTextFieldDecoration = InputDecoration(
     hintText: 'Enter value',
@@ -70,6 +75,8 @@ class _SignInScreenState extends State<SignInScreen> {
   void dispose() {
     _focusNode1.dispose();
     _focusNode2.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -124,7 +131,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               filled: true,
                               fillColor: const Color(0xFFF3F3F4),
                               prefixIcon: Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: SvgPicture.asset(
                                     "assets/icons/email.svg",
                                     colorFilter: ColorFilter.mode(
@@ -175,7 +183,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               filled: true,
                               fillColor: const Color(0xFFF3F3F4),
                               prefixIcon: Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: SvgPicture.asset(
                                     "assets/icons/password.svg",
                                     colorFilter: ColorFilter.mode(
@@ -183,7 +192,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                         BlendMode.srcIn)),
                               ),
                               suffixIcon: Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: SvgPicture.asset("assets/icons/eye.svg",
                                     colorFilter: const ColorFilter.mode(
                                         Color(0xFFBABBBE), BlendMode.srcIn)),
@@ -191,7 +201,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "ⓘ Please enter your email";
+                                return "ⓘ Please enter your password";
                               }
                               return null;
                             },
@@ -206,7 +216,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: CustomButton(
                             imageName: ImageString.icSignIn,
                             title: ButtonString.btnSignIn,
-                            onClick: () {},
+                            onClick: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen()));
+                            },
                             fontColor: AppColors.whiteColor,
                             buttonColor: AppColors.primaryColor)),
                     const SizedBox(height: 40),
@@ -221,24 +233,44 @@ class _SignInScreenState extends State<SignInScreen> {
                                       color: AppColors.blackColor,
                                       decoration: TextDecoration.none,
                                       fontWeight: FontWeight.w500))),
-                          const TextSpan(text: ButtonString.btnSignUp),
-                        ],
+                        TextSpan(
+                          text: ButtonString.btnSignUp,
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignUpScreen()));
+                            },
+                        ),
+                      ],
                             style: GoogleFonts.workSans(
                                 textStyle: TextStyle(
                                     fontSize: 14.sp,
                                     color: AppColors.primaryColor,
                                     fontWeight: FontWeight.w500,
-                                    decoration: TextDecoration.underline)))),
+                              decoration: TextDecoration.underline)),
+                    )),
                     const SizedBox(height: 20),
-                    Text(LabelString.labelForgotPassword,
-                        style: GoogleFonts.workSans(
-                            textStyle: TextStyle(
-                          fontSize: 16.sp,
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.primaryColor,
-                        )))
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                const ResetPasswordScreen()));
+                      },
+                      child: Text(LabelString.labelForgotPassword,
+                          style: GoogleFonts.workSans(
+                              textStyle: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primaryColor,
+                          ))),
+                    )
                   ],
                 ),
               )
