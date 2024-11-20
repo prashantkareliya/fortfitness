@@ -7,6 +7,7 @@ import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/custom_button.dart';
+import '../../../components/cutom_textfield.dart';
 import '../../../components/headerText.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
@@ -30,10 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController mmController = TextEditingController();
   TextEditingController yyyyController = TextEditingController();
 
-  final FocusNode _nameFocusNode = FocusNode();
-  final FocusNode _emailFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
-  final FocusNode _confirmPasswordFocusNode = FocusNode();
+
 
   final FocusNode _DDFocusNode = FocusNode();
   final FocusNode _MMFocusNode = FocusNode();
@@ -51,26 +49,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    _nameFocusNode.addListener(() {
-      setState(() {
-        _isNameFocused = _nameFocusNode.hasFocus;
-      });
-    });
-    _emailFocusNode.addListener(() {
-      setState(() {
-        _isEmailFocused = _emailFocusNode.hasFocus;
-      });
-    });
-    _passwordFocusNode.addListener(() {
-      setState(() {
-        _isPasswordFocused = _passwordFocusNode.hasFocus;
-      });
-    });
-    _confirmPasswordFocusNode.addListener(() {
-      setState(() {
-        _isConfirmPasswordFocused = _confirmPasswordFocusNode.hasFocus;
-      });
-    });
 
     _DDFocusNode.addListener(() {
       setState(() {
@@ -93,11 +71,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-    _nameFocusNode.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    _confirmPasswordFocusNode.dispose();
-
     _DDFocusNode.dispose();
     _MMFocusNode.dispose();
     _YYYYFocusNode.dispose();
@@ -128,224 +101,128 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: 15.sp),
               Image.asset(ImageString.imgLine),
               SizedBox(height: 20.sp),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Name",
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600))),
-                  SizedBox(height: 4.sp),
-                  Container(
-                    padding: EdgeInsets.all(4.sp),
-                    decoration: BoxDecoration(
-                        color: _isNameFocused
-                            ? AppColors.primaryColor.withOpacity(0.2)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12.0)),
-                    child: TextFormField(
-                      controller: nameController,
-                      focusNode: _nameFocusNode,
-                      keyboardType: TextInputType.text,
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 16.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600)),
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Name",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/name.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your name";
-                        }
-                        return null;
-                      },
-                    ),
-                  )
-                ],
+              CustomTextField(
+                titleText: "Name",
+                controller: nameController,
+                keyBoardType: TextInputType.name,
+                isSecure: false,
+                decoration: kTextFieldDecoration.copyWith(
+                  hintText: "Name",
+                  filled: true,
+                  fillColor: const Color(0xFFF3F3F4),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0),
+                    child: SvgPicture.asset(
+                        "assets/icons/name.svg",
+                        colorFilter: ColorFilter.mode(
+                            AppColors.primaryColor,
+                            BlendMode.srcIn)),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "ⓘ Please enter your name";
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Email Address",
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600))),
-                  SizedBox(height: 4.sp),
-                  Container(
-                    padding: EdgeInsets.all(4.sp),
-                    decoration: BoxDecoration(
-                        color: _isEmailFocused
-                            ? AppColors.primaryColor.withOpacity(0.2)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12.0)),
-                    child: TextFormField(
-                      controller: emailController,
-                      focusNode: _emailFocusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 16.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600)),
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "example@mail.com",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/email.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your email";
-                        } else if (!emailController.text.isValidEmail) {
-                          return "ⓘ Enter valid email address";
-                        }
-                        return null;
-                      },
-                    ),
-                  )
-                ],
+              CustomTextField(
+                titleText: "Email Address",
+                controller: emailController,
+                keyBoardType: TextInputType.emailAddress,
+                isSecure: false,
+                decoration: kTextFieldDecoration.copyWith(
+                  hintText: "Email Address",
+                  filled: true,
+                  fillColor: const Color(0xFFF3F3F4),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0),
+                    child: SvgPicture.asset(
+                        "assets/icons/email.svg",
+                        colorFilter: ColorFilter.mode(
+                            AppColors.primaryColor,
+                            BlendMode.srcIn)),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "ⓘ Please enter your email";
+                  } else if (!emailController.text.isValidEmail) {
+                    return "ⓘ Enter valid email address";
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Password",
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600))),
-                  SizedBox(height: 4.sp),
-                  Container(
-                    padding: EdgeInsets.all(4.sp),
-                    decoration: BoxDecoration(
-                        color: _isPasswordFocused
-                            ? AppColors.primaryColor.withOpacity(0.2)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12.0)),
-                    child: TextFormField(
-                      controller: passwordController,
-                      focusNode: _passwordFocusNode,
-                      keyboardType: TextInputType.text,
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 16.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600)),
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Password",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/password.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/eye.svg",
-                              colorFilter: const ColorFilter.mode(
-                                  Color(0xFFBABBBE), BlendMode.srcIn)),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your password";
-                        }
-                        return null;
-                      },
-                    ),
-                  )
-                ],
+              CustomTextField(
+                titleText: "Password",
+                controller: passwordController,
+                keyBoardType: TextInputType.text,
+                isSecure: true,
+                decoration: kTextFieldDecoration.copyWith(
+                  hintText: "Password",
+                  filled: true,
+                  fillColor: const Color(0xFFF3F3F4),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: SvgPicture.asset(
+                        "assets/icons/password.svg",
+                        colorFilter: ColorFilter.mode(
+                            AppColors.primaryColor,
+                            BlendMode.srcIn)),
+                  ),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0),
+                    child: SvgPicture.asset("assets/icons/eye.svg",
+                        colorFilter: const ColorFilter.mode(
+                            Color(0xFFBABBBE), BlendMode.srcIn)),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "ⓘ Please enter your password";
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Confirm Password",
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600))),
-                  SizedBox(height: 4.sp),
-                  Container(
-                    padding: EdgeInsets.all(4.sp),
-                    decoration: BoxDecoration(
-                        color: _isConfirmPasswordFocused
-                            ? AppColors.primaryColor.withOpacity(0.2)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12.0)),
-                    child: TextFormField(
-                      controller: confirmPasswordController,
-                      focusNode: _confirmPasswordFocusNode,
-                      keyboardType: TextInputType.text,
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 16.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600)),
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Confirm Password",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/password.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/eye.svg",
-                              colorFilter: const ColorFilter.mode(
-                                  Color(0xFFBABBBE), BlendMode.srcIn)),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your Confirm password";
-                        } else if(passwordController.text != confirmPasswordController.text){
-                          return "ⓘ Password and Confirm password not matched";
-                        }
-                        return null;
-                      },
-                    ),
-                  )
-                ],
+              CustomTextField(
+                titleText: "Confirm Password",
+                controller: confirmPasswordController,
+                keyBoardType: TextInputType.text,
+                isSecure: true,
+                decoration: kTextFieldDecoration.copyWith(
+                  hintText: "Confirm Password",
+                  filled: true,
+                  fillColor: const Color(0xFFF3F3F4),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: SvgPicture.asset(
+                        "assets/icons/password.svg",
+                        colorFilter: ColorFilter.mode(
+                            AppColors.primaryColor,
+                            BlendMode.srcIn)),
+                  ),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0),
+                    child: SvgPicture.asset("assets/icons/eye.svg",
+                        colorFilter: const ColorFilter.mode(
+                            Color(0xFFBABBBE), BlendMode.srcIn)),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "ⓘ Please enter your Confirm password";
+                  } else if(passwordController.text != confirmPasswordController.text){
+                    return "ⓘ New Password and Confirm password not matched";
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               Column(
@@ -373,7 +250,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             controller: ddController,
                             focusNode: _DDFocusNode,
                             textAlign: TextAlign.center,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             style: GoogleFonts.workSans(
                                 textStyle: TextStyle(
                                     fontSize: 16.sp,
@@ -424,8 +301,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextFormField(
                             controller: mmController,
                             focusNode: _MMFocusNode,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
+
                             style: GoogleFonts.workSans(
                                 textStyle: TextStyle(
                                     fontSize: 16.sp,
@@ -476,7 +354,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextFormField(
                             controller: yyyyController,
                             focusNode: _YYYYFocusNode,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.workSans(
                                 textStyle: TextStyle(

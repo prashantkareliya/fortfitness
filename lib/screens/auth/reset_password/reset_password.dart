@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fortfitness/screens/profile/profile_screen.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/custom_button.dart';
-import '../../../components/headerText.dart';
+import '../../../components/cutom_textfield.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
-import '../sign_in/sign_in.dart';
 import 'enter_reset_password.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -80,59 +78,34 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     Image.asset(ImageString.imgLogo5,
                         height: query.height * 0.12),
                     const SizedBox(height: 50),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Email Address",
-                            style: GoogleFonts.workSans(
-                                textStyle: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.w600))),
-                        SizedBox(height: 8.sp),
-                        Container(
-                          padding: EdgeInsets.all(4.sp),
-                          decoration: BoxDecoration(
-                              color: _isFocused1
-                                  ? AppColors.primaryColor.withOpacity(0.2)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12.0)),
-                          child: TextFormField(
-                            controller: emailController,
-                            focusNode: _focusNode1,
-                            keyboardType: TextInputType.emailAddress,
-                            style: GoogleFonts.workSans(
-                                textStyle: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.w600)),
-                            decoration: kTextFieldDecoration.copyWith(
-                              hintText: "examle@email.com",
-                              filled: true,
-                              fillColor: const Color(0xFFF3F3F4),
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15.0),
-                                child: SvgPicture.asset(
-                                    "assets/icons/email.svg",
-                                    colorFilter: ColorFilter.mode(
-                                        AppColors.primaryColor,
-                                        BlendMode.srcIn)),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "ⓘ Please enter your email";
-                              } else if (!emailController.text.isValidEmail) {
-                                return "ⓘ Enter valid email address";
-                              }
-                              return null;
-                            },
-                          ),
-                        )
-                      ],
+                    CustomTextField(
+                      titleText: "Email Address",
+                      controller: emailController,
+                      isSecure: false,
+                      keyBoardType: TextInputType.emailAddress,
+                      decoration: kTextFieldDecoration.copyWith(
+                        hintText: "Email Address",
+                        filled: true,
+                        fillColor: const Color(0xFFF3F3F4),
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0),
+                          child: SvgPicture.asset(
+                              "assets/icons/email.svg",
+                              colorFilter: ColorFilter.mode(
+                                  AppColors.primaryColor,
+                                  BlendMode.srcIn)),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "ⓘ Please enter your email";
+                        } else if (!emailController.text.isValidEmail) {
+                          return "ⓘ Enter valid email address";
+                        }
+                        return null;
+                      },
                     ),
-
                     const SizedBox(height: 40),
                     SizedBox(
                         height: query.height * 0.072,

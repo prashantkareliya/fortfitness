@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
           pageTransitionsTheme: const PageTransitionsTheme(builders: {
-            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           }),
           scaffoldBackgroundColor: AppColors.whiteColor,
