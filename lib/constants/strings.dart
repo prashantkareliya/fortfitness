@@ -58,5 +58,7 @@ class SvgImageString {
 
 //Shared Preference Strings(Save data in local DB)
 class PreferenceString {
-  //static const String tradePersonList = "tradePersonList";
+  static const String userId = "user_id";
+  static const String accessToken = "access_token";
+  static const String userEmail = "user_email";
 }

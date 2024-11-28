@@ -3,16 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/utils/app_colors.dart';
+import 'package:fortfitness/utils/preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/strings.dart';
+import '../../main.dart';
+import '../auth/auth_selection.dart';
 import '../profile/profile_screen.dart';
 import 'discount/discount_screen.dart';
 import 'gym/gyms_screen.dart';
 import 'services/services_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  String? from;
+   DashboardScreen({super.key, this.from});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,14 @@ class DashboardScreen extends StatelessWidget {
         backgroundColor: AppColors.whiteColor,
         elevation: 0,
         automaticallyImplyLeading: false,
-        leading: IconButton(
+        leading: from == "main" ? IconButton(
+            onPressed: () async {
+              SharedPreferences preferences = await SharedPreferences.getInstance();
+              preferences.clear();
+              Navigator.pushAndRemoveUntil(
+                  context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+            },
+            icon: Icon(Icons.logout, color: AppColors.primaryColor)) : IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: SvgPicture.asset("assets/icons/back.svg")),
         title: Image.asset(ImageString.imgLogo5,
@@ -31,7 +43,7 @@ class DashboardScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfilePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfilePage()));
             },
             icon: ClipOval(
                 child: SizedBox.fromSize(

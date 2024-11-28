@@ -387,7 +387,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                      const DashboardScreen()));
+                                      DashboardScreen()));
                             },
                             fontColor: AppColors.whiteColor,
                             buttonColor: AppColors.primaryColor)),

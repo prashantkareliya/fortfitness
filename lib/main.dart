@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/progress_indicator.dart';
 import 'constants/strings.dart';
+import 'screens/dashboard/dashboard_screen.dart';
 //https://www.figma.com/design/tkmMOGlfPmEGW1z5Iasp35/FortFitness-App?node-id=0-1&node-type=canvas&t=aL3Qf0hxzLNZVQL3-0
 void main() {
   runApp(const MyApp());
@@ -75,9 +76,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void afterFirstLayout(BuildContext context) => checkFirstSeen();
 
   Future checkFirstSeen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Navigator.pushAndRemoveUntil(
-        context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    if(preferences.getString(PreferenceString.accessToken) != null){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(from: "main")));
+    } else {
+      Navigator.pushAndRemoveUntil(
+          context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+    }
+
   }
 
   @override
@@ -121,12 +127,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
 class FadePageRoute<T> extends MaterialPageRoute<T> {
   FadePageRoute({
-    required WidgetBuilder builder,
-    RouteSettings? settings,
-  }) : super(
-    builder: builder,
-    settings: settings,
-  );
+    required super.builder,
+    super.settings,
+  });
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 1200);
