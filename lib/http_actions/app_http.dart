@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,8 +31,10 @@ class HttpActions {
   }
 
   Future<dynamic> getMethod(String url, {Map<String, String>? headers}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
-      headers = getSessionData(headers ?? {});
+      headers = getSessionData(
+          headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
       http.Response response = await http.get(Uri.parse(endPoint + url), headers: headers);
 
@@ -132,8 +133,10 @@ class HttpActions {
   }
 
   Future<dynamic> putMethod(String url, {dynamic data, Map<String, String>? headers}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
-      headers = getSessionData(headers ?? {});
+      headers = getSessionData(
+          headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
       http.Response response =
           await http.put(Uri.parse(endPoint + url), body: data, headers: headers);

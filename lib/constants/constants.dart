@@ -13,7 +13,7 @@ class Constants {
   factory Constants._prd() {
     return const Constants(
       ///Base URl
-      endpoint: 'http://143.110.244.228:8082/api/user/', //  staging server
+      endpoint: 'http://143.110.244.228:8082/api/', //  staging server
         //   endpoint: '', // live server
 );
   }
@@ -28,6 +28,21 @@ class ResponseStatus {
 }
 
 class ApiEndPoint {
-  static const String login = "login";
+  //POST API endpoint
+  static const String login = "user/login";
+  static const String register = "user/register";
+  static const String forgotPassword = "user/forgot-password";
+
+  //GET API endpoint
+  static const String getProfile = "user/profile";
+  static const String location = "location";
+
+  //PUT API endpoint
+  static const String profileUpdate = "user/profile/update";
+
+
+
+
+
 
 }

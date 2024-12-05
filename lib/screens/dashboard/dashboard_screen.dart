@@ -65,7 +65,7 @@ class DashboardScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                        const GymScreen()));
+                        GymScreen()));
               },
               child: Container(
                 height: query.height * 0.18,
