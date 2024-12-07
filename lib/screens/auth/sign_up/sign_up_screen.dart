@@ -14,7 +14,6 @@ import '../../../components/headerText.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
-import '../../../utils/preferences.dart';
 import '../../dashboard/dashboard_screen.dart';
 import '../bloc/auth_bloc.dart';
 import '../data/auth_datasource.dart';
@@ -89,6 +88,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   bool showSpinner = false;
+  bool password = false;
+  bool confirmPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +192,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             titleText: "Password",
                             controller: passwordController,
                             keyBoardType: TextInputType.text,
-                            isSecure: true,
+                            isSecure: password,
                             decoration: kTextFieldDecoration.copyWith(
                               hintText: "Password",
                               filled: true,
@@ -207,9 +208,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               suffixIcon: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset("assets/icons/eye.svg",
-                                    colorFilter: const ColorFilter.mode(
-                                        Color(0xFFBABBBE), BlendMode.srcIn)),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      password = !password;
+                                    });
+                                  },
+                                  child: SvgPicture.asset(
+                                      "assets/icons/eye.svg",
+                                      colorFilter: ColorFilter.mode(
+                                          !password
+                                              ? const Color(0xFFBABBBE)
+                                              : AppColors.primaryColor,
+                                          BlendMode.srcIn)),
+                                ),
                               ),
                             ),
                             validator: (value) {
@@ -224,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             titleText: "Confirm Password",
                             controller: confirmPasswordController,
                             keyBoardType: TextInputType.text,
-                            isSecure: true,
+                            isSecure: confirmPassword,
                             decoration: kTextFieldDecoration.copyWith(
                               hintText: "Confirm Password",
                               filled: true,
@@ -240,9 +252,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               suffixIcon: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset("assets/icons/eye.svg",
-                                    colorFilter: const ColorFilter.mode(
-                                        Color(0xFFBABBBE), BlendMode.srcIn)),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      confirmPassword = !confirmPassword;
+                                    });
+                                  },
+                                  child: SvgPicture.asset(
+                                      "assets/icons/eye.svg",
+                                      colorFilter: ColorFilter.mode(
+                                          !confirmPassword
+                                              ? const Color(0xFFBABBBE)
+                                              : AppColors.primaryColor,
+                                          BlendMode.srcIn)),
+                                ),
                               ),
                             ),
                             validator: (value) {
@@ -480,6 +503,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   imageName: ImageString.icSignIn,
                                   title: ButtonString.btnSubmit,
                                   onClick: () {
+                                    FocusScope.of(context).requestFocus(FocusNode());
                                     if (_formKey.currentState!.validate()) {
                                       RegistrationRequest registrationRequest =
                                           RegistrationRequest(
@@ -487,7 +511,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               email: emailController.text.trim(),
                                               password: passwordController.text,
                                               dob:
-                                                  "${yyyyController.text}-${mmController.text}-${ddController.text} ");
+                                                  "${yyyyController.text}-${mmController.text}-${ddController.text}",
+                                              role: "receptionist");
                                       authBloc.add(
                                           RegistrationEvent(registrationRequest));
                                     }

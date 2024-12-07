@@ -1,11 +1,11 @@
-class RegistrationResponse {
+class DiscountClaimResponse {
   bool? error;
   String? message;
   int? data;
 
-  RegistrationResponse({this.error, this.message, this.data});
+  DiscountClaimResponse({this.error, this.message, this.data});
 
-  RegistrationResponse.fromJson(Map<String, dynamic> json) {
+  DiscountClaimResponse.fromJson(Map<String, dynamic> json) {
     error = json['error'];
     message = json['message'];
     data = json['data'];

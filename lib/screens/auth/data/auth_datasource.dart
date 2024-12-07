@@ -15,7 +15,7 @@ class AuthDatasource extends HttpActions {
 
   Future<dynamic> registerUser(
       {required RegistrationRequest registrationRequest}) async {
-    final response = await postMethod(ApiEndPoint.login, data: registrationRequest.toJson());
+    final response = await postMethod(ApiEndPoint.register, data: registrationRequest.toJson());
     debugPrint("Register User -  $response");
     return response;
   }

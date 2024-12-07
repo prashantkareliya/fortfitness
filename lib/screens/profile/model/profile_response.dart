@@ -26,16 +26,16 @@ class Data {
   int? id;
   String? name;
   String? email;
-  Null? image;
+  String? image;
   String? dob;
   String? role;
   int? isActive;
   int? isSuperAdmin;
   int? confirmed;
-  Null? organizationId;
+  String? organizationId;
   int? accessEnabled;
-  Null? lastAccessedAt;
-  Null? kisiUserId;
+  String? lastAccessedAt;
+  String? kisiUserId;
   String? createdAt;
   String? updatedAt;
 

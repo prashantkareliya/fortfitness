@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +12,7 @@ import 'package:fortfitness/screens/profile/data/profile_repository.dart';
 import 'package:fortfitness/screens/profile/model/update_profile_request.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../components/custom_button.dart';
@@ -26,7 +31,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _formKey = GlobalKey<FormState>();
 
   ProfileBloc profileBloc =
       ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
@@ -39,6 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController ddController = TextEditingController();
   TextEditingController mmController = TextEditingController();
   TextEditingController yyyyController = TextEditingController();
+  String profileImage = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
   final FocusNode _DDFocusNode = FocusNode();
   final FocusNode _MMFocusNode = FocusNode();
@@ -86,6 +91,21 @@ class _ProfilePageState extends State<ProfilePage> {
 
   bool showSpinner = false;
 
+  String? base64String;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickAndConvertImage() async {
+    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      List<int> imageBytes = await imageFile.readAsBytes();
+      String base64Image = base64Encode(imageBytes);
+      setState(() {
+        base64String = base64Image;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,8 +126,8 @@ class _ProfilePageState extends State<ProfilePage> {
           emailController.text = state.profileResponse.data!.email ?? "";
           ddController.text = state.profileResponse.data!.dob!.substring(8, 10);
           mmController.text = state.profileResponse.data!.dob!.substring(5, 7);
-          yyyyController.text =
-              state.profileResponse.data!.dob!.substring(0, 4);
+          yyyyController.text = state.profileResponse.data!.dob!.substring(0, 4);
+          profileImage = state.profileResponse.data!.image!.toString();
         }
 
         if (state is UpdateProfileFailure) {
@@ -149,12 +169,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: SizedBox.fromSize(
                               size: Size.fromRadius(60.sp),
                               child: Image.network(
-                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUyllrW-u-01_B8qMki4ybHzbhuBWhUq3pMA&s",
+                                  profileImage,
                                   fit: BoxFit.cover))),
                     ),
-                    SvgPicture.asset(
-                      "assets/icons/image_upload.svg",
-                      height: 60.sp,
+                    GestureDetector(
+                      onTap: pickAndConvertImage,
+                      child: SvgPicture.asset(
+                        "assets/icons/image_upload.svg",
+                        height: 60.sp,
+                      ),
                     )
                   ],
                 ),
@@ -184,62 +207,67 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    CustomTextField(
-                      titleText: "Email Address",
-                      controller: emailController,
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Email Address",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/email.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor, BlendMode.srcIn)),
+                    IgnorePointer(
+                      child: CustomTextField(
+                        titleText: "Email Address",
+                        controller: emailController,
+                        decoration: kTextFieldDecoration.copyWith(
+
+                          hintText: "Email Address",
+                          filled: true,
+                          fillColor: const Color(0xFFF3F3F4),
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: SvgPicture.asset("assets/icons/email.svg",
+                                colorFilter: ColorFilter.mode(
+                                    AppColors.primaryColor, BlendMode.srcIn)),
+                          ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "ⓘ Please enter your email";
+                          } else if (!emailController.text.isValidEmail) {
+                            return "ⓘ Enter valid email address";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your email";
-                        } else if (!emailController.text.isValidEmail) {
-                          return "ⓘ Enter valid email address";
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomTextField(
-                          titleText: "Change Password",
-                          controller: passwordController,
-                          decoration: kTextFieldDecoration.copyWith(
-                            hintText: "Password",
-                            filled: true,
-                            fillColor: const Color(0xFFF3F3F4),
-                            prefixIcon: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15.0),
-                              child: SvgPicture.asset(
-                                  "assets/icons/password.svg",
-                                  colorFilter: ColorFilter.mode(
-                                      AppColors.primaryColor, BlendMode.srcIn)),
+                        IgnorePointer(
+                          child: CustomTextField(
+                            titleText: "Change Password",
+                            controller: passwordController,
+                            decoration: kTextFieldDecoration.copyWith(
+                              hintText: "******** ",
+                              filled: true,
+                              fillColor: const Color(0xFFF3F3F4),
+                              prefixIcon: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                child: SvgPicture.asset(
+                                    "assets/icons/password.svg",
+                                    colorFilter: ColorFilter.mode(
+                                        AppColors.primaryColor, BlendMode.srcIn)),
+                              ),
+                              suffixIcon: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                child: SvgPicture.asset("assets/icons/eye.svg",
+                                    colorFilter: const ColorFilter.mode(
+                                        Color(0xFFBABBBE), BlendMode.srcIn)),
+                              ),
                             ),
-                            suffixIcon: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15.0),
-                              child: SvgPicture.asset("assets/icons/eye.svg",
-                                  colorFilter: const ColorFilter.mode(
-                                      Color(0xFFBABBBE), BlendMode.srcIn)),
-                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "ⓘ Please enter your password";
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "ⓘ Please enter your password";
-                            }
-                            return null;
-                          },
                         ),
                         const SizedBox(height: 20),
                         Column(
@@ -479,8 +507,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   onClick: () {
                                     UpdateProfileRequest updateProfileRequest =
                                         UpdateProfileRequest(
-                                            dob:
-                                                "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                          image: base64String,
+                                            dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                    print(UpdateProfileEvent);
                                     profileBloc.add(UpdateProfileEvent(
                                         updateProfileRequest));
                                   },

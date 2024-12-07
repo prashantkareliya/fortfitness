@@ -149,7 +149,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     imageName: ImageString.icSignIn,
                                     title: ButtonString.btnSubmit,
                                     onClick: () {
-                                      //Navigator.push(context, MaterialPageRoute(builder: (context)=> EnterNewPassword()));
+                                      FocusScope.of(context).requestFocus(FocusNode());
                                       if (_formKey.currentState!.validate()) {
                                         ForgotPasswordRequest
                                             forgotPasswordRequest =

@@ -48,7 +48,7 @@ class DashboardScreen extends StatelessWidget {
             icon: ClipOval(
                 child: SizedBox.fromSize(
                     size: Size.fromRadius(18.sp),
-                    child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUyllrW-u-01_B8qMki4ybHzbhuBWhUq3pMA&s", fit: BoxFit.cover))),
+                    child: Image.network("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", fit: BoxFit.cover))),
           ),
           SizedBox(width: 5.sp),
         ],

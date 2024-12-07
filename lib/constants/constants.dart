@@ -32,10 +32,14 @@ class ApiEndPoint {
   static const String login = "user/login";
   static const String register = "user/register";
   static const String forgotPassword = "user/forgot-password";
+  static const String claimService = "service/claim";
+  static const String claimDiscount = "discount/claim";
 
   //GET API endpoint
   static const String getProfile = "user/profile";
   static const String location = "location";
+  static const String service = "service";
+  static const String discount = "discount";
 
   //PUT API endpoint
   static const String profileUpdate = "user/profile/update";

@@ -186,6 +186,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             imageName: ImageString.icSignIn,
                             title: ButtonString.btnSignIn,
                             onClick: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
                               if(_formKey.currentState!.validate()){
                                 LoginRequest loginRequest = LoginRequest(
                                     email: emailController.text.trim(),
@@ -212,6 +213,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               text: ButtonString.btnSignUp,
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () async {
+                                  FocusScope.of(context).requestFocus(FocusNode());
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
@@ -230,6 +232,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
                         Navigator.push(
                             context,
                             MaterialPageRoute(

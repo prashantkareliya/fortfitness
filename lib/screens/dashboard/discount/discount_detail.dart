@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/screens/dashboard/discount/model/get_discount_response.dart';
 import 'package:fortfitness/screens/dashboard/discount/upload_receipt.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,7 +11,9 @@ import '../../../utils/app_colors.dart';
 import '../../profile/profile_screen.dart';
 
 class DiscountDetailScreen extends StatefulWidget {
-  const DiscountDetailScreen({super.key});
+  Data discount;
+
+  DiscountDetailScreen(this.discount, {super.key});
 
   @override
   State<DiscountDetailScreen> createState() => _DiscountDetailScreenState();
@@ -30,7 +32,7 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: SvgPicture.asset("assets/icons/back.svg")),
-        title: Text("Discount",
+        title: Text(widget.discount.name ?? "",
             style: GoogleFonts.workSans(
                 textStyle: TextStyle(
                     fontSize: 28.sp,
@@ -52,7 +54,7 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 18.sp),
-        child: Container(
+        child: SizedBox(
           width: query.width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,10 +71,12 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset("assets/images/image_demo1.png", height: query.height * 0.035),
+                    Image.network(widget.discount.logo ?? "",
+                        height: query.height * 0.06),
                     SizedBox(width: 10.sp),
                     Expanded(
-                      child: Text("Sportsware Clothing",
+                      child: Text(widget.discount.address ?? "",
+                          maxLines: 2,
                           style: GoogleFonts.workSans(
                               textStyle: TextStyle(
                                   fontSize: 14.sp,
@@ -91,11 +95,12 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("20% ",
+                            Text(
+                                "${widget.discount.discount.toString().substring(0, 2) ?? ""}% ",
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.workSans(
                                     textStyle: TextStyle(
                                         fontSize: 28.sp,
-                                        height: 0.8,
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold))),
                             Text("OFF",
@@ -109,12 +114,12 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                         ),
                       ),
                     )
-
                   ],
                 ),
               ),
               SizedBox(height: 40.sp),
-              Image.asset("assets/images/image_demo.png", height: query.height * 0.08),
+              Image.network(widget.discount.logo ?? "",
+                  height: query.height * 0.12),
               SizedBox(height: 30.sp),
               Container(
                 decoration: BoxDecoration(
@@ -124,7 +129,7 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 15.sp, vertical: 15.sp),
                 child: Column(
                   children: [
-                    for (String point in [
+                    /* for (String point in [
                       'Lorem ipsum dolor sit amet, consectetur.',
                       'Aliquam tincidunt mauris eu risus.',
                       'Vestibulum auctor dapibus neque.',
@@ -133,16 +138,18 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                       'Vivamus vestibulum nulla nec ante.',
                       'Praesent placerat risus quis eros.',
                       'Fusce pellentesque suscipit nibh.'
-                    ])
-                      Padding(
+                    ])*/
+                    Padding(
                         padding: const EdgeInsets.only(bottom: 4.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Icon(Icons.brightness_1, size: 6),
                             const SizedBox(width: 8),
-                            Expanded(child: Text(point, style: GoogleFonts.workSans(
-                                textStyle: TextStyle(
+                          Expanded(
+                              child: Text(widget.discount.description ?? "",
+                                  style: GoogleFonts.workSans(
+                                      textStyle: TextStyle(
                                     fontSize: 14.sp,
                                     color: AppColors.blackColor,
                                     fontWeight: FontWeight.w400)))),
@@ -160,7 +167,11 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                       imageName: ImageString.icClaimNow,
                       title: ButtonString.btnClaimNow,
                       onClick: () {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const UploadReceiptScreen()));
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UploadReceiptScreen(widget.discount)));
                       },
                       fontColor: AppColors.whiteColor,
                       buttonColor: AppColors.primaryColor)),
