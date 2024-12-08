@@ -323,6 +323,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 fontSize: 16.sp,
                                                 color: AppColors.blackColor,
                                                 fontWeight: FontWeight.w600)),
+                                        maxLines: 1,
+                                        maxLength: 2,
                                         decoration: InputDecoration(
                                             fillColor: AppColors.whiteColor,
                                             filled: true,
@@ -365,6 +367,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Date";
+                                          } else if(int.parse(value) > 31){
+                                            return "Not valid";
                                           }
                                           return null;
                                         },
@@ -393,10 +397,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             fontSize: 16.sp,
                                             color: AppColors.blackColor,
                                             fontWeight: FontWeight.w600)),
+                                        maxLines: 1,
+                                        maxLength: 2,
                                     decoration: InputDecoration(
                                         fillColor: AppColors.whiteColor,
                                         filled: true,
                                         hintText: 'MM',
+
                                         hintStyle: GoogleFonts.workSans(
                                             color: const Color(0xFFBABBBE),
                                             fontWeight: FontWeight.w600,
@@ -431,6 +438,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return "Enter Month";
+                                      } else if(int.parse(value) > 12){
+                                        return "Not valid";
                                       }
                                       return null;
                                     },
@@ -453,6 +462,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     focusNode: _YYYYFocusNode,
                                     keyboardType: TextInputType.number,
                                     textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    maxLength: 4,
                                     style: GoogleFonts.workSans(
                                         textStyle: TextStyle(
                                             fontSize: 16.sp,
@@ -496,6 +507,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return "Enter Year";
+                                      } else if(int.parse(value) > 2024){
+                                        return "Not valid";
                                       }
                                       return null;
                                     },

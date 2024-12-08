@@ -302,6 +302,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       focusNode: _DDFocusNode,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.text,
+                                      maxLines: 1,
+                                      maxLength: 2,
                                       style: GoogleFonts.workSans(
                                           textStyle: TextStyle(
                                               fontSize: 16.sp,
@@ -348,7 +350,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   vertical: 10)),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return "ⓘ Please enter date";
+                                          return "Enter Date";
+                                        } else if(int.parse(value) > 31){
+                                          return "Not valid";
                                         }
                                         return null;
                                       },
@@ -377,6 +381,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               fontSize: 16.sp,
                                               color: AppColors.blackColor,
                                               fontWeight: FontWeight.w600)),
+                                      maxLines: 1,
+                                      maxLength: 2,
                                       decoration: InputDecoration(
                                           fillColor: AppColors.whiteColor,
                                           filled: true,
@@ -418,7 +424,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   vertical: 10)),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return "ⓘ Please enter date";
+                                          return "Enter Month";
+                                        } else if(int.parse(value) > 12){
+                                          return "Not valid";
                                         }
                                         return null;
                                       },
@@ -447,6 +455,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               fontSize: 16.sp,
                                               color: AppColors.blackColor,
                                               fontWeight: FontWeight.w600)),
+                                      maxLines: 1,
+                                      maxLength: 4,
                                       decoration: InputDecoration(
                                           fillColor: AppColors.whiteColor,
                                           filled: true,
@@ -488,7 +498,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   vertical: 10)),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return "ⓘ Please enter date";
+                                          return "Enter Year";
+                                        } else if(int.parse(value) > 2024){
+                                          return "Not valid";
                                         }
                                         return null;
                                       },
@@ -511,9 +523,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   onClick: () {
                                     UpdateProfileRequest updateProfileRequest =
                                         UpdateProfileRequest(
-                                          image: base64String,
+                                          image: base64String ?? profileImage,
                                             dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
-                                    print(UpdateProfileEvent);
+
                                     profileBloc.add(UpdateProfileEvent(
                                         updateProfileRequest));
                                   },
