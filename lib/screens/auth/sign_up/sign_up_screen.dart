@@ -15,7 +15,7 @@ import '../../../components/progress_indicator.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
-import '../../dashboard/dashboard_screen.dart';
+
 import '../bloc/auth_bloc.dart';
 import '../data/auth_datasource.dart';
 import '../data/auth_repository.dart';
@@ -144,6 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 20.sp),
                     Form(
                       key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         children: [
                           CustomTextField(
@@ -563,7 +564,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               fontWeight: FontWeight.w500,
                               decoration: TextDecoration.underline)),
                     )),
-
+                const SizedBox(height: 20),
               ],
             ),
                     ),

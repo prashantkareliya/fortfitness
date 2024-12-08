@@ -91,6 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(height: 40.sp),
             Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Center(
                 child: Column(
                   children: [

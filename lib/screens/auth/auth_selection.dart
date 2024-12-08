@@ -66,7 +66,7 @@ class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
                         imageName: ImageString.icSignIn,
                         title: ButtonString.btnSignIn,
                         onClick: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const SignInScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const SignInScreen()));
                         },
                         fontColor: AppColors.whiteColor,
                         buttonColor: AppColors.primaryColor)),
@@ -85,7 +85,7 @@ class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
                         imageName: ImageString.icSignUp,
                         btnString: ButtonString.btnSignUp,
                         onClick: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const SignUpScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const SignUpScreen()));
                         },
                         fontColor: AppColors.primaryColor))
               ],

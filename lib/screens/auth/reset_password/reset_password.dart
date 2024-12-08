@@ -72,7 +72,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             showSpinner = false;
             Helpers.showSnackBar(
                 context, state.forgotPasswordResponse.message ?? "");
-            Navigator.push(context,
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const SignInScreen()));
           }
         },
