@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/components/custom_button.dart';
 import 'package:fortfitness/utils/app_colors.dart';
 import 'package:fortfitness/utils/preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../components/appbar_custom.dart';
 import '../../constants/strings.dart';
 import '../../main.dart';
 import '../auth/auth_selection.dart';
@@ -19,6 +22,7 @@ class DashboardScreen extends StatelessWidget {
   String? from;
    DashboardScreen({super.key, this.from});
 
+  SharedPreferences? preferences;
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -29,10 +33,7 @@ class DashboardScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         leading: from == "main" ? IconButton(
             onPressed: () async {
-              SharedPreferences preferences = await SharedPreferences.getInstance();
-              preferences.clear();
-              Navigator.pushAndRemoveUntil(
-                  context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+              showLogoutDialog(context);
             },
             icon: Icon(Icons.logout, color: AppColors.primaryColor)) : IconButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -48,11 +49,10 @@ class DashboardScreen extends StatelessWidget {
             icon: ClipOval(
                 child: SizedBox.fromSize(
                     size: Size.fromRadius(18.sp),
-                    child: Image.network("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", fit: BoxFit.cover))),
-          ),
-          SizedBox(width: 5.sp),
-        ],
-      ),
+                    child: Image.network(
+                        preferences?.getString(PreferenceString.userImage) ??
+                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                        fit: BoxFit.cover))))]),
       body: SizedBox(
         width: query.width,
         child: Column(
@@ -151,6 +151,64 @@ class DashboardScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: AppColors.primaryColor,
+          title: Text("Confirm Logout", style: GoogleFonts.workSans(
+              textStyle: TextStyle(
+                  fontSize: 28.sp,
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.w700))),
+          content: Text("Are you sure you want to logout?",
+              style: GoogleFonts.workSans(
+                  textStyle: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.blackColor,
+                      fontWeight: FontWeight.normal))),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel",
+                  style : GoogleFonts.workSans(
+                      textStyle: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.normal))),
+            ),
+
+            ElevatedButton(
+              clipBehavior: Clip.hardEdge,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  splashFactory: NoSplash.splashFactory,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)))),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                SharedPreferences preferences = await SharedPreferences.getInstance();
+                preferences.clear();
+                Navigator.pushAndRemoveUntil(
+                    context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+              },
+              child: Text("Logout", style : GoogleFonts.workSans(
+                  textStyle: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal))),
+            ),
+          ],
+        );
+      },
     );
   }
 }

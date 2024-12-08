@@ -5,6 +5,7 @@ import 'package:fortfitness/screens/dashboard/discount/model/get_discount_respon
 import 'package:fortfitness/screens/dashboard/discount/upload_receipt.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../components/appbar_custom.dart';
 import '../../../components/custom_button.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
@@ -25,32 +26,12 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
     var query = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppbar(
+        title: widget.discount.name ?? "",
         backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: SvgPicture.asset("assets/icons/back.svg")),
-        title: Text(widget.discount.name ?? "",
-            style: GoogleFonts.workSans(
-                textStyle: TextStyle(
-                    fontSize: 28.sp,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w700))),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfilePage()));
-            },
-            icon: ClipOval(
-                child: SizedBox.fromSize(
-                    size: Size.fromRadius(18.sp),
-                    child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUyllrW-u-01_B8qMki4ybHzbhuBWhUq3pMA&s", fit: BoxFit.cover))),
-          ),
-          SizedBox(width: 5.sp),
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 18.sp),

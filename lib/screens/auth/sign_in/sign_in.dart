@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/components/cutom_textfield.dart';
@@ -12,42 +13,15 @@ import 'package:fortfitness/screens/auth/sign_up/sign_up_screen.dart';
 import 'package:fortfitness/screens/dashboard/dashboard_screen.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../components/custom_button.dart';
 import '../../../components/headerText.dart';
+import '../../../components/progress_indicator.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/preferences.dart';
 import '../reset_password/reset_password.dart';
-
-/*InputDecoration kTextFieldDecoration = InputDecoration(
-    hintText: 'Enter value',
-    hintStyle: GoogleFonts.workSans(
-        color: const Color(0xFFBABBBE),
-        fontWeight: FontWeight.w600,
-        fontSize: 16.sp),
-    enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
-        borderRadius: BorderRadius.circular(12.0) // Border radius
-        ),
-    focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
-        borderRadius: BorderRadius.circular(12.0)),
-    errorBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
-        borderRadius: BorderRadius.circular(12.0)),
-    focusedErrorBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
-        borderRadius: BorderRadius.circular(12.0)),
-    prefixIcon: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: SvgPicture.asset("assets/svg/email.svg",
-          colorFilter:
-              ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)),
-    ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 18));*/
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -72,7 +46,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   bool showSpinner = false;
-
+  bool password = true;
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -93,13 +67,19 @@ class _SignInScreenState extends State<SignInScreen> {
             preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
             preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
             preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(from: "main")));
+            preferences.setPreference(PreferenceString.userImage,
+                state.loginResponse.data?.user!.image.toString());
+            Navigator.pushAndRemoveUntil<dynamic>(context,
+              MaterialPageRoute<dynamic>(builder: (BuildContext context) =>DashboardScreen(from: "main")),
+              (route) => false);
           }
         },
         builder: (context, state) {
         return ModalProgressHUD(
-        inAsyncCall: showSpinner,
-        child: Padding(
+            inAsyncCall: showSpinner,
+            progressIndicator:
+                SpinKitCircle(color: AppColors.primaryColor, size: 60.0),
+            child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: SingleChildScrollView(
             child: Column(
@@ -150,8 +130,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       titleText: "Password",
                       controller: passwordController,
                       keyBoardType: TextInputType.text,
-                      isSecure: true,
-                      decoration: kTextFieldDecoration.copyWith(
+                              isSecure: password,
+                              decoration: kTextFieldDecoration.copyWith(
                         hintText: "Password",
                         filled: true,
                         fillColor: const Color(0xFFF3F3F4),
@@ -166,10 +146,19 @@ class _SignInScreenState extends State<SignInScreen> {
                         suffixIcon: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/eye.svg",
-                              colorFilter: const ColorFilter.mode(
-                                  Color(0xFFBABBBE), BlendMode.srcIn)),
-                        ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        password = !password;
+                                      });
+                                    },
+                                    child: SvgPicture.asset(
+                                        "assets/icons/eye.svg",
+                                        colorFilter: const ColorFilter.mode(
+                                            Color(0xFFBABBBE),
+                                            BlendMode.srcIn)),
+                                  ),
+                                ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {

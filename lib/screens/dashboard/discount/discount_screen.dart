@@ -8,6 +8,8 @@ import 'package:fortfitness/screens/dashboard/discount/data/discount_repository.
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
+import '../../../components/appbar_custom.dart';
+import '../../../components/progress_indicator.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../profile/profile_screen.dart';
@@ -40,33 +42,13 @@ class _DiscountScreenState extends State<DiscountScreen> {
     var query = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppbar(
+        title: "Discount",
         backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: SvgPicture.asset("assets/icons/back.svg")),
-        title: Text("Discount",
-            style: GoogleFonts.workSans(
-                textStyle: TextStyle(
-                    fontSize: 28.sp,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w700))),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfilePage()));
-            },
-            icon: ClipOval(
-                child: SizedBox.fromSize(
-                    size: Size.fromRadius(18.sp),
-                    child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUyllrW-u-01_B8qMki4ybHzbhuBWhUq3pMA&s", fit: BoxFit.cover))),
-          ),
-          SizedBox(width: 5.sp),
-        ],
-      ),
+        ),
       body: BlocConsumer<DiscountBloc, DiscountState>(
         bloc: discountBloc,
         listener: (context, state) {
@@ -86,6 +68,9 @@ class _DiscountScreenState extends State<DiscountScreen> {
         builder: (context, state) {
           return ModalProgressHUD(
             inAsyncCall: showSpinner,
+            progressIndicator: SpinKitCircle(
+                color: AppColors.primaryColor,
+                size: 60.0),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 35.sp),
               child: SizedBox(

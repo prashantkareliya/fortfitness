@@ -23,3 +23,21 @@ class GetGymLocationFailure extends GymLocationState {
 
   GetGymLocationFailure(this.error);
 }
+
+
+
+//Claim location states
+class ClaimLocationLoading extends GymLocationState {
+  final bool isBusy;
+  ClaimLocationLoading(this.isBusy);
+}
+
+class ClaimLocationLoaded extends GymLocationState {
+  LocationClaimResponse locationClaimResponse;
+  ClaimLocationLoaded({required this.locationClaimResponse});
+}
+
+class ClaimLocationFailure extends GymLocationState {
+  final String error;
+  ClaimLocationFailure(this.error);
+}

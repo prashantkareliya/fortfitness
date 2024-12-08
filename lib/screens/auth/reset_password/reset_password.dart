@@ -10,6 +10,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../components/custom_button.dart';
 import '../../../components/cutom_textfield.dart';
+import '../../../components/progress_indicator.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
@@ -78,6 +79,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         builder: (context, state) {
           return ModalProgressHUD(
             inAsyncCall: showSpinner,
+            progressIndicator: SpinKitCircle(
+                color: AppColors.primaryColor,
+                size: 60.0),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.sp),
               child: SingleChildScrollView(

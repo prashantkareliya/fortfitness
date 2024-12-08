@@ -34,6 +34,7 @@ class ApiEndPoint {
   static const String forgotPassword = "user/forgot-password";
   static const String claimService = "service/claim";
   static const String claimDiscount = "discount/claim";
+  static const String claimLocation = "location/submit";
 
   //GET API endpoint
   static const String getProfile = "user/profile";

@@ -11,6 +11,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/cutom_textfield.dart';
 import '../../../components/headerText.dart';
+import '../../../components/progress_indicator.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
@@ -88,8 +89,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   bool showSpinner = false;
-  bool password = false;
-  bool confirmPassword = false;
+  bool password = true;
+  bool confirmPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -110,12 +111,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             /*preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
             preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
             preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());*/
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(from: "main")));
+            Navigator.pushAndRemoveUntil<dynamic>(
+              context,
+              MaterialPageRoute<dynamic>(
+                builder: (BuildContext context) =>
+                    const SignInScreen(),
+              ),
+              (route) => false,
+            );
           }
         },
         builder: (context, state) {
           return ModalProgressHUD(
             inAsyncCall: showSpinner,
+            progressIndicator:
+                SpinKitCircle(color: AppColors.primaryColor, size: 60.0),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: SingleChildScrollView(

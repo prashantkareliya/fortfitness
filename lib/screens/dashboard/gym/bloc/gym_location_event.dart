@@ -8,3 +8,10 @@ sealed class GymLocationEvent {}
 class GetGymLocationEvent extends GymLocationEvent {
   GetGymLocationEvent();
 }
+
+
+//Update user event
+class ClaimLocationEvent extends GymLocationEvent {
+  final LocationClaimRequest locationClaimRequest;
+  ClaimLocationEvent(this.locationClaimRequest);
+}

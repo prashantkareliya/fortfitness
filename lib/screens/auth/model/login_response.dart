@@ -47,15 +47,16 @@ class User {
   int? id;
   String? name;
   String? email;
+  String? image;
   String? dob;
   String? role;
   int? isActive;
   int? isSuperAdmin;
   int? confirmed;
-  Null? organizationId;
+  String? organizationId;
   int? accessEnabled;
-  Null? lastAccessedAt;
-  Null? kisiUserId;
+  String? lastAccessedAt;
+  String? kisiUserId;
   String? createdAt;
   String? updatedAt;
 
@@ -63,6 +64,7 @@ class User {
       {this.id,
         this.name,
         this.email,
+        this.image,
         this.dob,
         this.role,
         this.isActive,
@@ -79,6 +81,7 @@ class User {
     id = json['id'];
     name = json['name'];
     email = json['email'];
+    image = json['image'];
     dob = json['dob'];
     role = json['role'];
     isActive = json['is_active'];
@@ -97,6 +100,7 @@ class User {
     data['id'] = this.id;
     data['name'] = this.name;
     data['email'] = this.email;
+    data['image'] = this.image;
     data['dob'] = this.dob;
     data['role'] = this.role;
     data['is_active'] = this.isActive;
