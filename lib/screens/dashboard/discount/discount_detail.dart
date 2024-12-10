@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/screens/dashboard/discount/model/get_discount_response.dart';
@@ -9,8 +10,6 @@ import '../../../components/appbar_custom.dart';
 import '../../../components/custom_button.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
-import '../../profile/profile_screen.dart';
-
 class DiscountDetailScreen extends StatefulWidget {
   Data discount;
 
@@ -52,8 +51,9 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.network(widget.discount.logo ?? "",
-                        height: query.height * 0.06),
+                    if (widget.discount.logo != null)
+                      Image.network(widget.discount.logo ?? "",
+                          height: query.height * 0.08),
                     SizedBox(width: 10.sp),
                     Expanded(
                       child: Text(widget.discount.address ?? "",
@@ -99,45 +99,19 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                 ),
               ),
               SizedBox(height: 40.sp),
-              Image.network(widget.discount.logo ?? "",
-                  height: query.height * 0.12),
+              if (widget.discount.logo != null)
+                Image.network(widget.discount.logo ?? "",
+                    height: query.height * 0.15),
               SizedBox(height: 30.sp),
-              Container(
+              if (widget.discount.description != "")
+                Container(
                 decoration: BoxDecoration(
                     color: AppColors.grayTile,
                     borderRadius: BorderRadius.circular(15.sp)
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 15.sp, vertical: 15.sp),
-                child: Column(
-                  children: [
-                    /* for (String point in [
-                      'Lorem ipsum dolor sit amet, consectetur.',
-                      'Aliquam tincidunt mauris eu risus.',
-                      'Vestibulum auctor dapibus neque.',
-                      'Nunc dignissim risus id metus.',
-                      'Cras ornare tristique elit.',
-                      'Vivamus vestibulum nulla nec ante.',
-                      'Praesent placerat risus quis eros.',
-                      'Fusce pellentesque suscipit nibh.'
-                    ])*/
-                    Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.brightness_1, size: 6),
-                            const SizedBox(width: 8),
-                          Expanded(
-                              child: Text(widget.discount.description ?? "",
-                                  style: GoogleFonts.workSans(
-                                      textStyle: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.w400)))),
-                          ],
-                        ),
-                      ),
-                  ],
+                padding: EdgeInsets.symmetric(horizontal: 15.sp, vertical: 10.sp),
+                child: Html(
+                  data: widget.discount.description ?? "",
                 ),
               ),
               SizedBox(height: 30.sp),
@@ -147,7 +121,7 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                   child: CustomButton(
                       imageName: ImageString.icClaimNow,
                       title: ButtonString.btnClaimNow,
-                      onClick: () {
+                      onClick: widget.discount.isClaimed == true ? null :  () {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

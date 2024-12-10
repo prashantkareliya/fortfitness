@@ -64,8 +64,8 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
           }
           if (state is ClaimLocationLoaded) {
             showSpinner = false;
-            Helpers.showSnackBar(
-                context, state.locationClaimResponse.message ?? "");
+            /*Helpers.showSnackBar(
+                context, state.locationClaimResponse.message ?? "");*/
           }
         },
         builder: (context, state) {

@@ -64,8 +64,8 @@ class _GymScreenState extends State<GymScreen> {
             if (state is GetGymLocationLoaded) {
               showSpinner = false;
               gymLocation = state.gymLocationResponse.data!.locations!;
-              Helpers.showSnackBar(
-                  context, state.gymLocationResponse.message ?? "");
+             /* Helpers.showSnackBar(
+                  context, state.gymLocationResponse.message ?? "");*/
             }
           },
           builder: (context, state) {

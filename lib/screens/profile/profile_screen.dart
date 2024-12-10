@@ -11,6 +11,7 @@ import 'package:fortfitness/screens/profile/data/profile_datasource.dart';
 import 'package:fortfitness/screens/profile/data/profile_repository.dart';
 import 'package:fortfitness/screens/profile/model/update_profile_request.dart';
 import 'package:fortfitness/utils/extention_text.dart';
+import 'package:fortfitness/utils/preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -91,6 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   bool showSpinner = false;
+  File? _image1;
 
   String? base64String;
   final ImagePicker _picker = ImagePicker();
@@ -103,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
       String base64Image = base64Encode(imageBytes);
       setState(() {
         base64String = base64Image;
+        _image1 = imageFile;
       });
     }
   }
@@ -122,13 +125,14 @@ class _ProfilePageState extends State<ProfilePage> {
         }
         if (state is ProfileLoaded) {
           showSpinner = false;
-          Helpers.showSnackBar(context, state.profileResponse.message ?? "");
+          //Helpers.showSnackBar(context, state.profileResponse.message ?? "");
           nameController.text = state.profileResponse.data!.name ?? "";
           emailController.text = state.profileResponse.data!.email ?? "";
           ddController.text = state.profileResponse.data!.dob!.substring(8, 10);
           mmController.text = state.profileResponse.data!.dob!.substring(5, 7);
           yyyyController.text = state.profileResponse.data!.dob!.substring(0, 4);
           profileImage = state.profileResponse.data!.image!.toString();
+          preferences.setPreference(PreferenceString.userImage, state.profileResponse.data!.image.toString());
         }
 
         if (state is UpdateProfileFailure) {
@@ -167,13 +171,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    Padding(
+                    _image1 != null ?
+                Padding(
+                padding: EdgeInsets.only(bottom: 10.sp, right: 15.sp),
+            child: ClipOval(
+                child: SizedBox.fromSize(
+                    size: Size.fromRadius(60.sp),
+                    child: Image.file(
+                        _image1!,
+                        fit: BoxFit.cover))),
+          )
+                    : Padding(
                       padding: EdgeInsets.only(bottom: 10.sp, right: 15.sp),
                       child: ClipOval(
                           child: SizedBox.fromSize(
                               size: Size.fromRadius(60.sp),
                               child: Image.network(
-                                  profileImage,
+                                  Uri.parse(profileImage).toString(),
                                   fit: BoxFit.cover))),
                     ),
                     GestureDetector(
@@ -310,6 +324,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: AppColors.blackColor,
                                               fontWeight: FontWeight.w600)),
                                       decoration: InputDecoration(
+                                          counter: const SizedBox.shrink(),
                                           fillColor: AppColors.whiteColor,
                                           filled: true,
                                           hintText: 'DD',
@@ -383,7 +398,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                               fontWeight: FontWeight.w600)),
                                       maxLines: 1,
                                       maxLength: 2,
+
                                       decoration: InputDecoration(
+                                          counter: const SizedBox.shrink(),
                                           fillColor: AppColors.whiteColor,
                                           filled: true,
                                           hintText: 'MM',
@@ -458,6 +475,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       maxLines: 1,
                                       maxLength: 4,
                                       decoration: InputDecoration(
+                                        counter: const SizedBox.shrink(),
                                           fillColor: AppColors.whiteColor,
                                           filled: true,
                                           hintText: 'YYYY',
@@ -523,9 +541,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   onClick: () {
                                     UpdateProfileRequest updateProfileRequest =
                                         UpdateProfileRequest(
-                                          image: base64String ?? profileImage,
+                                          image: "data:image/png;base64,$base64String" ?? profileImage,
                                             dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
 
+                                    print(updateProfileRequest.toJson());
                                     profileBloc.add(UpdateProfileEvent(
                                         updateProfileRequest));
                                   },

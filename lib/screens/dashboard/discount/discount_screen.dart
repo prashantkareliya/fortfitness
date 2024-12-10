@@ -62,7 +62,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
           if (state is DiscountLoaded) {
             showSpinner = false;
             discountList = state.discountResponse.data!;
-            Helpers.showSnackBar(context, state.discountResponse.message ?? "");
+           // Helpers.showSnackBar(context, state.discountResponse.message ?? "");
           }
         },
         builder: (context, state) {

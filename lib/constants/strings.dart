@@ -28,6 +28,7 @@ class ButtonString {
   static const String btnEnter = "Enter";
   static const String btnClaimNow = "Claim Now";
   static const String btnResetPassword = "Reset Password";
+  static const String btnClaimService = "Claim Service";
 }
 
 //Image path Strings

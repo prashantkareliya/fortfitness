@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -62,7 +61,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
           if (state is ServiceLoaded) {
             showSpinner = false;
             serviceList = state.serviceResponse.data!;
-            Helpers.showSnackBar(context, state.serviceResponse.message ?? "");
+           // Helpers.showSnackBar(context, state.serviceResponse.message ?? "");
           }
         },
         builder: (context, state) {
@@ -104,7 +103,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     SizedBox(width: 20.sp),
-                                    Image.network(service.logo ?? "", height: 70.sp,),
+                                    if(service.logo!= null) Image.network(service.logo ?? "", height: 70.sp,),
                                     SizedBox(width: 15.sp),
                                     Expanded(
                                       child: Text(service.name ?? "",

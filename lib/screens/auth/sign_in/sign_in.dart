@@ -33,8 +33,8 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController emailController = TextEditingController(text: "ajaykorat16@gmail.com");
-  TextEditingController passwordController = TextEditingController(text: "Ajay@123");
+  TextEditingController emailController = TextEditingController(text: "jasminkorat204@gmail.com");
+  TextEditingController passwordController = TextEditingController(text: "12345678");
 
   AuthBloc authBloc = AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
 
@@ -67,8 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
             preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
             preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
             preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
-            preferences.setPreference(PreferenceString.userImage,
-                state.loginResponse.data?.user!.image.toString());
+            preferences.setPreference(PreferenceString.userImage, state.loginResponse.data?.user!.image.toString());
             Navigator.pushAndRemoveUntil<dynamic>(context,
               MaterialPageRoute<dynamic>(builder: (BuildContext context) =>DashboardScreen(from: "main")),
               (route) => false);

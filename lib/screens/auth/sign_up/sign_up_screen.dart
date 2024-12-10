@@ -326,6 +326,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         maxLines: 1,
                                         maxLength: 2,
                                         decoration: InputDecoration(
+                                          counter: const SizedBox.shrink(),
                                             fillColor: AppColors.whiteColor,
                                             filled: true,
                                             hintText: 'DD',
@@ -400,6 +401,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         maxLines: 1,
                                         maxLength: 2,
                                     decoration: InputDecoration(
+                                        counter: const SizedBox.shrink(),
                                         fillColor: AppColors.whiteColor,
                                         filled: true,
                                         hintText: 'MM',
@@ -470,6 +472,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             color: AppColors.blackColor,
                                             fontWeight: FontWeight.w600)),
                                     decoration: InputDecoration(
+                                        counter: const SizedBox.shrink(),
                                         fillColor: AppColors.whiteColor,
                                         filled: true,
                                         hintText: 'YYYY',
