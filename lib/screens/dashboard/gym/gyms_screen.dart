@@ -208,7 +208,7 @@ class _GymScreenState extends State<GymScreen> {
                                             style: GoogleFonts.workSans(
                                                 textStyle: TextStyle(
                                                     height: 1.0,
-                                                    fontSize: 28.sp,
+                                                    fontSize: 16.sp,
                                                     color: AppColors.primaryColor,
                                                     fontWeight: FontWeight.w700))),
                                       ),

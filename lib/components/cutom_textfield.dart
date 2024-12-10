@@ -92,7 +92,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(12.0)),
           child: TextFormField(
             maxLength: widget.length,
-            maxLines: widget.lines,
+            maxLines: widget.lines ?? 1,
             controller: widget.controller,
             focusNode: _focusNode,
             keyboardType: widget.keyBoardType,

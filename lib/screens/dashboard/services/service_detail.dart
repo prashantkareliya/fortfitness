@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../components/appbar_custom.dart';
 import '../../../components/custom_button.dart';
@@ -176,9 +177,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   }
 
   Future<void> downloadPDF(String url, String fileName) async {
+    await Permission.storage.request();
     try {
-      final Directory directory = await getApplicationDocumentsDirectory();
-      String filePath = "${directory.path}/$fileName";
+      final Directory? directory = await getDownloadsDirectory();
+      String filePath = "/storage/emulated/0/Download/$fileName";
 
       // Start downloading
       setState(() {

@@ -47,6 +47,7 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
     return Scaffold(
       appBar: CustomAppbar(
         title: widget.location?.name ?? "",
+        fontSize: 20.0,
         backgroundColor: AppColors.whiteColor,
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),

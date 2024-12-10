@@ -19,6 +19,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final Color backgroundColor;
   final double height;
+  final double? fontSize;
 
   String? profileImage;
   //SharedPreferences? preferences;
@@ -30,7 +31,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.backgroundColor = Colors.blue,
     this.height = 60.0,
-    this.profileImage
+    this.profileImage,
+    this.fontSize
   });
 
   ProfileBloc profileBloc =
@@ -71,10 +73,10 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
             Expanded(
               child: Text(
                 title,
-                maxLines: 1,
+                maxLines: 2,
                 style: GoogleFonts.workSans(
                     textStyle: TextStyle(
-                        fontSize: 28.sp,
+                        fontSize: fontSize ?? 28.0,
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.w700)),
                 textAlign: TextAlign.center,
