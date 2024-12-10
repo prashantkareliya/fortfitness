@@ -144,8 +144,8 @@ class _ProfilePageState extends State<ProfilePage> {
         }
         if (state is UpdateProfileLoaded) {
           showSpinner = false;
-          Helpers.showSnackBar(
-              context, state.updateProfileResponse.message ?? "");
+          /*Helpers.showSnackBar(
+              context, state.updateProfileResponse.message ?? "");*/
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => DashboardScreen()));
         }
@@ -539,12 +539,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   imageName: ImageString.icSignIn,
                                   title: ButtonString.btnSubmit,
                                   onClick: () {
+                                    FocusScope.of(context).requestFocus(FocusNode());
                                     UpdateProfileRequest updateProfileRequest =
                                         UpdateProfileRequest(
                                           image: "data:image/png;base64,$base64String" ?? profileImage,
                                             dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
-
-                                    print(updateProfileRequest.toJson());
                                     profileBloc.add(UpdateProfileEvent(
                                         updateProfileRequest));
                                   },

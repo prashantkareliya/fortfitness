@@ -53,22 +53,28 @@ class Data {
 
 class Locations {
   int? id;
+  int? placeId;
   String? name;
   String? description;
+  double? latitude;
+  double? longitude;
   String? logo;
   int? isPublic;
   int? isBookable;
   String? createdAt;
   String? updatedAt;
   int? activeMembers;
-  String? startTime;
-  String? endTime;
+  Null? startTime;
+  Null? endTime;
   bool? isClaimed;
 
   Locations(
       {this.id,
+        this.placeId,
         this.name,
         this.description,
+        this.latitude,
+        this.longitude,
         this.logo,
         this.isPublic,
         this.isBookable,
@@ -81,8 +87,11 @@ class Locations {
 
   Locations.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    placeId = json['place_id'];
     name = json['name'];
     description = json['description'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
     logo = json['logo'];
     isPublic = json['is_public'];
     isBookable = json['is_bookable'];
@@ -97,8 +106,11 @@ class Locations {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['place_id'] = this.placeId;
     data['name'] = this.name;
     data['description'] = this.description;
+    data['latitude'] = this.latitude;
+    data['longitude'] = this.longitude;
     data['logo'] = this.logo;
     data['is_public'] = this.isPublic;
     data['is_bookable'] = this.isBookable;

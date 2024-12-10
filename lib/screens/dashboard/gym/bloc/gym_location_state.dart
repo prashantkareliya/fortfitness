@@ -25,19 +25,18 @@ class GetGymLocationFailure extends GymLocationState {
 }
 
 
-
 //Claim location states
-class ClaimLocationLoading extends GymLocationState {
+class KisiLocationLoading extends GymLocationState {
   final bool isBusy;
-  ClaimLocationLoading(this.isBusy);
+  KisiLocationLoading(this.isBusy);
 }
 
-class ClaimLocationLoaded extends GymLocationState {
-  LocationClaimResponse locationClaimResponse;
-  ClaimLocationLoaded({required this.locationClaimResponse});
+class KisiLocationLoaded extends GymLocationState {
+  KisiResponse kisiResponse;
+  KisiLocationLoaded({required this.kisiResponse});
 }
 
-class ClaimLocationFailure extends GymLocationState {
+class KisiLocationFailure extends GymLocationState {
   final String error;
-  ClaimLocationFailure(this.error);
+  KisiLocationFailure(this.error);
 }

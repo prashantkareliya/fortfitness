@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,15 +7,14 @@ import 'package:fortfitness/screens/dashboard/gym/model/gym_location_response.da
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-import '../../../components/appbar_custom.dart';
-import '../../../components/progress_indicator.dart';
-import '../../../utils/app_colors.dart';
-import '../../../utils/helpers.dart';
-import '../../profile/profile_screen.dart';
+import 'package:fortfitness/components/appbar_custom.dart';
+import 'package:fortfitness/components/progress_indicator.dart';
+import 'package:fortfitness/utils/app_colors.dart';
+import 'package:fortfitness/utils/helpers.dart';
 import 'bloc/gym_location_bloc.dart';
 import 'data/gym_location_datasource.dart';
 import 'data/gym_location_repository.dart';
-import 'model/location_claim_request.dart';
+import 'model/kisi_response.dart';
 
 class GymDetailScreen extends StatefulWidget {
   Locations? location;
@@ -26,19 +26,19 @@ class GymDetailScreen extends StatefulWidget {
 }
 
 class _GymDetailScreenState extends State<GymDetailScreen> {
-  int? selectDoor;
   bool showSpinner = false;
 
   GymLocationBloc gymLocationBloc = GymLocationBloc(
       GymLocationRepository(gymLocationDatasource: GymLocationDatasource()));
 
+  List<KisiData> locksList = [];
+
   @override
   void initState() {
     super.initState();
-    LocationClaimRequest locationClaimRequest =
-        LocationClaimRequest(locationId: widget.location?.id.toString());
-    gymLocationBloc.add(ClaimLocationEvent(locationClaimRequest));
+    gymLocationBloc.add(KisiLocationEvent(widget.location!.placeId.toString()));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,17 +55,16 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
       body: BlocConsumer<GymLocationBloc, GymLocationState>(
         bloc: gymLocationBloc,
         listener: (context, state) {
-          if (state is ClaimLocationFailure) {
+          if (state is KisiLocationFailure) {
             showSpinner = false;
             Helpers.showSnackBar(context, state.error);
           }
-          if (state is ClaimLocationLoading) {
+          if (state is KisiLocationLoading) {
             showSpinner = true;
           }
-          if (state is ClaimLocationLoaded) {
+          if (state is KisiLocationLoaded) {
             showSpinner = false;
-            /*Helpers.showSnackBar(
-                context, state.locationClaimResponse.message ?? "");*/
+            locksList = state.kisiResponse.data!;
           }
         },
         builder: (context, state) {
@@ -81,25 +80,28 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 50.sp),
+                    if(locksList.isEmpty)
+                      Text("No data found",
+                        style: GoogleFonts.workSans(
+                          textStyle: TextStyle(
+                              fontSize: 22.sp,
+                              color:  AppColors.primaryColor,
+                              fontWeight: FontWeight.w700)),)
+                      else
                     ListView.builder(
                         shrinkWrap: true,
-                        itemCount: 3,
+                        itemCount: locksList.isEmpty ? 0 : locksList.length,
                         itemBuilder: (context, index) {
+                          final locks = locksList[index];
                           return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectDoor = index;
-                              });
-                            },
+                            onTap: () { },
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 15.sp),
                               child: Container(
                                 height: query.height * 0.14,
                                 width: query.width / 1.28,
                                 decoration: BoxDecoration(
-                                    color: selectDoor == index
-                                        ? AppColors.primaryColor
-                                        : AppColors.grayTile,
+                                    color: AppColors.grayTile,
                                     borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(80.sp),
                                       topLeft: Radius.circular(25.sp),
@@ -113,18 +115,18 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                                   children: [
                                     SvgPicture.asset(
                                       "assets/icons/door.svg",
-                                      color: selectDoor == index
-                                          ? AppColors.whiteColor
-                                          : const Color(0xFF989898),
+                                      color: const Color(0xFF989898),
                                     ),
-                                    Text("Open Door 2",
-                                        style: GoogleFonts.workSans(
-                                            textStyle: TextStyle(
-                                                fontSize: 28.sp,
-                                                color: selectDoor == index
-                                                    ? AppColors.whiteColor
-                                                    : AppColors.primaryColor,
-                                                fontWeight: FontWeight.w700)))
+                                    const SizedBox(width: 20),
+                                    Expanded(
+                                      child: Text("Open - ${locks.name}",
+                                          maxLines: 2,
+                                          style: GoogleFonts.workSans(
+                                          textStyle: TextStyle(
+                                                  fontSize: 22.sp,
+                                                  color:  AppColors.primaryColor,
+                                                  fontWeight: FontWeight.w700))),
+                                    )
                                   ],
                                 ),
                               ),

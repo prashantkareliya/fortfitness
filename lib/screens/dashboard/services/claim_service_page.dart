@@ -1,14 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/components/custom_button.dart';
 import 'package:fortfitness/screens/dashboard/services/bloc/service_bloc.dart';
 import 'package:fortfitness/screens/dashboard/services/model/service_response_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../components/appbar_custom.dart';
+import '../../../components/cutom_textfield.dart';
 import '../../../components/progress_indicator.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
@@ -28,12 +32,36 @@ class ClaimServicePage extends StatefulWidget {
 }
 
 class _ClaimServicePageState extends State<ClaimServicePage> {
-  String selectDate = "Select Date";
-  String selectTime = "Select Time";
+  final _formKey = GlobalKey<FormState>();
+
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
 
   ServiceBloc serviceBloc =
       ServiceBloc(ServiceRepository(serviceDatasource: ServiceDatasource()));
   bool showSpinner = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    dateController.dispose();
+    timeController.dispose();
+    _noteFocusNode.dispose();
+  }
+
+  bool _isDDFocused = false;
+  final FocusNode _noteFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _noteFocusNode.addListener(() {
+      setState(() {
+        _isDDFocused = _noteFocusNode.hasFocus;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +86,6 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
           }
           if (state is ClaimServiceLoaded) {
             showSpinner = false;
-            Helpers.showSnackBar(
-                context, state.claimServiceResponse.message ?? "");
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => DashboardScreen()));
           }
@@ -70,49 +96,179 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
             progressIndicator: SpinKitCircle(
                 color: AppColors.primaryColor,
                 size: 60.0),
-            child: Padding(
-              padding: EdgeInsets.all(18.sp),
-              child: Column(
-                children: [
-                  SizedBox(
-                      //String formattedDate = DateFormat('MM/dd/yyyy hh:mm a').format(now);
-                      height: query.height * 0.072,
-                      child: CustomButton(
-                        buttonColor: AppColors.grayTile,
-                        title: selectDate,
-                        onClick: () {
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(18.sp),
+                child: Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: (){
                           _selectDate(context);
                         },
-                        fontColor: AppColors.blackColor,
-                      )),
-                  SizedBox(height: query.height * 0.02),
-                  SizedBox(
-                      height: query.height * 0.072,
-                      child: CustomButton(
-                        buttonColor: AppColors.grayTile,
-                        title: selectTime,
-                        onClick: () {
+                        child: IgnorePointer(
+                          child: CustomTextField(
+                            titleText: "Select Date",
+                            controller: dateController,
+                            isSecure: false,
+                            decoration: kTextFieldDecoration.copyWith(
+                              hintText: "Select Date",
+                              filled: true,
+                              fillColor: const Color(0xFFF3F3F4),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Icon(Icons.calendar_month, color: AppColors.primaryColor),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "ⓘ Please select date";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      InkWell(
+                        onTap: (){
                           _selectTime(context);
                         },
-                        fontColor: AppColors.blackColor,
-                      )),
-                  SizedBox(height: query.height * 0.05),
-                  SizedBox(
-                      height: query.height * 0.072,
-                      width: query.width * 0.6,
-                      child: CustomButton(
-                          title: ButtonString.btnClaimService,
-                          onClick: () {
-                            ClaimServiceRequest claimServiceRequest =
-                                ClaimServiceRequest(
-                              serviceId: widget.serviceList!.id!.toString(),
-                                  date: selectDate,
-                                  time: selectTime);
-                            serviceBloc.add(ClaimServiceEvent(claimServiceRequest));
-                          },
-                          fontColor: AppColors.whiteColor,
-                          buttonColor: AppColors.primaryColor)),
-                ],
+                        child: IgnorePointer(
+                          child: CustomTextField(
+
+                            titleText: "Select Time",
+                            controller: timeController,
+                            isSecure: false,
+                            decoration: kTextFieldDecoration.copyWith(
+                              hintText: "Select Time",
+                              filled: true,
+                              fillColor: const Color(0xFFF3F3F4),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Icon(Icons.watch_later_outlined, color: AppColors.primaryColor),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "ⓘ Please select Time";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Notes",
+                              style: GoogleFonts.workSans(
+                                  textStyle: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: AppColors.blackColor,
+                                      fontWeight: FontWeight.w600))),
+                          SizedBox(height: 4.sp),
+                          Container(
+                            padding: EdgeInsets.all(4.sp),
+                            decoration: BoxDecoration(
+                                color: _isDDFocused
+                                    ? AppColors.primaryColor
+                                    .withOpacity(0.2)
+                                    : Colors.transparent,
+                                borderRadius:
+                                BorderRadius.circular(12.0)),
+                            child: TextFormField(
+                              controller: noteController,
+                              focusNode: _noteFocusNode,
+                              keyboardType: TextInputType.text,
+                              maxLines: 4,
+                              maxLength: 300,
+                              style: GoogleFonts.workSans(
+                                  textStyle: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: AppColors.blackColor,
+                                      fontWeight: FontWeight.w600)),
+                              decoration: InputDecoration(
+                                  counter: const SizedBox.shrink(),
+                                  filled: true,
+                                  fillColor: const Color(0xFFF3F3F4),
+                                  hintText: 'Write notes...',
+                                  hintStyle: GoogleFonts.workSans(
+                                      color: const Color(0xFFBABBBE),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16.sp),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppColors.primaryColor,
+                                          width: 1.5),
+                                      borderRadius:
+                                      BorderRadius.circular(
+                                          12.0) // Border radius
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppColors.primaryColor,
+                                          width: 1.5),
+                                      borderRadius:
+                                      BorderRadius.circular(12.0)),
+                                  errorBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.red,
+                                          width: 1.5),
+                                      borderRadius:
+                                      BorderRadius.circular(12.0)),
+                                  focusedErrorBorder:
+                                  OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.red,
+                                          width: 1.5),
+                                      borderRadius: BorderRadius
+                                          .circular(12.0)),
+                                  contentPadding:
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                      vertical: 10)),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter notes";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                          height: query.height * 0.072,
+                          width: query.width * 0.6,
+                          child: CustomButton(
+                              title: ButtonString.btnClaimService,
+                              onClick: () {
+                                FocusScope.of(context).requestFocus(FocusNode());
+
+                                if(_formKey.currentState!.validate()){
+                                 ClaimServiceRequest claimServiceRequest =
+                                 ClaimServiceRequest(
+                                   serviceId: widget.serviceList!.id!.toString(),
+                                   date: dateController.text.trim(),
+                                   time: timeController.text.trim(),
+                                   note: noteController.text,
+                                 );
+                                 serviceBloc.add(ClaimServiceEvent(claimServiceRequest));
+                               }
+                              },
+                              fontColor: AppColors.whiteColor,
+                              buttonColor: AppColors.primaryColor)),
+                    ],
+                  ),
+                ),
               ),
             ),
           );
@@ -137,8 +293,7 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
       print(
           'Selected Time: ${pickedTime.replacing().hour} : ${pickedTime.replacing().minute}');
       setState(() {
-        selectTime =
-            "${pickedTime.replacing().hour}:${pickedTime.replacing().minute}";
+        timeController.text = "${pickedTime.replacing().hour}:${pickedTime.replacing().minute}";
       });
     }
   }
@@ -157,9 +312,9 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
 
     if (pickedDate != null && pickedDate != initialDate) {
       setState(() {
-        selectDate = pickedDate.toString();
-        selectDate =
-            DateFormat('yyyy-MM-dd').format(DateTime.parse(selectDate));
+        dateController.text = pickedDate.toString();
+        dateController.text =
+            DateFormat('yyyy-MM-dd').format(DateTime.parse(dateController.text));
       });
     }
   }

@@ -5,8 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/screens/dashboard/gym/bloc/gym_location_bloc.dart';
 import 'package:fortfitness/screens/dashboard/gym/data/gym_location_datasource.dart';
 import 'package:fortfitness/screens/dashboard/gym/data/gym_location_repository.dart';
-import 'package:fortfitness/screens/dashboard/gym/model/location_claim_request.dart';
-import 'package:fortfitness/screens/profile/profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -64,8 +62,7 @@ class _GymScreenState extends State<GymScreen> {
             if (state is GetGymLocationLoaded) {
               showSpinner = false;
               gymLocation = state.gymLocationResponse.data!.locations!;
-             /* Helpers.showSnackBar(
-                  context, state.gymLocationResponse.message ?? "");*/
+
             }
           },
           builder: (context, state) {

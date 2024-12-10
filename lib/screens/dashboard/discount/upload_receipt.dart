@@ -75,8 +75,6 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
           }
           if (state is ClaimDiscountLoaded) {
             showSpinner = false;
-            Helpers.showSnackBar(
-                context, state.discountClaimResponse.message ?? "");
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => DashboardScreen()));
           }

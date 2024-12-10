@@ -63,7 +63,6 @@ class _SignInScreenState extends State<SignInScreen> {
           }
           if (state is LoginLoaded) {
             showSpinner = false;
-            Helpers.showSnackBar(context, state.loginResponse.message ?? "");
             preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
             preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
             preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());

@@ -9,9 +9,8 @@ class GetGymLocationEvent extends GymLocationEvent {
   GetGymLocationEvent();
 }
 
-
-//Update user event
-class ClaimLocationEvent extends GymLocationEvent {
-  final LocationClaimRequest locationClaimRequest;
-  ClaimLocationEvent(this.locationClaimRequest);
+//Kisi location  event
+class KisiLocationEvent extends GymLocationEvent {
+  final String locationId;
+  KisiLocationEvent(this.locationId);
 }

@@ -89,26 +89,33 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               SizedBox(height: 5.sp),
               const Divider(color: Color(0xFFD9D9DA)),
               SizedBox(height: 5.sp),
-              Row(
-                children: [
-                  SizedBox(
-                      width: 35,
-                      child: SvgPicture.asset("assets/icons/time.svg", height: 25.sp)),
-                  SizedBox(width: 15.sp),
-                  Expanded(
-                    child: Text(
-                        "Opening hour ${widget.serviceList?.startTime?.substring(0, 5) ?? ""} - ${widget.serviceList?.endTime?.substring(0, 5) ?? ""}",
-                        style: GoogleFonts.workSans(
-                            textStyle: TextStyle(
-                                fontSize: 14.sp,
-                                color: AppColors.blackColor,
-                                fontWeight: FontWeight.w400))),
-                  )
-                ],
-              ),
-              SizedBox(height: 5.sp),
-              const Divider(color: Color(0xFFD9D9DA)),
-              SizedBox(height: 5.sp),
+              if(widget.serviceList!.startTime != null && widget.serviceList!.endTime != null)
+                Column(
+                  children: [
+                    Row(
+                    children: [
+                      SizedBox(
+                          width: 35,
+                          child: SvgPicture.asset("assets/icons/time.svg", height: 25.sp)),
+                      SizedBox(width: 15.sp),
+                      Expanded(
+                        child: Text(
+                            "Opening hour ${widget.serviceList?.startTime?.substring(0, 5) ?? ""} - ${widget.serviceList?.endTime?.substring(0, 5) ?? ""}",
+                            style: GoogleFonts.workSans(
+                                textStyle: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: AppColors.blackColor,
+                                    fontWeight: FontWeight.w400))),
+                      )
+                    ],
+                                  ),
+                    SizedBox(height: 5.sp),
+                    const Divider(color: Color(0xFFD9D9DA)),
+                    SizedBox(height: 5.sp),
+                  ],
+                ),
+
+
               isDownloading
                   ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -118,37 +125,37 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   Text("Downloading: $downloadProgress"),
                 ],
               )
-                  : widget.serviceList!.pdf != null ? Row(
-                children: [
-                  SizedBox(
-                      width: 35,
-                      child: SvgPicture.asset("assets/icons/service.svg", height: 25.sp)),
-                  SizedBox(width: 15.sp),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.serviceList!.pdf == null) {
-                          Helpers.showSnackBar(context,
-                              "Service menu is not available");
-                        } else {
-                          downloadPDF(
-                              widget.serviceList!.pdf.toString(),
-                              "${widget.serviceList?.name}.pdf");
-                        }
-                      },
-                      child: Text("Service Menu Download PDF Now!",
-                          style: GoogleFonts.workSans(
-                              textStyle: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: AppColors.blackColor,
-                                  fontWeight: FontWeight.w400))),
-                    ),
-                  )
-                ],
-              ) : SizedBox.shrink(),
-              if(widget.serviceList!.pdf != null) SizedBox(height: 5.sp),
-              if(widget.serviceList!.pdf != null) const Divider(color: Color(0xFFD9D9DA)),
-              SizedBox(height: 25.sp),
+                  : widget.serviceList!.pdf != null ? Column(
+                    children: [
+                      Row(
+                        children: [
+                      SizedBox(
+                          width: 35,
+                          child: SvgPicture.asset("assets/icons/service.svg", height: 25.sp)),
+                      SizedBox(width: 15.sp),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                              downloadPDF(
+                                  widget.serviceList!.pdf.toString(),
+                                  "${widget.serviceList?.name}.pdf");
+                              },
+                          child: Text("Service Menu Download PDF Now!",
+                              style: GoogleFonts.workSans(
+                                  textStyle: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: AppColors.blackColor,
+                                      fontWeight: FontWeight.w400))),
+                        ),
+                      )
+                                      ],
+                                    ),
+                      SizedBox(height: 5.sp),
+                      const Divider(color: Color(0xFFD9D9DA)),
+                      SizedBox(height: 25.sp),
+                    ],
+                  ) : const SizedBox.shrink(),
+
               SizedBox(
                   height: query.height * 0.072,
                   width: query.width * 0.5,

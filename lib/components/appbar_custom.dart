@@ -71,6 +71,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
             Expanded(
               child: Text(
                 title,
+                maxLines: 1,
                 style: GoogleFonts.workSans(
                     textStyle: TextStyle(
                         fontSize: 28.sp,

@@ -38,9 +38,11 @@ class CustomTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final String? titleText;
   final TextInputType? keyBoardType;
+  final int? length;
+  final int? lines;
   bool isSecure;
 
-  CustomTextField({super.key, this.controller, this.decoration, this.validator, this.titleText, this.keyBoardType, this.isSecure = false});
+  CustomTextField({super.key, this.controller, this.decoration, this.validator, this.titleText, this.keyBoardType, this.isSecure = false, this.length, this.lines});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -89,6 +91,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12.0)),
           child: TextFormField(
+            maxLength: widget.length,
+            maxLines: widget.lines,
             controller: widget.controller,
             focusNode: _focusNode,
             keyboardType: widget.keyBoardType,

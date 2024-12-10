@@ -41,6 +41,7 @@ class ApiEndPoint {
   static const String location = "location";
   static const String service = "service";
   static const String discount = "discount";
+  static const String locationIdLocks = "location/id/locks";
 
   //PUT API endpoint
   static const String profileUpdate = "user/profile/update";
