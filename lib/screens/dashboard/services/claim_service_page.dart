@@ -233,12 +233,6 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                                   const EdgeInsets.symmetric(
                                       horizontal: 15,
                                       vertical: 10)),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please enter notes";
-                                }
-                                return null;
-                              },
                             ),
                           ),
                         ],
@@ -249,7 +243,7 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                           height: query.height * 0.072,
                           width: query.width * 0.6,
                           child: CustomButton(
-                              title: ButtonString.btnClaimService,
+                              title: ButtonString.btnBookNow,
                               onClick: () {
                                 FocusScope.of(context).requestFocus(FocusNode());
 

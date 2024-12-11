@@ -64,8 +64,8 @@ class Locations {
   String? createdAt;
   String? updatedAt;
   int? activeMembers;
-  Null? startTime;
-  Null? endTime;
+  String? startTime;
+  String? endTime;
   bool? isClaimed;
 
   Locations(

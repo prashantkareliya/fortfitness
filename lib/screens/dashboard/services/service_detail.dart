@@ -162,7 +162,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   width: query.width * 0.5,
                   child: CustomButton(
                       imageName: ImageString.icSignIn,
-                      title: ButtonString.btnSubmit,
+                      title: ButtonString.btnBook,
                       onClick:  () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => ClaimServicePage(widget.serviceList)));

@@ -127,7 +127,9 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                                     fontWeight: FontWeight.w600))),
                         SizedBox(height: 4.sp),
                         GestureDetector(
-                          onTap: pickLocalImage,
+                          onTap: (){
+                            _showImageSourceDialog();
+                          },
                           child: Container(
                             //height: query.height * 0.25,
                             width: query.width,
@@ -224,9 +226,64 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
     );
   }
 
-  Future<void> pickLocalImage() async {
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: AppColors.primaryColor,
+          title: Text("Select Option",
+              style: GoogleFonts.workSans(
+              textStyle: TextStyle(
+                  fontSize: 28.sp,
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.w700))),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: Text('Take a Photo',
+                    style: GoogleFonts.workSans(
+                    textStyle: TextStyle(
+                        fontSize: 16.sp,
+                        color: AppColors.blackColor,
+                        fontWeight: FontWeight.normal))),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickLocalImage("camera");
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.image),
+                title: Text('Choose from Gallery',
+                    style: GoogleFonts.workSans(
+                        textStyle: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.blackColor,
+                            fontWeight: FontWeight.normal))),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickLocalImage("gallery");
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> pickLocalImage(String option) async {
     try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? image;
+      if(option == "camera"){
+        image = await _picker.pickImage(source: ImageSource.camera);
+      } else {
+        image = await _picker.pickImage(source: ImageSource.gallery);
+      }
+
       if (image != null) {
         File imageFile = File(image.path);
         List<int> imageBytes = await imageFile.readAsBytes();

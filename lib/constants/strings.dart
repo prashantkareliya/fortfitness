@@ -29,6 +29,8 @@ class ButtonString {
   static const String btnClaimNow = "Claim Now";
   static const String btnResetPassword = "Reset Password";
   static const String btnClaimService = "Claim Service";
+  static const String btnBook = "Book";
+  static const String btnBookNow = "Book Now";
 }
 
 //Image path Strings

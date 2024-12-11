@@ -81,14 +81,6 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 50.sp),
-                    if(locksList.isEmpty)
-                      Text("No data found",
-                        style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 22.sp,
-                              color:  AppColors.primaryColor,
-                              fontWeight: FontWeight.w700)),)
-                      else
                     ListView.builder(
                         shrinkWrap: true,
                         itemCount: locksList.isEmpty ? 0 : locksList.length,
