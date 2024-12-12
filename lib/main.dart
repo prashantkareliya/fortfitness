@@ -5,14 +5,22 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/screens/auth/auth_selection.dart';
 import 'package:fortfitness/utils/app_colors.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/progress_indicator.dart';
 import 'constants/strings.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 //https://www.figma.com/design/tkmMOGlfPmEGW1z5Iasp35/FortFitness-App?node-id=0-1&node-type=canvas&t=aL3Qf0hxzLNZVQL3-0
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  await SentryFlutter.init(
+        (options) {
+          options.dsn = 'https://example@sentry.io/add-your-dsn-here';
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(const MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {

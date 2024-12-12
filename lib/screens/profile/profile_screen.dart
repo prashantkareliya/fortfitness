@@ -1,4 +1,4 @@
-import 'dart:convert';
+import'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -15,7 +15,8 @@ import 'package:fortfitness/utils/preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import '../../components/custom_button.dart';
 import '../../components/cutom_textfield.dart';
 import '../../components/headerText.dart';
@@ -538,14 +539,24 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: CustomButton(
                                   imageName: ImageString.icSignIn,
                                   title: ButtonString.btnSubmit,
-                                  onClick: () {
+                                  onClick: () async {
+                                    if(base64String != null){
+                                      UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
+                                          image: "data:image/png;base64,$base64String",
+                                          dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                      profileBloc.add(UpdateProfileEvent(updateProfileRequest));
+                                    } else {
+                                      String imageUrl = profileImage;
+                                      String covertImage = await convertImageUrlToBase64(imageUrl);
+                                      UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
+                                          image: "data:image/png;base64,$covertImage",
+                                          dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                      profileBloc.add(UpdateProfileEvent(updateProfileRequest));
+                                    }
+
                                     FocusScope.of(context).requestFocus(FocusNode());
-                                    UpdateProfileRequest updateProfileRequest =
-                                        UpdateProfileRequest(
-                                          image: "data:image/png;base64,$base64String" ?? profileImage,
-                                            dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
-                                    profileBloc.add(UpdateProfileEvent(
-                                        updateProfileRequest));
+
+
                                   },
                                   fontColor: AppColors.whiteColor,
                                   buttonColor: AppColors.primaryColor)),
@@ -558,5 +569,21 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       },
     ));
+  }
+  Future<String> convertImageUrlToBase64(String imageUrl) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+
+      if (response.statusCode == 200) {
+        Uint8List bytes = response.bodyBytes;
+        String base64String = base64Encode(bytes);
+        return base64String;
+      } else {
+        throw Exception('Failed to load image');
+      }
+    } catch (e) {
+      print("Error: $e");
+      return '';
+    }
   }
 }
