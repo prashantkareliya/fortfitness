@@ -123,12 +123,12 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                                 child: Icon(Icons.calendar_month, color: AppColors.primaryColor),
                               ),
                             ),
-                            validator: (value) {
+                           /* validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "ⓘ Please select date";
                               }
                               return null;
-                            },
+                            },*/
                           ),
                         ),
                       ),
@@ -153,12 +153,6 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                                 child: Icon(Icons.watch_later_outlined, color: AppColors.primaryColor),
                               ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "ⓘ Please select Time";
-                              }
-                              return null;
-                            },
                           ),
                         ),
                       ),
@@ -233,6 +227,11 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                                   const EdgeInsets.symmetric(
                                       horizontal: 15,
                                       vertical: 10)),
+                              validator: (value){
+                                if (value == null || value.isEmpty) {
+                                  return "ⓘ Please enter notes...";
+                                }
+                              },
                             ),
                           ),
                         ],

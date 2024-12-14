@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fortfitness/components/network_image.dart';
 import 'package:fortfitness/constants/strings.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,9 +97,10 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                         icon: ClipOval(
                           child: SizedBox.fromSize(
                               size: Size.fromRadius(18.sp),
-                              child: Image.network(profileImage ??
-                                      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-                                  fit: BoxFit.cover)),
+                              child: CustomCachedImage(
+                                  imageUrl: profileImage ??
+                                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                                fit: BoxFit.cover)),
                         ))
                   ],
             ),

@@ -53,10 +53,10 @@ class User {
   int? isActive;
   int? isSuperAdmin;
   int? confirmed;
-  String? organizationId;
+  int? organizationId;
   int? accessEnabled;
   String? lastAccessedAt;
-  String? kisiUserId;
+  int? kisiUserId;
   String? createdAt;
   String? updatedAt;
 

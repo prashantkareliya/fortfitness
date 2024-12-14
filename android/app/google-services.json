@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "141538630694",
+    "project_id": "fortfitnessapp",
+    "storage_bucket": "fortfitnessapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141538630694:android:29342b5d815960145f1ae7",
+        "android_client_info": {
+          "package_name": "club.fortfitness.fortfitness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd7t_fZ9Nx39WHjxK93uZsYiGGssrxIvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/components/network_image.dart';
 import 'package:fortfitness/screens/dashboard/services/data/service_datasource.dart';
 import 'package:fortfitness/screens/dashboard/services/data/service_repository.dart';
 import 'package:fortfitness/screens/dashboard/services/model/service_response_model.dart';
@@ -56,7 +57,8 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
             children: [
               SizedBox(height: 40.sp),
               if(widget.serviceList?.logo != null)
-                Image.network(widget.serviceList?.logo ?? "",
+                CustomCachedImage(
+                    imageUrl: widget.serviceList?.logo ?? "",
                     height: query.height * 0.18),
               SizedBox(height: 30.sp),
               if(widget.serviceList?.description != "")
@@ -179,8 +181,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   Future<void> downloadPDF(String url, String fileName) async {
     await Permission.storage.request();
     try {
-      final Directory? directory = await getDownloadsDirectory();
-      String filePath = "/storage/emulated/0/Download/$fileName";
+      final Directory directory = await getApplicationDocumentsDirectory();
+      //String filePath = "/storage/emulated/0/Download/$fileName";
+      String filePath = Platform.isIOS ? '${directory.path}/$fileName' : '/storage/emulated/0/Download/$fileName';
+
 
       // Start downloading
       setState(() {

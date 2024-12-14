@@ -33,8 +33,8 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController emailController = TextEditingController(/*text: "jasminkorat204@gmail.com"*/);
-  TextEditingController passwordController = TextEditingController(/*text: "12345678"*/);
+  TextEditingController emailController = TextEditingController(text: "brandon.azzopardi@axxsky.com");
+  TextEditingController passwordController = TextEditingController(text: "Admin@1234");
 
   AuthBloc authBloc = AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
 

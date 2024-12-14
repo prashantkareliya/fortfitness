@@ -1,7 +1,7 @@
 import'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,13 +13,14 @@ import 'package:fortfitness/screens/profile/model/update_profile_request.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:fortfitness/utils/preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'dart:typed_data';
-import 'package:http/http.dart' as http;
+
 import '../../components/custom_button.dart';
 import '../../components/cutom_textfield.dart';
 import '../../components/headerText.dart';
+import '../../components/network_image.dart';
 import '../../components/progress_indicator.dart';
 import '../../constants/strings.dart';
 import '../../utils/app_colors.dart';
@@ -98,19 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String? base64String;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> pickAndConvertImage() async {
-    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      File imageFile = File(pickedImage.path);
-      List<int> imageBytes = await imageFile.readAsBytes();
-      String base64Image = base64Encode(imageBytes);
-      setState(() {
-        base64String = base64Image;
-        _image1 = imageFile;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,26 +166,49 @@ class _ProfilePageState extends State<ProfilePage> {
             child: ClipOval(
                 child: SizedBox.fromSize(
                     size: Size.fromRadius(60.sp),
-                    child: Image.file(
-                        _image1!,
-                        fit: BoxFit.cover))),
+                                    child: Image.file(_image1!,
+                                        fit: BoxFit.cover))),
           )
                     : Padding(
                       padding: EdgeInsets.only(bottom: 10.sp, right: 15.sp),
                       child: ClipOval(
                           child: SizedBox.fromSize(
                               size: Size.fromRadius(60.sp),
-                              child: Image.network(
-                                  Uri.parse(profileImage).toString(),
+                              child: CustomCachedImage(imageUrl: Uri.parse(profileImage).toString(),
                                   fit: BoxFit.cover))),
                     ),
                     GestureDetector(
-                      onTap: pickAndConvertImage,
-                      child: SvgPicture.asset(
-                        "assets/icons/image_upload.svg",
-                        height: 60.sp,
-                      ),
-                    )
+                        onTap: () {},
+                        child: PopupMenuButton<String>(
+                          offset: const Offset(-30, 50),
+                          onSelected: handleClick,
+                          popUpAnimationStyle: AnimationStyle(reverseCurve: Curves.ease,
+                              curve: Curves.ease,
+                          reverseDuration: const Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          surfaceTintColor: AppColors.primaryColor,
+                          child: SvgPicture.asset(
+                            "assets/icons/image_upload.svg",
+                            height: 60.sp,
+                          ),
+                          itemBuilder: (BuildContext context) {
+                            return {'📸 Camera', '📽️ Gallery', "✖ Remove"}
+                                .map((String choice) {
+                              return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice,
+                                    style: GoogleFonts.workSans(
+                                        textStyle: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: AppColors.blackColor,
+                                            fontWeight: FontWeight.normal)))
+                              );
+                            }).toList();
+                          },
+                        ))
                   ],
                 ),
                 SizedBox(height: 10.sp),
@@ -256,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IgnorePointer(
+                        /* IgnorePointer(
                           child: CustomTextField(
                             titleText: "Change Password",
                             controller: passwordController,
@@ -287,8 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               return null;
                             },
                           ),
-                        ),
-                        const SizedBox(height: 20),
+                        ),*/
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -570,6 +580,53 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     ));
   }
+
+  void handleClick(String value) {
+    switch (value) {
+      case '📸 Camera':
+        pickLocalImage(value);
+        break;
+      case '📽️ Gallery':
+        pickLocalImage(value);
+        break;
+      case '✖ Remove':
+        pickLocalImage(value);
+        break;
+    }
+  }
+
+  Future<void> pickLocalImage(String option) async {
+    try {
+      final XFile? image;
+      if (option == "📸 Camera") {
+        image = await _picker.pickImage(source: ImageSource.camera);
+      } else if (option == "📽️ Gallery") {
+        image = await _picker.pickImage(source: ImageSource.gallery);
+      } else {
+        preferences.removeKeyFromPreference(PreferenceString.userImage);
+        image = null;
+        _image1 = null;
+        profileImage =
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+        setState(() {});
+      }
+
+      if (image != null) {
+        File imageFile = File(image.path);
+        List<int> imageBytes = await imageFile.readAsBytes();
+        String base64Image = base64Encode(imageBytes);
+        setState(() {
+          base64String = base64Image;
+          _image1 = imageFile;
+        });
+      } else {
+        print("No image selected");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   Future<String> convertImageUrlToBase64(String imageUrl) async {
     try {
       final response = await http.get(Uri.parse(imageUrl));

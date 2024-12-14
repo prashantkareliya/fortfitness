@@ -42,6 +42,7 @@ class ImageString {
   static const String imgLogo5 = "assets/images/logo5.png";
   static const String imgGymBoyGirl = "assets/images/gymboygirl.png";
   static const String imgPassword = "assets/images/password.png";
+  static const String imgProfile = "assets/images/profile.png";
 
 
   //icons directory

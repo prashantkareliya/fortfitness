@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/components/network_image.dart';
 import 'package:fortfitness/screens/dashboard/services/bloc/service_bloc.dart';
 import 'package:fortfitness/screens/dashboard/services/data/service_datasource.dart';
 import 'package:fortfitness/screens/dashboard/services/data/service_repository.dart';
@@ -103,7 +104,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     SizedBox(width: 20.sp),
-                                    if(service.logo!= null) Image.network(service.logo ?? "", height: 70.sp,),
+                                    if(service.logo!= null) CustomCachedImage(
+                                        imageUrl: service.logo ?? "", height: 70.sp),
                                     SizedBox(width: 15.sp),
                                     Expanded(
                                       child: Text(service.name ?? "",

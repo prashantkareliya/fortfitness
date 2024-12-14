@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/appbar_custom.dart';
 import '../../../components/custom_button.dart';
+import '../../../components/network_image.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
 class DiscountDetailScreen extends StatefulWidget {
@@ -52,7 +53,8 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (widget.discount.logo != null)
-                      Image.network(widget.discount.logo ?? "",
+                      CustomCachedImage(
+                          imageUrl: widget.discount.logo ?? "",
                           height: query.height * 0.08),
                     SizedBox(width: 10.sp),
                     Expanded(
@@ -100,7 +102,8 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
               ),
               SizedBox(height: 40.sp),
               if (widget.discount.logo != null)
-                Image.network(widget.discount.logo ?? "",
+                CustomCachedImage(
+                    imageUrl: widget.discount.logo ?? "",
                     height: query.height * 0.15),
               SizedBox(height: 30.sp),
               if (widget.discount.description != "")
