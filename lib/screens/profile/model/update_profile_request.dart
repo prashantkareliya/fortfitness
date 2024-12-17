@@ -1,3 +1,5 @@
+import 'package:http/http.dart' as http;
+
 class UpdateProfileRequest {
   String? dob;
   String? image;
@@ -6,7 +8,7 @@ class UpdateProfileRequest {
 
   UpdateProfileRequest.fromJson(Map<String, dynamic> json) {
     dob = json['dob'];
-    image = json['image'];
+    image = json['image'] ?? "";
   }
 
   Map<String, dynamic> toJson() {

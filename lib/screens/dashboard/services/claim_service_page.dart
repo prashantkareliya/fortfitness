@@ -86,8 +86,9 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
           }
           if (state is ClaimServiceLoaded) {
             showSpinner = false;
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => DashboardScreen()));
+            Navigator.pushAndRemoveUntil<dynamic>(context,
+                MaterialPageRoute<dynamic>(builder: (BuildContext context) =>DashboardScreen()),
+                    (route) => false);
           }
         },
         builder: (context, state) {
@@ -160,12 +161,24 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Notes",
-                              style: GoogleFonts.workSans(
-                                  textStyle: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: AppColors.blackColor,
-                                      fontWeight: FontWeight.w600))),
+                          RichText(
+                              text: TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: "Request",
+                                        style: GoogleFonts.workSans(
+                                            textStyle: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.w600))),
+                                    TextSpan(text:"*"),
+                                  ],
+                                  style: GoogleFonts.workSans(
+                                      textStyle: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: AppColors.errorRed,
+                                          fontWeight: FontWeight.w600)))),
+
                           SizedBox(height: 4.sp),
                           Container(
                             padding: EdgeInsets.all(4.sp),
@@ -191,7 +204,7 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                                   counter: const SizedBox.shrink(),
                                   filled: true,
                                   fillColor: const Color(0xFFF3F3F4),
-                                  hintText: 'Write notes...',
+                                  hintText: 'Write request...',
                                   hintStyle: GoogleFonts.workSans(
                                       color: const Color(0xFFBABBBE),
                                       fontWeight: FontWeight.w600,
@@ -226,10 +239,16 @@ class _ClaimServicePageState extends State<ClaimServicePage> {
                                   contentPadding:
                                   const EdgeInsets.symmetric(
                                       horizontal: 15,
-                                      vertical: 10)),
+                                      vertical: 10),
+                                errorStyle: GoogleFonts.workSans(
+                                    textStyle: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: AppColors.errorRed,
+                                        fontWeight: FontWeight.w600)),
+                              ),
                               validator: (value){
                                 if (value == null || value.isEmpty) {
-                                  return "ⓘ Please enter notes...";
+                                  return "ⓘ Please write request...";
                                 }
                               },
                             ),

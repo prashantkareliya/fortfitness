@@ -36,7 +36,7 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController totalAmountController = TextEditingController();
 
-  String? base64Image;
+  //String? base64Image;
   final ImagePicker _picker = ImagePicker();
   File? _image1;
 
@@ -69,14 +69,18 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
           if (state is ClaimDiscountFailure) {
             showSpinner = false;
             Helpers.showSnackBar(context, state.error);
+            Navigator.pushAndRemoveUntil<dynamic>(context,
+                MaterialPageRoute<dynamic>(builder: (BuildContext context) =>DashboardScreen()),
+                    (route) => false);
           }
           if (state is ClaimDiscountLoading) {
             showSpinner = true;
           }
           if (state is ClaimDiscountLoaded) {
             showSpinner = false;
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => DashboardScreen()));
+            Navigator.pushAndRemoveUntil<dynamic>(context,
+                MaterialPageRoute<dynamic>(builder: (BuildContext context) =>DashboardScreen()),
+                    (route) => false);
           }
         },
         builder: (context, state) {
@@ -95,6 +99,7 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                       key: _formKey,
                       child: CustomTextField(
                         titleText: "Total Amount",
+                        requiredText: "*",
                         controller: totalAmountController,
                         decoration: kTextFieldDecoration.copyWith(
                           hintText: "Amount",
@@ -119,12 +124,24 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Receipt",
-                            style: GoogleFonts.workSans(
-                                textStyle: TextStyle(
-                                    fontSize: 18.sp,
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.w600))),
+                        RichText(
+                            text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: "Receipt",
+                                      style: GoogleFonts.workSans(
+                                          textStyle: TextStyle(
+                                              fontSize: 14.sp,
+                                              color: AppColors.blackColor,
+                                              fontWeight: FontWeight.w600))),
+                                  const TextSpan(text: "*"),
+                                ],
+                                style: GoogleFonts.workSans(
+                                    textStyle: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: AppColors.errorRed,
+                                        fontWeight: FontWeight.w600)))),
+
                         SizedBox(height: 4.sp),
                         GestureDetector(
                           onTap: (){
@@ -186,9 +203,11 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                         child: Row(
                           children: [
                             Text("ⓘ Please upload receipt",
-                                style: TextStyle(
-                                    fontSize: 10.sp,
-                                    color: AppColors.errorRed)),
+                                style: GoogleFonts.workSans(
+                                    textStyle: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: AppColors.errorRed,
+                                        fontWeight: FontWeight.w600))),
                           ],
                         ),
                       ),
@@ -205,9 +224,7 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                                     DiscountClaimRequest(
                                   amount: totalAmountController.text.trim(),
                                   discountId: widget.discount.id.toString(),
-                                  receipt:
-                                      "data:image/jpeg;base64,$base64Image",
-                                );
+                                  receipt: _image1 != null ? _image1!.path : "");
                                 discountBloc.add(
                                     ClaimDiscountEvent(discountClaimRequest));
                                 print(discountClaimRequest.toJson());
@@ -289,7 +306,7 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
         List<int> imageBytes = await imageFile.readAsBytes();
         String base64String = base64Encode(imageBytes);
         setState(() {
-          base64Image = base64String;
+          //base64Image = base64String;
           _image1 = imageFile;
         });
       } else {

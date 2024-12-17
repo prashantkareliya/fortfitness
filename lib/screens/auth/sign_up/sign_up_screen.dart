@@ -364,7 +364,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             contentPadding:
                                                 const EdgeInsets.symmetric(
                                                     horizontal: 15,
-                                                    vertical: 10)),
+                                                    vertical: 10),
+                                          errorStyle: GoogleFonts.workSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.errorRed,
+                                                  fontWeight: FontWeight.w600)),
+                                        ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Date";
@@ -435,7 +441,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 12.0)),
                                         contentPadding: const EdgeInsets
                                             .symmetric(
-                                            horizontal: 15, vertical: 10)
+                                            horizontal: 15, vertical: 10),
+                                      errorStyle: GoogleFonts.workSans(
+                                          textStyle: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: AppColors.errorRed,
+                                              fontWeight: FontWeight.w600)),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -505,7 +516,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 12.0)),
                                         contentPadding: const EdgeInsets
                                             .symmetric(
-                                            horizontal: 15, vertical: 10)
+                                            horizontal: 15, vertical: 10),
+                                      errorStyle: GoogleFonts.workSans(
+                                          textStyle: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: AppColors.errorRed,
+                                              fontWeight: FontWeight.w600)),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {

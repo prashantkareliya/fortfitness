@@ -197,24 +197,25 @@ class HttpActions {
   }
 
   Future<dynamic> postMultiPartMethod(String url,
-      {dynamic data, Map<String, String>? headers}) async {
+      {data, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
       debugPrint("data $data");
-      debugPrint(Uri.parse(endPoint + url).toString());
-      var request = http.MultipartRequest('POST', Uri.parse(endPoint + url),);
+          debugPrint(Uri.parse(endPoint + url).toString());
+          var request = http.MultipartRequest('POST', Uri.parse(endPoint + url));
 
-      //Set request files and filed to MultipartRequest object
-      for (var entry in data.entries) {
-        //If value type is http.MultipartFile then should set into files else filed
-        if (entry.value is http.MultipartFile) {
-          request.files.add(entry.value);
+      data.forEach((key, value) async {
+
+        if (key.toString().contains("receipt")) {
+          if(value != ""){
+            request.files.add(await http.MultipartFile.fromPath('receipt', value));
+          }
         } else {
-          request.fields[entry.key] = entry.value.toString();
+          request.fields["$key"] = value.toString();
         }
-      }
+      });
       print(request);
       request.headers.addAll(headers);
 
@@ -222,6 +223,59 @@ class HttpActions {
         //Send request
         var streamedResponse =
             await request.send().timeout(const Duration(seconds: 1400), onTimeout: () {
+          // ignore: null_argument_to_non_null_type
+          return Future.value(null);
+        });
+        try {
+          final apiResponse = await http.Response.fromStream(streamedResponse);
+          //Generate response from streamedResponse
+          String enCodedStr = utf8.decode(apiResponse.bodyBytes);
+          return jsonDecode(enCodedStr);
+        } catch (e) {
+          //Throw error if getting any issue
+          return Future.error(e.toString());
+        }
+      } catch (e) {
+        //Throw error if getting any issue
+        return Future.error(e.toString());
+      }
+    }
+  }
+
+  Future<dynamic> putMultiPartMethod(String url,
+      {data, Map<String, String>? headers}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    if ((await checkConnection()) != ConnectivityResult.none) {
+      headers = getSessionData(headers ?? {}, preferences.getString(PreferenceString.accessToken));
+
+      debugPrint("data $data");
+      debugPrint(Uri.parse(endPoint + url).toString());
+      var request = http.MultipartRequest('PUT', Uri.parse(endPoint + url));
+
+      data.forEach((key, value) async {
+
+        if (key.toString().contains("image")) {
+          if(value != ""){
+            request.files.add(await http.MultipartFile.fromPath('image', value));
+          }
+        } else {
+          request.fields["$key"] = value.toString();
+        }
+      });
+
+      /* if (data.image != "") {
+              request.files.add(await http.MultipartFile.fromPath('image', data.image));
+            } else {
+              request.fields["dob"] = data.dob.toString();
+        }*/
+
+      print(request);
+      request.headers.addAll(headers);
+
+      try {
+        //Send request
+        var streamedResponse =
+        await request.send().timeout(const Duration(seconds: 1400), onTimeout: () {
           // ignore: null_argument_to_non_null_type
           return Future.value(null);
         });

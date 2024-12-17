@@ -13,7 +13,7 @@ class DiscountDatasource extends HttpActions {
 
   Future<dynamic> claimDiscount(
       {required DiscountClaimRequest discountClaimRequest}) async {
-    final response = await postMethod(ApiEndPoint.claimDiscount,
+    final response = await postMultiPartMethod(ApiEndPoint.claimDiscount,
         data: discountClaimRequest.toJson());
     debugPrint("claim discount -  $response");
     return response;

@@ -16,15 +16,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/cutom_textfield.dart';
 import '../../components/headerText.dart';
 import '../../components/network_image.dart';
 import '../../components/progress_indicator.dart';
+import '../../constants/constants.dart';
 import '../../constants/strings.dart';
+import '../../http_actions/app_http.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helpers.dart';
+import '../../utils/progress_dialog_utils.dart';
 import '../dashboard/dashboard_screen.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -57,6 +62,9 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isDDFocused = false;
   bool _isMMFocused = false;
   bool _isYYYYFocused = false;
+
+  final _formKey = GlobalKey<FormState>();
+
 
   @override
   void initState() {
@@ -96,9 +104,11 @@ class _ProfilePageState extends State<ProfilePage> {
   bool showSpinner = false;
   File? _image1;
 
-  String? base64String;
-  final ImagePicker _picker = ImagePicker();
+  //String? base64String;
 
+  File? file;
+  final ImagePicker _picker = ImagePicker();
+  String dtiCertificate = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -212,368 +222,376 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 SizedBox(height: 10.sp),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextField(
-                      titleText: "Name",
-                      controller: nameController,
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Name",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/name.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor, BlendMode.srcIn)),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your name";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    IgnorePointer(
-                      child: CustomTextField(
-                        titleText: "Email Address",
-                        controller: emailController,
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(
+                        titleText: "Name",
+                        controller: nameController,
                         decoration: kTextFieldDecoration.copyWith(
-
-                          hintText: "Email Address",
+                          hintText: "Name",
                           filled: true,
                           fillColor: const Color(0xFFF3F3F4),
                           prefixIcon: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: SvgPicture.asset("assets/icons/email.svg",
+                            child: SvgPicture.asset("assets/icons/name.svg",
                                 colorFilter: ColorFilter.mode(
                                     AppColors.primaryColor, BlendMode.srcIn)),
                           ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "ⓘ Please enter your email";
-                          } else if (!emailController.text.isValidEmail) {
-                            return "ⓘ Enter valid email address";
+                            return "ⓘ Please enter your name";
                           }
                           return null;
                         },
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /* IgnorePointer(
-                          child: CustomTextField(
-                            titleText: "Change Password",
-                            controller: passwordController,
-                            decoration: kTextFieldDecoration.copyWith(
-                              hintText: "******** ",
-                              filled: true,
-                              fillColor: const Color(0xFFF3F3F4),
-                              prefixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset(
-                                    "assets/icons/password.svg",
-                                    colorFilter: ColorFilter.mode(
-                                        AppColors.primaryColor, BlendMode.srcIn)),
-                              ),
-                              suffixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset("assets/icons/eye.svg",
-                                    colorFilter: const ColorFilter.mode(
-                                        Color(0xFFBABBBE), BlendMode.srcIn)),
-                              ),
+                      const SizedBox(height: 20),
+                      IgnorePointer(
+                        child: CustomTextField(
+                          titleText: "Email Address",
+                          controller: emailController,
+                          decoration: kTextFieldDecoration.copyWith(
+
+                            hintText: "Email Address",
+                            filled: true,
+                            fillColor: const Color(0xFFF3F3F4),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                              child: SvgPicture.asset("assets/icons/email.svg",
+                                  colorFilter: ColorFilter.mode(
+                                      AppColors.primaryColor, BlendMode.srcIn)),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "ⓘ Please enter your password";
-                              }
-                              return null;
-                            },
                           ),
-                        ),*/
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Date of Birth",
-                                style: GoogleFonts.workSans(
-                                    textStyle: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: AppColors.blackColor,
-                                        fontWeight: FontWeight.w600))),
-                            SizedBox(height: 4.sp),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.sp),
-                                    decoration: BoxDecoration(
-                                        color: _isDDFocused
-                                            ? AppColors.primaryColor
-                                                .withOpacity(0.2)
-                                            : Colors.transparent,
-                                        borderRadius:
-                                            BorderRadius.circular(12.0)),
-                                    child: TextFormField(
-                                      controller: ddController,
-                                      focusNode: _DDFocusNode,
-                                      textAlign: TextAlign.center,
-                                      keyboardType: TextInputType.text,
-                                      maxLines: 1,
-                                      maxLength: 2,
-                                      style: GoogleFonts.workSans(
-                                          textStyle: TextStyle(
-                                              fontSize: 16.sp,
-                                              color: AppColors.blackColor,
-                                              fontWeight: FontWeight.w600)),
-                                      decoration: InputDecoration(
-                                          counter: const SizedBox.shrink(),
-                                          fillColor: AppColors.whiteColor,
-                                          filled: true,
-                                          hintText: 'DD',
-                                          hintStyle: GoogleFonts.workSans(
-                                              color: const Color(0xFFBABBBE),
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.sp),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryColor,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0) // Border radius
-                                              ),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryColor,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0)),
-                                          errorBorder: OutlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                  color: Colors.red,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0)),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.red,
-                                                      width: 1.5),
-                                                  borderRadius: BorderRadius
-                                                      .circular(12.0)),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10)),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Enter Date";
-                                        } else if(int.parse(value) > 31){
-                                          return "Not valid";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "ⓘ Please enter your email";
+                            } else if (!emailController.text.isValidEmail) {
+                              return "ⓘ Enter valid email address";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /* IgnorePointer(
+                            child: CustomTextField(
+                              titleText: "Change Password",
+                              controller: passwordController,
+                              decoration: kTextFieldDecoration.copyWith(
+                                hintText: "******** ",
+                                filled: true,
+                                fillColor: const Color(0xFFF3F3F4),
+                                prefixIcon: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: SvgPicture.asset(
+                                      "assets/icons/password.svg",
+                                      colorFilter: ColorFilter.mode(
+                                          AppColors.primaryColor, BlendMode.srcIn)),
                                 ),
-                                SizedBox(width: 8.sp),
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.sp),
-                                    decoration: BoxDecoration(
-                                        color: _isMMFocused
-                                            ? AppColors.primaryColor
-                                                .withOpacity(0.2)
-                                            : Colors.transparent,
-                                        borderRadius:
-                                            BorderRadius.circular(12.0)),
-                                    child: TextFormField(
-                                      controller: mmController,
-                                      focusNode: _MMFocusNode,
-                                      keyboardType: TextInputType.text,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.workSans(
-                                          textStyle: TextStyle(
-                                              fontSize: 16.sp,
-                                              color: AppColors.blackColor,
-                                              fontWeight: FontWeight.w600)),
-                                      maxLines: 1,
-                                      maxLength: 2,
-
-                                      decoration: InputDecoration(
-                                          counter: const SizedBox.shrink(),
-                                          fillColor: AppColors.whiteColor,
-                                          filled: true,
-                                          hintText: 'MM',
-                                          hintStyle: GoogleFonts.workSans(
-                                              color: const Color(0xFFBABBBE),
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.sp),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryColor,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0) // Border radius
-                                              ),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryColor,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0)),
-                                          errorBorder: OutlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                  color: Colors.red,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0)),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.red,
-                                                      width: 1.5),
-                                                  borderRadius: BorderRadius
-                                                      .circular(12.0)),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10)),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Enter Month";
-                                        } else if(int.parse(value) > 12){
-                                          return "Not valid";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
+                                suffixIcon: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: SvgPicture.asset("assets/icons/eye.svg",
+                                      colorFilter: const ColorFilter.mode(
+                                          Color(0xFFBABBBE), BlendMode.srcIn)),
                                 ),
-                                SizedBox(width: 8.sp),
-                                Expanded(
-                                  flex: 3,
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.sp),
-                                    decoration: BoxDecoration(
-                                        color: _isYYYYFocused
-                                            ? AppColors.primaryColor
-                                                .withOpacity(0.2)
-                                            : Colors.transparent,
-                                        borderRadius:
-                                            BorderRadius.circular(12.0)),
-                                    child: TextFormField(
-                                      controller: yyyyController,
-                                      focusNode: _YYYYFocusNode,
-                                      keyboardType: TextInputType.text,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.workSans(
-                                          textStyle: TextStyle(
-                                              fontSize: 16.sp,
-                                              color: AppColors.blackColor,
-                                              fontWeight: FontWeight.w600)),
-                                      maxLines: 1,
-                                      maxLength: 4,
-                                      decoration: InputDecoration(
-                                        counter: const SizedBox.shrink(),
-                                          fillColor: AppColors.whiteColor,
-                                          filled: true,
-                                          hintText: 'YYYY',
-                                          hintStyle: GoogleFonts.workSans(
-                                              color: const Color(0xFFBABBBE),
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.sp),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryColor,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0) // Border radius
-                                              ),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryColor,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0)),
-                                          errorBorder: OutlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                  color: Colors.red,
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0)),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.red,
-                                                      width: 1.5),
-                                                  borderRadius: BorderRadius
-                                                      .circular(12.0)),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10)),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Enter Year";
-                                        } else if(int.parse(value) > 2024){
-                                          return "Not valid";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "ⓘ Please enter your password";
+                                }
+                                return null;
+                              },
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        Center(
-                          child: SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.072,
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              child: CustomButton(
-                                  imageName: ImageString.icSignIn,
-                                  title: ButtonString.btnSubmit,
-                                  onClick: () async {
-                                    if(base64String != null){
-                                      UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
-                                          image: "data:image/png;base64,$base64String",
-                                          dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
-                                      profileBloc.add(UpdateProfileEvent(updateProfileRequest));
-                                    } else {
-                                      String imageUrl = profileImage;
-                                      String covertImage = await convertImageUrlToBase64(imageUrl);
-                                      UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
-                                          image: "data:image/png;base64,$covertImage",
-                                          dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
-                                      profileBloc.add(UpdateProfileEvent(updateProfileRequest));
-                                    }
+                          ),*/
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Date of Birth",
+                                  style: GoogleFonts.workSans(
+                                      textStyle: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: AppColors.blackColor,
+                                          fontWeight: FontWeight.w600))),
+                              SizedBox(height: 4.sp),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(4.sp),
+                                      decoration: BoxDecoration(
+                                          color: _isDDFocused
+                                              ? AppColors.primaryColor
+                                                  .withOpacity(0.2)
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12.0)),
+                                      child: TextFormField(
+                                        controller: ddController,
+                                        focusNode: _DDFocusNode,
+                                        textAlign: TextAlign.center,
+                                        keyboardType: TextInputType.text,
+                                        maxLines: 1,
+                                        maxLength: 2,
+                                        style: GoogleFonts.workSans(
+                                            textStyle: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.w600)),
+                                        decoration: InputDecoration(
+                                            counter: const SizedBox.shrink(),
+                                            fillColor: AppColors.whiteColor,
+                                            filled: true,
+                                            hintText: 'DD',
+                                            hintStyle: GoogleFonts.workSans(
+                                                color: const Color(0xFFBABBBE),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.sp),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: AppColors.primaryColor,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        12.0) // Border radius
+                                                ),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: AppColors.primaryColor,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0)),
+                                            errorBorder: OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.red,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0)),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                                    borderSide: const BorderSide(
+                                                        color: Colors.red,
+                                                        width: 1.5),
+                                                    borderRadius: BorderRadius
+                                                        .circular(12.0)),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 15,
+                                                    vertical: 10),
+                                          errorStyle: GoogleFonts.workSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.errorRed,
+                                                  fontWeight: FontWeight.w600)),),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Enter Date";
+                                          } else if(int.parse(value) > 31){
+                                            return "Not valid";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.sp),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(4.sp),
+                                      decoration: BoxDecoration(
+                                          color: _isMMFocused
+                                              ? AppColors.primaryColor
+                                                  .withOpacity(0.2)
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12.0)),
+                                      child: TextFormField(
+                                        controller: mmController,
+                                        focusNode: _MMFocusNode,
+                                        keyboardType: TextInputType.text,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.workSans(
+                                            textStyle: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.w600)),
+                                        maxLines: 1,
+                                        maxLength: 2,
 
-                                    FocusScope.of(context).requestFocus(FocusNode());
-
-
-                                  },
-                                  fontColor: AppColors.whiteColor,
-                                  buttonColor: AppColors.primaryColor)),
-                        ),
-                      ],
-                    ),
-                  ],
+                                        decoration: InputDecoration(
+                                            counter: const SizedBox.shrink(),
+                                            fillColor: AppColors.whiteColor,
+                                            filled: true,
+                                            hintText: 'MM',
+                                            hintStyle: GoogleFonts.workSans(
+                                                color: const Color(0xFFBABBBE),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.sp),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: AppColors.primaryColor,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        12.0) // Border radius
+                                                ),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: AppColors.primaryColor,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0)),
+                                            errorBorder: OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.red,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0)),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                                    borderSide: const BorderSide(
+                                                        color: Colors.red,
+                                                        width: 1.5),
+                                                    borderRadius: BorderRadius
+                                                        .circular(12.0)),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 15,
+                                                    vertical: 10),
+                                          errorStyle: GoogleFonts.workSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.errorRed,
+                                                  fontWeight: FontWeight.w600)),),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Enter Month";
+                                          } else if(int.parse(value) > 12){
+                                            return "Not valid";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.sp),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(4.sp),
+                                      decoration: BoxDecoration(
+                                          color: _isYYYYFocused
+                                              ? AppColors.primaryColor
+                                                  .withOpacity(0.2)
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12.0)),
+                                      child: TextFormField(
+                                        controller: yyyyController,
+                                        focusNode: _YYYYFocusNode,
+                                        keyboardType: TextInputType.text,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.workSans(
+                                            textStyle: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.w600)),
+                                        maxLines: 1,
+                                        maxLength: 4,
+                                        decoration: InputDecoration(
+                                          counter: const SizedBox.shrink(),
+                                            fillColor: AppColors.whiteColor,
+                                            filled: true,
+                                            hintText: 'YYYY',
+                                            hintStyle: GoogleFonts.workSans(
+                                                color: const Color(0xFFBABBBE),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.sp),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: AppColors.primaryColor,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        12.0) // Border radius
+                                                ),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: AppColors.primaryColor,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0)),
+                                            errorBorder: OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.red,
+                                                    width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0)),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                                    borderSide: const BorderSide(
+                                                        color: Colors.red,
+                                                        width: 1.5),
+                                                    borderRadius: BorderRadius
+                                                        .circular(12.0)),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 15,
+                                                    vertical: 10),
+                                          errorStyle: GoogleFonts.workSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.errorRed,
+                                                  fontWeight: FontWeight.w600)),),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Enter Year";
+                                          } else if(int.parse(value) > 2024){
+                                            return "Not valid";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                          Center(
+                            child: SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.072,
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                child: CustomButton(
+                                    imageName: ImageString.icSignIn,
+                                    title: ButtonString.btnSubmit,
+                                    onClick: () async {
+                                        if(_formKey.currentState!.validate()){
+                                          UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
+                                              image: _image1 != null ? _image1!.path : "",
+                                              dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                          profileBloc.add(UpdateProfileEvent(updateProfileRequest));
+                                        }
+                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      },
+                                    fontColor: AppColors.whiteColor,
+                                    buttonColor: AppColors.primaryColor)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ]))),
         );
@@ -613,10 +631,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (image != null) {
         File imageFile = File(image.path);
-        List<int> imageBytes = await imageFile.readAsBytes();
-        String base64Image = base64Encode(imageBytes);
         setState(() {
-          base64String = base64Image;
           _image1 = imageFile;
         });
       } else {

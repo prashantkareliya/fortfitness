@@ -30,6 +30,11 @@ InputDecoration kTextFieldDecoration = InputDecoration(
           colorFilter:
           ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)),
     ),
+    errorStyle: GoogleFonts.workSans(
+        textStyle: TextStyle(
+            fontSize: 12.sp,
+            color: AppColors.errorRed,
+            fontWeight: FontWeight.w600)),
     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 18));
 
 class CustomTextField extends StatefulWidget {
@@ -37,12 +42,13 @@ class CustomTextField extends StatefulWidget {
   final InputDecoration? decoration;
   final String? Function(String?)? validator;
   final String? titleText;
+  final String? requiredText;
   final TextInputType? keyBoardType;
   final int? length;
   final int? lines;
   bool isSecure;
 
-  CustomTextField({super.key, this.controller, this.decoration, this.validator, this.titleText, this.keyBoardType, this.isSecure = false, this.length, this.lines});
+  CustomTextField({super.key, this.controller, this.decoration, this.validator, this.titleText, this.keyBoardType, this.isSecure = false, this.length, this.lines, this.requiredText});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -76,12 +82,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.titleText ?? "",
-            style: GoogleFonts.workSans(
-                textStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.blackColor,
-                    fontWeight: FontWeight.w600))),
+        RichText(
+            text: TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                      text: widget.titleText ?? "",
+                      style: GoogleFonts.workSans(
+                          textStyle: TextStyle(
+                              fontSize: 14.sp,
+                              color: AppColors.blackColor,
+                              fontWeight: FontWeight.w600))),
+                  TextSpan(text: widget.requiredText ?? ""),
+                ],
+                style: GoogleFonts.workSans(
+                    textStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.errorRed,
+                        fontWeight: FontWeight.w600)))),
         SizedBox(height: 8.sp),
         Container(
           padding: EdgeInsets.all(4.sp),
@@ -102,6 +119,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     fontSize: 16.sp,
                     color: AppColors.blackColor,
                     fontWeight: FontWeight.w600)),
+
             decoration: widget.decoration,
             validator: widget.validator,
           ),

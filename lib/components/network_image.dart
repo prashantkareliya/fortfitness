@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fortfitness/constants/strings.dart';
 
 class CustomCachedImage extends StatelessWidget {
   final String imageUrl;
@@ -32,7 +33,7 @@ class CustomCachedImage extends StatelessWidget {
             color: CupertinoColors.white,
           ),
       child: const Center(child: CupertinoActivityIndicator())),
-      errorWidget: (context, url, error) => const Icon(Icons.error_outline, color: Colors.redAccent),
+      errorWidget: (context, url, error) => Image.asset(ImageString.imgProfile),
     );
   }
 }
