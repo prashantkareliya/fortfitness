@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   bool showSpinner = false;
   bool password = true;
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -173,12 +175,15 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: CustomButton(
                             imageName: ImageString.icSignIn,
                             title: ButtonString.btnSignIn,
-                            onClick: () {
+                            onClick: () async {
                               FocusScope.of(context).requestFocus(FocusNode());
                               if(_formKey.currentState!.validate()){
+                                String? fcmToken = await FirebaseMessaging.instance.getToken();
+
                                 LoginRequest loginRequest = LoginRequest(
                                     email: emailController.text.trim(),
-                                    password: passwordController.text
+                                    password: passwordController.text,
+                                  deviceToken: fcmToken.toString()
                                 );
                                 authBloc.add(LoginUserEvent(loginRequest));
                               }

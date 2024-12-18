@@ -15,7 +15,7 @@ import 'screens/dashboard/dashboard_screen.dart';
 Future<void> main() async {
   await SentryFlutter.init(
         (options) {
-          options.dsn = 'https://example@sentry.io/add-your-dsn-here';
+          options.dsn = 'https://3dba6b0b270aa0d1403382feef922c48@o4508421010030592.ingest.us.sentry.io/4508455997800448';
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },
