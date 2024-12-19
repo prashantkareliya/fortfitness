@@ -54,6 +54,7 @@ dependencies:
   flutter_html:
   sentry_flutter: ^8.11.0
   firebase_messaging: ^15.1.0
+  flutter_gen: ^5.5.0+1
   
 
 
@@ -67,6 +68,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner:
+  flutter_gen_runner: ^5.5.0+1
 flutter_native_splash:
   image: assets/images/logo.png
   color: "#FFFFFF"
@@ -92,6 +95,10 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+
+flutter_gen:
+  integrations:
+    flutter_svg: true
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

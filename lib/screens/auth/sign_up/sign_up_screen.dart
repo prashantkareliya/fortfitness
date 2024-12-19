@@ -13,6 +13,7 @@ import '../../../components/cutom_textfield.dart';
 import '../../../components/headerText.dart';
 import '../../../components/progress_indicator.dart';
 import '../../../constants/strings.dart';
+import '../../../gen/assets.gen.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 
@@ -159,7 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               prefixIcon: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset("assets/icons/name.svg",
+                                child: SvgPicture.asset(Assets.icons.name.toString(),
                                     colorFilter: ColorFilter.mode(
                                         AppColors.primaryColor, BlendMode.srcIn)),
                               ),
@@ -184,7 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               prefixIcon: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset("assets/icons/email.svg",
+                                child: SvgPicture.asset(Assets.icons.email.toString(),
                                     colorFilter: ColorFilter.mode(
                                         AppColors.primaryColor, BlendMode.srcIn)),
                               ),

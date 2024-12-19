@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/components/custom_button.dart';
 import 'package:fortfitness/constants/strings.dart';
+import 'package:fortfitness/gen/assets.gen.dart';
 import 'package:fortfitness/utils/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -56,7 +57,7 @@ class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
             Center(
                 child: Column(
               children: [
-                Image.asset(ImageString.imgLogo5,
+                Image.asset(Assets.images.logo5.toString() ,
                     height: query.height * 0.2),
                 SizedBox(height: query.height * 0.11),
                 SizedBox(
