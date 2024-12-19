@@ -57,8 +57,9 @@ class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
             Center(
                 child: Column(
               children: [
-                Image.asset(Assets.images.logo5.toString() ,
-                    height: query.height * 0.2),
+                Assets.images.logo5.image(height: query.height * 0.2),
+                // Image.asset(Assets.images.logo5.path,
+                //     height: query.height * 0.2),
                 SizedBox(height: query.height * 0.11),
                 SizedBox(
                     height: query.height * 0.072,
@@ -67,7 +68,10 @@ class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
                         imageName: ImageString.icSignIn,
                         title: ButtonString.btnSignIn,
                         onClick: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const SignInScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignInScreen()));
                         },
                         fontColor: AppColors.whiteColor,
                         buttonColor: AppColors.primaryColor)),
@@ -86,7 +90,10 @@ class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
                         imageName: ImageString.icSignUp,
                         btnString: ButtonString.btnSignUp,
                         onClick: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const SignUpScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignUpScreen()));
                         },
                         fontColor: AppColors.primaryColor))
               ],

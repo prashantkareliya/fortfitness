@@ -53,8 +53,11 @@ dependencies:
   intl: ^0.20.0
   flutter_html:
   sentry_flutter: ^8.11.0
-  firebase_messaging: ^15.1.0
+  firebase_messaging: ^14.7.10
+  firebase_core: ^2.25.3
   flutter_gen: ^5.5.0+1
+  hive:
+  hive_flutter:
   
 
 
@@ -70,6 +73,8 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   build_runner:
   flutter_gen_runner: ^5.5.0+1
+  hive_generator:
+
 flutter_native_splash:
   image: assets/images/logo.png
   color: "#FFFFFF"

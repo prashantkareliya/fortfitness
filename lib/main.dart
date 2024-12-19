@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/screens/auth/auth_selection.dart';
+import 'package:fortfitness/screens/auth/sign_in/hive_storage/profile_data.dart';
 import 'package:fortfitness/utils/app_colors.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,6 +16,9 @@ import 'constants/strings.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 //https://www.figma.com/design/tkmMOGlfPmEGW1z5Iasp35/FortFitness-App?node-id=0-1&node-type=canvas&t=aL3Qf0hxzLNZVQL3-0
 Future<void> main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(ProfileModelAdapter());
+
   await SentryFlutter.init(
         (options) {
           options.dsn = 'https://3dba6b0b270aa0d1403382feef922c48@o4508421010030592.ingest.us.sentry.io/4508455997800448';

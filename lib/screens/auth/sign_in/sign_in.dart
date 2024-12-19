@@ -10,10 +10,12 @@ import 'package:fortfitness/screens/auth/bloc/auth_bloc.dart';
 import 'package:fortfitness/screens/auth/data/auth_datasource.dart';
 import 'package:fortfitness/screens/auth/data/auth_repository.dart';
 import 'package:fortfitness/screens/auth/model/login_request.dart';
+import 'package:fortfitness/screens/auth/sign_in/hive_storage/profile_data.dart';
 import 'package:fortfitness/screens/auth/sign_up/sign_up_screen.dart';
 import 'package:fortfitness/screens/dashboard/dashboard_screen.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../components/custom_button.dart';
@@ -34,10 +36,13 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController emailController = TextEditingController(text: "brandon.azzopardi@axxsky.com");
-  TextEditingController passwordController = TextEditingController(text: "Admin@1234");
+  TextEditingController emailController =
+      TextEditingController(text: "brandon.azzopardi@axxsky.com");
+  TextEditingController passwordController =
+      TextEditingController(text: "Admin@1234");
 
-  AuthBloc authBloc = AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
+  AuthBloc authBloc =
+      AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
 
   @override
   void dispose() {
@@ -50,6 +55,22 @@ class _SignInScreenState extends State<SignInScreen> {
   bool password = true;
 
   @override
+  void initState() {
+    super.initState();
+    store();
+  }
+  store(){
+    Hive.openBox<ProfileModel>('profileData');
+
+    Box<ProfileModel> profileHive = Hive.box<ProfileModel>('profileData');
+    profileHive.add(ProfileModel(
+        "state.loginResponse.data?.user!.email.toString()",
+        "state.loginResponse.data?.token.toString()",
+        "state.loginResponse.data?.user?.id.toString()",
+        "state.loginResponse.data?.user?.image.toString()))"));
+    print("Display Stored Values :::: ::: :: ${profileHive.getAt(0)}");
+  }
+  @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
     return Scaffold(
@@ -60,93 +81,105 @@ class _SignInScreenState extends State<SignInScreen> {
             showSpinner = false;
             Helpers.showSnackBar(context, state.error);
           }
-          if(state is LoginLoading) {
+          if (state is LoginLoading) {
             showSpinner = true;
           }
           if (state is LoginLoaded) {
             showSpinner = false;
-            preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
-            preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
-            preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
-            preferences.setPreference(PreferenceString.userImage, state.loginResponse.data?.user!.image.toString());
-            Navigator.pushAndRemoveUntil<dynamic>(context,
-              MaterialPageRoute<dynamic>(builder: (BuildContext context) =>DashboardScreen(from: "main")),
-              (route) => false);
+            Box<ProfileModel> profileHive =
+                Hive.box<ProfileModel>('profileData');
+            profileHive.add(ProfileModel(
+                state.loginResponse.data?.user!.email.toString(),
+                state.loginResponse.data?.token.toString(),
+                state.loginResponse.data?.user?.id.toString(),
+                state.loginResponse.data?.user?.image.toString()));
+            print("Display Stored Values :::: ::: :: ${profileHive.getAt(0)}");
+            // preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
+            // preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
+            // preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
+            // preferences.setPreference(PreferenceString.userImage, state.loginResponse.data?.user!.image.toString());
+            Navigator.pushAndRemoveUntil<dynamic>(
+                context,
+                MaterialPageRoute<dynamic>(
+                    builder: (BuildContext context) =>
+                        DashboardScreen(from: "main")),
+                (route) => false);
           }
         },
         builder: (context, state) {
-        return ModalProgressHUD(
+          return ModalProgressHUD(
             inAsyncCall: showSpinner,
             progressIndicator:
                 SpinKitCircle(color: AppColors.primaryColor, size: 60.0),
             child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CommonHeader(text1: "Welcome back", text2: "\nAgain!!!"),
-                SizedBox(height: 15.sp),
-                Image.asset(ImageString.imgLine),
-                SizedBox(height: 40.sp),
-            Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Center(
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
+              child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(ImageString.imgLogo5,
-                        height: query.height * 0.12),
-                    const SizedBox(height: 40),
-                    CustomTextField(
-                      titleText: "Email Address",
-                      controller: emailController,
-                      keyBoardType: TextInputType.emailAddress,
-                      isSecure: false,
-                      decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Email Address",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/email.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your email";
-                        } else if (!emailController.text.isValidEmail) {
-                          return "ⓘ Enter valid email address";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      titleText: "Password",
-                      controller: passwordController,
-                      keyBoardType: TextInputType.text,
+                    CommonHeader(text1: "Welcome back", text2: "\nAgain!!!"),
+                    SizedBox(height: 15.sp),
+                    Image.asset(ImageString.imgLine),
+                    SizedBox(height: 40.sp),
+                    Form(
+                      key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Image.asset(ImageString.imgLogo5,
+                                height: query.height * 0.12),
+                            const SizedBox(height: 40),
+                            CustomTextField(
+                              titleText: "Email Address",
+                              controller: emailController,
+                              keyBoardType: TextInputType.emailAddress,
+                              isSecure: false,
+                              decoration: kTextFieldDecoration.copyWith(
+                                hintText: "Email Address",
+                                filled: true,
+                                fillColor: const Color(0xFFF3F3F4),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: SvgPicture.asset(
+                                      "assets/icons/email.svg",
+                                      colorFilter: ColorFilter.mode(
+                                          AppColors.primaryColor,
+                                          BlendMode.srcIn)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "ⓘ Please enter your email";
+                                } else if (!emailController.text.isValidEmail) {
+                                  return "ⓘ Enter valid email address";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            CustomTextField(
+                              titleText: "Password",
+                              controller: passwordController,
+                              keyBoardType: TextInputType.text,
                               isSecure: password,
                               decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Password",
-                        filled: true,
-                        fillColor: const Color(0xFFF3F3F4),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/password.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
+                                hintText: "Password",
+                                filled: true,
+                                fillColor: const Color(0xFFF3F3F4),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: SvgPicture.asset(
+                                      "assets/icons/password.svg",
+                                      colorFilter: ColorFilter.mode(
+                                          AppColors.primaryColor,
+                                          BlendMode.srcIn)),
+                                ),
+                                suffixIcon: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -160,101 +193,108 @@ class _SignInScreenState extends State<SignInScreen> {
                                             BlendMode.srcIn)),
                                   ),
                                 ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your password";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 40),
-                    SizedBox(
-                        height: query.height * 0.072,
-                        width: query.width * 0.55,
-                        child: CustomButton(
-                            imageName: ImageString.icSignIn,
-                            title: ButtonString.btnSignIn,
-                            onClick: () async {
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              if(_formKey.currentState!.validate()){
-                                String? fcmToken = await FirebaseMessaging.instance.getToken();
-
-                                LoginRequest loginRequest = LoginRequest(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text,
-                                  deviceToken: fcmToken.toString()
-                                );
-                                authBloc.add(LoginUserEvent(loginRequest));
-                              }
-                            },
-                            fontColor: AppColors.whiteColor,
-                            buttonColor: AppColors.primaryColor)),
-                    const SizedBox(height: 40),
-                    RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: LabelString.labelNotAc1,
-                                style: GoogleFonts.workSans(
-                                    textStyle: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: AppColors.blackColor,
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w500))),
-                            TextSpan(
-                              text: ButtonString.btnSignUp,
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () async {
-                                  FocusScope.of(context).requestFocus(FocusNode());
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const SignUpScreen()));
-                                },
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "ⓘ Please enter your password";
+                                }
+                                return null;
+                              },
                             ),
+                            const SizedBox(height: 40),
+                            SizedBox(
+                                height: query.height * 0.072,
+                                width: query.width * 0.55,
+                                child: CustomButton(
+                                    imageName: ImageString.icSignIn,
+                                    title: ButtonString.btnSignIn,
+                                    onClick: () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      if (_formKey.currentState!.validate()) {
+                                      /*  String? fcmToken =
+                                            await FirebaseMessaging.instance
+                                                .getToken();*/
+
+                                        LoginRequest loginRequest =
+                                            LoginRequest(
+                                                email:
+                                                    emailController.text.trim(),
+                                                password:
+                                                    passwordController.text,
+                                                /*deviceToken:
+                                                    fcmToken.toString()*/);
+                                        authBloc
+                                            .add(LoginUserEvent(loginRequest));
+                                      }
+                                    },
+                                    fontColor: AppColors.whiteColor,
+                                    buttonColor: AppColors.primaryColor)),
+                            const SizedBox(height: 40),
+                            RichText(
+                                text: TextSpan(
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: LabelString.labelNotAc1,
+                                    style: GoogleFonts.workSans(
+                                        textStyle: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: AppColors.blackColor,
+                                            decoration: TextDecoration.none,
+                                            fontWeight: FontWeight.w500))),
+                                TextSpan(
+                                  text: ButtonString.btnSignUp,
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const SignUpScreen()));
+                                    },
+                                ),
+                              ],
+                              style: GoogleFonts.workSans(
+                                  textStyle: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.w500,
+                                      decoration: TextDecoration.underline)),
+                            )),
+                            const SizedBox(height: 20),
+                            GestureDetector(
+                              onTap: () {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ResetPasswordScreen()));
+                              },
+                              child: Text(LabelString.labelForgotPassword,
+                                  style: GoogleFonts.workSans(
+                                      textStyle: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColors.primaryColor,
+                                  ))),
+                            )
                           ],
-                          style: GoogleFonts.workSans(
-                              textStyle: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.w500,
-                                  decoration: TextDecoration.underline)),
-                        )),
-                    const SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                const ResetPasswordScreen()));
-                      },
-                      child: Text(LabelString.labelForgotPassword,
-                          style: GoogleFonts.workSans(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w500,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.primaryColor,
-                              ))),
+                        ),
+                      ),
                     )
                   ],
                 ),
               ),
-            )
-              ],
             ),
-          ),
-        ),
-      );
-  },
-),
+          );
+        },
+      ),
     );
   }
-
-
 }
