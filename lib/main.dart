@@ -1,13 +1,11 @@
 import 'dart:async';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/screens/auth/auth_selection.dart';
-import 'package:fortfitness/screens/auth/sign_in/hive_storage/profile_data.dart';
 import 'package:fortfitness/utils/app_colors.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,10 +13,12 @@ import 'components/progress_indicator.dart';
 import 'constants/strings.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 //https://www.figma.com/design/tkmMOGlfPmEGW1z5Iasp35/FortFitness-App?node-id=0-1&node-type=canvas&t=aL3Qf0hxzLNZVQL3-0
-Future<void> main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(ProfileModelAdapter());
-
+///api/lock/:lockid/unlock
+main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: const FirebaseOptions(apiKey: "AIzaSyDd7t_fZ9Nx39WHjxK93uZsYiGGssrxIvE",
+      appId: "1:141538630694:android:29342b5d815960145f1ae7",
+      messagingSenderId: "141538630694", projectId: "fortfitnessapp"));
   await SentryFlutter.init(
         (options) {
           options.dsn = 'https://3dba6b0b270aa0d1403382feef922c48@o4508421010030592.ingest.us.sentry.io/4508455997800448';
@@ -27,6 +27,8 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatelessWidget {

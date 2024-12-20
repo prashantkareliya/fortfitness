@@ -40,3 +40,20 @@ class KisiLocationFailure extends GymLocationState {
   final String error;
   KisiLocationFailure(this.error);
 }
+
+
+//open lock states
+class OpenLockLoading extends GymLocationState {
+  final bool isBusy;
+  OpenLockLoading(this.isBusy);
+}
+
+class OpenLockLoaded extends GymLocationState {
+  KisiResponse kisiResponse;
+  OpenLockLoaded({required this.kisiResponse});
+}
+
+class OpenLockFailure extends GymLocationState {
+  final String error;
+  OpenLockFailure(this.error);
+}

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +12,10 @@ import 'package:fortfitness/screens/auth/bloc/auth_bloc.dart';
 import 'package:fortfitness/screens/auth/data/auth_datasource.dart';
 import 'package:fortfitness/screens/auth/data/auth_repository.dart';
 import 'package:fortfitness/screens/auth/model/login_request.dart';
-import 'package:fortfitness/screens/auth/sign_in/hive_storage/profile_data.dart';
 import 'package:fortfitness/screens/auth/sign_up/sign_up_screen.dart';
 import 'package:fortfitness/screens/dashboard/dashboard_screen.dart';
 import 'package:fortfitness/utils/extention_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../components/custom_button.dart';
@@ -53,22 +53,19 @@ class _SignInScreenState extends State<SignInScreen> {
 
   bool showSpinner = false;
   bool password = true;
+  String? deviceToken;
 
   @override
   void initState() {
     super.initState();
-    store();
+    getFCMToken();
   }
-  store(){
-    Hive.openBox<ProfileModel>('profileData');
 
-    Box<ProfileModel> profileHive = Hive.box<ProfileModel>('profileData');
-    profileHive.add(ProfileModel(
-        "state.loginResponse.data?.user!.email.toString()",
-        "state.loginResponse.data?.token.toString()",
-        "state.loginResponse.data?.user?.id.toString()",
-        "state.loginResponse.data?.user?.image.toString()))"));
-    print("Display Stored Values :::: ::: :: ${profileHive.getAt(0)}");
+  getFCMToken() async {
+    if(Platform.isAndroid){
+      deviceToken = await FirebaseMessaging.instance.getToken();
+      print("::::: device Token :::: --- $deviceToken");
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -86,18 +83,10 @@ class _SignInScreenState extends State<SignInScreen> {
           }
           if (state is LoginLoaded) {
             showSpinner = false;
-            Box<ProfileModel> profileHive =
-                Hive.box<ProfileModel>('profileData');
-            profileHive.add(ProfileModel(
-                state.loginResponse.data?.user!.email.toString(),
-                state.loginResponse.data?.token.toString(),
-                state.loginResponse.data?.user?.id.toString(),
-                state.loginResponse.data?.user?.image.toString()));
-            print("Display Stored Values :::: ::: :: ${profileHive.getAt(0)}");
-            // preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
-            // preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
-            // preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
-            // preferences.setPreference(PreferenceString.userImage, state.loginResponse.data?.user!.image.toString());
+            preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
+            preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
+            preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
+            preferences.setPreference(PreferenceString.userImage, state.loginResponse.data?.user!.image.toString());
             Navigator.pushAndRemoveUntil<dynamic>(
                 context,
                 MaterialPageRoute<dynamic>(
@@ -209,23 +198,13 @@ class _SignInScreenState extends State<SignInScreen> {
                                     imageName: ImageString.icSignIn,
                                     title: ButtonString.btnSignIn,
                                     onClick: () async {
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode());
+                                      FocusScope.of(context).requestFocus(FocusNode());
                                       if (_formKey.currentState!.validate()) {
-                                      /*  String? fcmToken =
-                                            await FirebaseMessaging.instance
-                                                .getToken();*/
-
-                                        LoginRequest loginRequest =
-                                            LoginRequest(
-                                                email:
-                                                    emailController.text.trim(),
-                                                password:
-                                                    passwordController.text,
-                                                /*deviceToken:
-                                                    fcmToken.toString()*/);
-                                        authBloc
-                                            .add(LoginUserEvent(loginRequest));
+                                        LoginRequest loginRequest = LoginRequest(
+                                                email: emailController.text.trim(),
+                                                password: passwordController.text,
+                                                deviceToken: deviceToken ?? "");
+                                        authBloc.add(LoginUserEvent(loginRequest));
                                       }
                                     },
                                     fontColor: AppColors.whiteColor,

@@ -146,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
           /*Helpers.showSnackBar(
               context, state.updateProfileResponse.message ?? "");*/
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => DashboardScreen()));
+              MaterialPageRoute(builder: (context) => DashboardScreen(from: "main")));
         }
       },
       builder: (context, state) {

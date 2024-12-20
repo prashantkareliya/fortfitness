@@ -67,6 +67,18 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
             showSpinner = false;
             locksList = state.kisiResponse.data!;
           }
+
+          if (state is OpenLockFailure) {
+            showSpinner = false;
+            Helpers.showSnackBar(context, state.error);
+          }
+          if (state is OpenLockLoading) {
+            showSpinner = true;
+          }
+          if (state is OpenLockLoaded) {
+            showSpinner = false;
+            print(state.kisiResponse);
+          }
         },
         builder: (context, state) {
           return ModalProgressHUD(
@@ -87,7 +99,9 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                         itemBuilder: (context, index) {
                           final locks = locksList[index];
                           return GestureDetector(
-                            onTap: () { },
+                            onTap: () {
+                              gymLocationBloc.add(OpenLockEvent(locks.id.toString()));
+                            },
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 15.sp),
                               child: Container(

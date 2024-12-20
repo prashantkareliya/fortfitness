@@ -160,9 +160,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               prefixIcon: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset(Assets.icons.name.toString(),
+                                child: Assets.icons.name.svg(
                                     colorFilter: ColorFilter.mode(
-                                        AppColors.primaryColor, BlendMode.srcIn)),
+                                    AppColors.primaryColor, BlendMode.srcIn)),
                               ),
                             ),
                             validator: (value) {
@@ -185,9 +185,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               prefixIcon: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: SvgPicture.asset(Assets.icons.email.toString(),
-                                    colorFilter: ColorFilter.mode(
-                                        AppColors.primaryColor, BlendMode.srcIn)),
+                                child: Assets.icons.email.svg(colorFilter: ColorFilter.mode(
+                                    AppColors.primaryColor, BlendMode.srcIn)),
                               ),
                             ),
                             validator: (value) {

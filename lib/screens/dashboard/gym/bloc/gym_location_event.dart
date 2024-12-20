@@ -14,3 +14,11 @@ class KisiLocationEvent extends GymLocationEvent {
   final String locationId;
   KisiLocationEvent(this.locationId);
 }
+
+
+
+//open lock event
+class OpenLockEvent extends GymLocationEvent {
+  final String lockId;
+  OpenLockEvent(this.lockId);
+}

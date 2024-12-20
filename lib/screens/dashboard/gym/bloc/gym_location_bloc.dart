@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../constants/constants.dart';
 import '../data/gym_location_repository.dart';
 
 part 'gym_location_event.dart';
@@ -15,11 +16,13 @@ part 'gym_location_state.dart';
 
 class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
   final GymLocationRepository gymLocationRepository;
+  String endPoint = Constants.of().endpoint;
 
   GymLocationBloc(this.gymLocationRepository) : super(GymLocationInitial()) {
     on<GymLocationEvent>((event, emit) {});
     on<GetGymLocationEvent>((event, emit) => getGymLocation(event, emit));
     on<KisiLocationEvent>((event, emit) => mapEventToState(event, emit));
+    on<OpenLockEvent>((event, emit) => openGymLock(event, emit));
   }
 
   getGymLocation(
@@ -46,7 +49,7 @@ class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
           'Authorization': 'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}', // Optional, if you need auth
         };
         final response = await http.get(
-            Uri.parse('http://143.110.244.228:8082/api/location/${event.locationId}/locks'),
+            Uri.parse('${endPoint}location/${event.locationId}/locks'),
             headers: headers);
 
         if (response.statusCode == 200) {
@@ -61,5 +64,32 @@ class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
         emit(KisiLocationFailure('An error occurred: $e'));
       }
     }
+  }
+
+  openGymLock(OpenLockEvent event, Emitter<GymLocationState> emit) async {
+      SharedPreferences? preferences = await SharedPreferences.getInstance();
+
+      if (event is OpenLockEvent) {
+        emit(OpenLockLoading(true));
+        try {
+          Map<String, String> headers = {
+            'Content-Type': 'application/json', // Example header, can be customized
+            'Authorization': 'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}', // Optional, if you need auth
+          };
+          final response = await http.post(
+              Uri.parse('${endPoint}lock/:${event.lockId}/unlock'),
+              headers: headers);
+
+          if (response.statusCode == 200) {
+            Map<String, dynamic> responseData = json.decode(response.body);
+            KisiResponse kisiResponse = KisiResponse.fromJson(responseData);
+            emit(OpenLockLoaded(kisiResponse: kisiResponse));
+          } else {
+            emit(OpenLockFailure('Failed to load locks'));
+          }
+        } catch (e) {
+          emit(OpenLockFailure('An error occurred: $e'));
+        }
+      }
   }
 }

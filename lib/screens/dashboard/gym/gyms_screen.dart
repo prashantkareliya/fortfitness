@@ -62,7 +62,6 @@ class _GymScreenState extends State<GymScreen> {
             if (state is GetGymLocationLoaded) {
               showSpinner = false;
               gymLocation = state.gymLocationResponse.data!.locations!;
-
             }
           },
           builder: (context, state) {
