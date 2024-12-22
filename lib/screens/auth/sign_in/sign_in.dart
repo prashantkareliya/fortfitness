@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/components/cutom_textfield.dart';
 import 'package:fortfitness/constants/strings.dart';
+import 'package:fortfitness/gen/assets.gen.dart';
 import 'package:fortfitness/screens/auth/bloc/auth_bloc.dart';
 import 'package:fortfitness/screens/auth/data/auth_datasource.dart';
 import 'package:fortfitness/screens/auth/data/auth_repository.dart';
@@ -131,13 +132,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                 prefixIcon: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15.0),
-                                  child: SvgPicture.asset(
-                                      "assets/icons/email.svg",
+                                  child: Assets.icons.email.svg(
                                       colorFilter: ColorFilter.mode(
-                                          AppColors.primaryColor,
-                                          BlendMode.srcIn)),
-                                ),
-                              ),
+                                      AppColors.primaryColor,
+                                      BlendMode.srcIn)))),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "ⓘ Please enter your email";
@@ -163,7 +161,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                   child: SvgPicture.asset(
                                       "assets/icons/password.svg",
                                       colorFilter: ColorFilter.mode(
-                                          AppColors.primaryColor,
+                                          password ? const Color(0xFFBABBBE)
+                                          : AppColors.primaryColor,
                                           BlendMode.srcIn)),
                                 ),
                                 suffixIcon: Padding(

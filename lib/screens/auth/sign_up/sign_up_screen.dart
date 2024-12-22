@@ -228,7 +228,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   child: SvgPicture.asset(
                                       "assets/icons/eye.svg",
                                       colorFilter: ColorFilter.mode(
-                                          !password
+                                          password
                                               ? const Color(0xFFBABBBE)
                                               : AppColors.primaryColor,
                                           BlendMode.srcIn)),
@@ -272,7 +272,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   child: SvgPicture.asset(
                                       "assets/icons/eye.svg",
                                       colorFilter: ColorFilter.mode(
-                                          !confirmPassword
+                                          confirmPassword
                                               ? const Color(0xFFBABBBE)
                                               : AppColors.primaryColor,
                                           BlendMode.srcIn)),

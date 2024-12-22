@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/screens/dashboard/gym/model/gym_location_response.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:fortfitness/components/appbar_custom.dart';
 import 'package:fortfitness/components/progress_indicator.dart';
@@ -99,8 +100,20 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                         itemBuilder: (context, index) {
                           final locks = locksList[index];
                           return GestureDetector(
-                            onTap: () {
-                              gymLocationBloc.add(OpenLockEvent(locks.id.toString()));
+                            onTap: () async {
+                              LocationPermission permission = await Geolocator.requestPermission();
+
+                              if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+                                Position position = await Geolocator.getCurrentPosition(
+                                    desiredAccuracy: LocationAccuracy.high);
+
+                                print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+                                Helpers.showSnackBar(context, "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+                              } else {
+                                print("Permission denied");
+                                Helpers.showSnackBar(context, "permission denied");
+                              }
+                              //gymLocationBloc.add(OpenLockEvent(locks.id.toString()));
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 15.sp),
