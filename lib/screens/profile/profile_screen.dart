@@ -176,8 +176,8 @@ class _ProfilePageState extends State<ProfilePage> {
             child: ClipOval(
                 child: SizedBox.fromSize(
                     size: Size.fromRadius(60.sp),
-                                    child: Image.file(_image1!,
-                                        fit: BoxFit.cover))),
+                    child: Image.file(_image1!,
+                        fit: BoxFit.cover))),
           )
                     : Padding(
                       padding: EdgeInsets.only(bottom: 10.sp, right: 15.sp),
@@ -202,8 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           surfaceTintColor: AppColors.primaryColor,
                           child: SvgPicture.asset(
                             "assets/icons/image_upload.svg",
-                            height: 60.sp,
-                          ),
+                            height: 60.sp),
                           itemBuilder: (BuildContext context) {
                             return {'📸 Camera', '📽️ Gallery', "✖ Remove"}
                                 .map((String choice) {
