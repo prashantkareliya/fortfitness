@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/components/custom_button.dart';
@@ -18,6 +19,25 @@ class AuthSelectionScreen extends StatefulWidget {
 }
 
 class _AuthSelectionScreenState extends State<AuthSelectionScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      signInAndRequestPermission();
+    });
+  }
+
+
+  Future<void> signInAndRequestPermission() async {
+    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print("Notification permission granted!");
+    } else {
+      print("Notification permission denied!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;

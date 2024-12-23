@@ -20,5 +20,6 @@ class KisiLocationEvent extends GymLocationEvent {
 //open lock event
 class OpenLockEvent extends GymLocationEvent {
   final String lockId;
-  OpenLockEvent(this.lockId);
+  final UnlockRequest unlockRequest;
+  OpenLockEvent(this.lockId, this.unlockRequest);
 }

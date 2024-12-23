@@ -34,6 +34,14 @@
     <string>We need your location for...</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>We need your location for...</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>We would like to send you notifications about important updates.</string>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

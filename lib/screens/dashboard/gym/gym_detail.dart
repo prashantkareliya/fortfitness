@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/screens/dashboard/gym/model/gym_location_response.dart';
+import 'package:fortfitness/screens/dashboard/gym/model/unlock_request.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:geolocator/geolocator.dart';
@@ -80,6 +81,7 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
             showSpinner = false;
             print(state.kisiResponse);
           }
+
         },
         builder: (context, state) {
           return ModalProgressHUD(
@@ -102,11 +104,14 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                           return GestureDetector(
                             onTap: () async {
                               LocationPermission permission = await Geolocator.requestPermission();
-
                               if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
                                 Position position = await Geolocator.getCurrentPosition(
                                     desiredAccuracy: LocationAccuracy.high);
-
+                                UnlockRequest unlockRequest = UnlockRequest(
+                                  lat: position.latitude.toString(),
+                                  long: position.longitude.toString(),
+                                );
+                                gymLocationBloc.add(OpenLockEvent(locks.id.toString(), unlockRequest));
                                 print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
                                 Helpers.showSnackBar(context, "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
                               } else {
