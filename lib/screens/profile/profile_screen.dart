@@ -142,11 +142,16 @@ class _ProfilePageState extends State<ProfilePage> {
           showSpinner = true;
         }
         if (state is UpdateProfileLoaded) {
-          showSpinner = false;
+
           /*Helpers.showSnackBar(
               context, state.updateProfileResponse.message ?? "");*/
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => DashboardScreen(from: "main")));
+          profileBloc.add(GetProfileEvent());
+
+          Future.delayed(const Duration(seconds: 2), () {
+            showSpinner = false;
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => DashboardScreen(from: "main")));
+          });
         }
       },
       builder: (context, state) {

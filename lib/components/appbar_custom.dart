@@ -40,14 +40,15 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
 
   void _getProfile(BuildContext context) {
-    profileBloc.add(GetProfileEvent());
+    //profileBloc.add(GetProfileEvent());
   }
+
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
       _getProfile(context);
-    });
+    });*/
     return SafeArea(
       child: BlocConsumer<ProfileBloc, ProfileState>(
         bloc: profileBloc,
