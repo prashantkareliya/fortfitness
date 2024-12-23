@@ -38,9 +38,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailController =
-      TextEditingController(text: "brandon.azzopardi@axxsky.com");
+      TextEditingController(/*text: "brandon.azzopardi@axxsky.com"*/);
   TextEditingController passwordController =
-      TextEditingController(text: "Admin@1234");
+      TextEditingController(/*text: "Admin@1234"*/);
 
   AuthBloc authBloc =
       AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
@@ -202,7 +202,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                         LoginRequest loginRequest = LoginRequest(
                                                 email: emailController.text.trim(),
                                                 password: passwordController.text,
-                                                deviceToken: deviceToken ?? "");
+                                                deviceToken: deviceToken ?? "",
+                                          deviceType: Platform.isAndroid ? "android" : "ios"
+                                        );
                                         authBloc.add(LoginUserEvent(loginRequest));
                                       }
                                     },
