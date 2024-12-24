@@ -38,9 +38,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailController =
-      TextEditingController(/*text: "brandon.azzopardi@axxsky.com"*/);
+      TextEditingController(text: "brandon.azzopardi@axxsky.com");
   TextEditingController passwordController =
-      TextEditingController(/*text: "Admin@1234"*/);
+      TextEditingController(text: "Admin@1234");
 
   AuthBloc authBloc =
       AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
@@ -54,20 +54,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
   bool showSpinner = false;
   bool password = true;
-  String? deviceToken;
+  //String? deviceToken;
 
-  @override
-  void initState() {
-    super.initState();
-    getFCMToken();
-  }
 
-  getFCMToken() async {
-    if(Platform.isAndroid){
-      deviceToken = await FirebaseMessaging.instance.getToken();
-      print("::::: device Token :::: --- $deviceToken");
-    }
-  }
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -199,6 +189,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     onClick: () async {
                                       FocusScope.of(context).requestFocus(FocusNode());
                                       if (_formKey.currentState!.validate()) {
+                                        String? deviceToken = await FirebaseMessaging.instance.getToken();
                                         LoginRequest loginRequest = LoginRequest(
                                                 email: emailController.text.trim(),
                                                 password: passwordController.text,

@@ -5,6 +5,7 @@ import 'package:fortfitness/constants/strings.dart';
 import 'package:fortfitness/screens/dashboard/gym/model/gym_location_response.dart';
 import 'package:fortfitness/screens/dashboard/gym/model/kisi_response.dart';
 import 'package:fortfitness/screens/dashboard/gym/model/unlock_request.dart';
+import 'package:fortfitness/screens/dashboard/gym/model/unlock_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,27 +71,25 @@ class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
   openGymLock(OpenLockEvent event, Emitter<GymLocationState> emit) async {
       SharedPreferences? preferences = await SharedPreferences.getInstance();
 
-      if (event is OpenLockEvent) {
-        emit(OpenLockLoading(true));
-        try {
-          Map<String, String> headers = {
-            'Content-Type': "application/x-www-form-urlencoded; charset=utf-8",
-            'Authorization': 'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}',
-          };
-          final response = await http.put(body: event.unlockRequest.toJson(),
-              Uri.parse('${endPoint}lock/${event.lockId}/unlock'),
-              headers: headers);
+      emit(OpenLockLoading(true));
+      try {
+        Map<String, String> headers = {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}',
+        };
+        final response = await http.post(body: event.unlockRequest.toString(),
+            Uri.parse('${endPoint}lock/${event.lockId}/unlock'),
+            headers: headers);
 
-          if (response.statusCode == 200) {
-            Map<String, dynamic> responseData = json.decode(response.body);
-            KisiResponse kisiResponse = KisiResponse.fromJson(responseData);
-            emit(OpenLockLoaded(kisiResponse: kisiResponse));
-          } else {
-            emit(OpenLockFailure('Failed to load locks'));
-          }
-        } catch (e) {
-          emit(OpenLockFailure('An error occurred: $e'));
+        if (response.statusCode == 200) {
+          Map<String, dynamic> responseData = json.decode(response.body);
+          UnlockResponse unlockResponse = UnlockResponse.fromJson(responseData);
+          emit(OpenLockLoaded(unlockResponse: unlockResponse));
+        } else {
+          emit(OpenLockFailure('You are too far away.'));
         }
+      } catch (e) {
+        emit(OpenLockFailure('An error occurred: $e'));
       }
-  }
+      }
 }

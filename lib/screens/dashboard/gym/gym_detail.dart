@@ -79,7 +79,8 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
           }
           if (state is OpenLockLoaded) {
             showSpinner = false;
-            print(state.kisiResponse);
+            print(state.unlockResponse);
+            Navigator.pop(context);
           }
 
         },
@@ -103,22 +104,28 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                           final locks = locksList[index];
                           return GestureDetector(
                             onTap: () async {
+                              setState(() {
+                                showSpinner = true;
+                              });
                               LocationPermission permission = await Geolocator.requestPermission();
-                              if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+                              if (permission == LocationPermission.whileInUse
+                                  || permission == LocationPermission.always) {
                                 Position position = await Geolocator.getCurrentPosition(
                                     desiredAccuracy: LocationAccuracy.high);
                                 UnlockRequest unlockRequest = UnlockRequest(
-                                  lat: position.latitude.toString(),
                                   long: position.longitude.toString(),
+                                  lat: position.latitude.toString(),
                                 );
                                 gymLocationBloc.add(OpenLockEvent(locks.id.toString(), unlockRequest));
-                                print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
-                                Helpers.showSnackBar(context, "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+                                //print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+                                //Helpers.showSnackBar(context, "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
                               } else {
+                                setState(() {
+                                  showSpinner = false;
+                                });
                                 print("Permission denied");
                                 Helpers.showSnackBar(context, "permission denied");
                               }
-                              //gymLocationBloc.add(OpenLockEvent(locks.id.toString()));
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 15.sp),

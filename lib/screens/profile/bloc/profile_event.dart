@@ -13,3 +13,8 @@ class UpdateProfileEvent extends ProfileEvent {
   final UpdateProfileRequest updateProfileRequest;
   UpdateProfileEvent(this.updateProfileRequest);
 }
+
+
+class LogoutEvent extends ProfileEvent {
+  LogoutEvent();
+}

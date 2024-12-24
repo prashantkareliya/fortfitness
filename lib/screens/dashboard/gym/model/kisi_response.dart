@@ -11,13 +11,13 @@ class KisiResponse {
     if (json['data'] != null) {
       data = <KisiData>[];
       json['data'].forEach((v) {
-        data!.add(KisiData.fromJson(v));
+        data!.add(new KisiData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['error'] = this.error;
     data['message'] = this.message;
     if (this.data != null) {
@@ -29,6 +29,7 @@ class KisiResponse {
 
 class KisiData {
   int? id;
+  int? lockId;
   String? createdAt;
   String? updatedAt;
   bool? configured;
@@ -59,6 +60,7 @@ class KisiData {
 
   KisiData(
       {this.id,
+        this.lockId,
         this.createdAt,
         this.updatedAt,
         this.configured,
@@ -89,6 +91,7 @@ class KisiData {
 
   KisiData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    lockId = json['lock_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     configured = json['configured'];
@@ -115,12 +118,13 @@ class KisiData {
     timeRestrictionTimeZone = json['time_restriction_time_zone'];
     unlocked = json['unlocked'];
     unlockedUntil = json['unlocked_until'];
-    place = json['place'] != null ? Place.fromJson(json['place']) : null;
+    place = json['place'] != null ? new Place.fromJson(json['place']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['lock_id'] = this.lockId;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['configured'] = this.configured;
@@ -170,7 +174,7 @@ class Place {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
     data['latitude'] = this.latitude;

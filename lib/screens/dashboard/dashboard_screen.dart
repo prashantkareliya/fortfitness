@@ -1,10 +1,14 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/components/network_image.dart';
+import 'package:fortfitness/components/progress_indicator.dart';
 import 'package:fortfitness/utils/app_colors.dart';
+import 'package:fortfitness/utils/helpers.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/strings.dart';
@@ -55,19 +59,34 @@ class DashboardScreen extends StatelessWidget {
         actions: [
             BlocConsumer<ProfileBloc, ProfileState>(
               bloc: profileBloc,
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is ProfileFailure) {}
                 if (state is ProfileLoading) {}
                 if (state is ProfileLoaded) {
                   profileImage = state.profileResponse.data!.image.toString();
                 }
+                if(state is LogoutLoading){}
+                if(state is LogoutLoaded) {
+                  SharedPreferences preferences = await SharedPreferences.getInstance();
+                  preferences.clear();
+                  await FirebaseMessaging.instance.deleteToken();
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      FadePageRoute(
+                          builder: (context) => const AuthSelectionScreen()),
+                          (_) => false);
+                }
+                if(state is LogoutFailure){
+                  Helpers.showSnackBar(context, state.error);
+                }
               },
               builder: (context, state) {
                 return IconButton(
                     onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfilePage()));
-            },
-            icon: ClipOval(
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => const ProfilePage()));
+                            },
+                            icon: ClipOval(
                 child: SizedBox.fromSize(
                     size: Size.fromRadius(18.sp),
                     child: CustomCachedImage(
@@ -181,69 +200,58 @@ class DashboardScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const LogoutDialog();
-      },
-    );
-  }
-}
-
-class LogoutDialog extends StatelessWidget {
-  const LogoutDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: AppColors.whiteColor,
-      surfaceTintColor: AppColors.primaryColor,
-      title: Text("Confirm Logout",
-          style: GoogleFonts.workSans(
-              textStyle: TextStyle(
-                  fontSize: 28.sp,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.w700))),
-      content: Text("Are you sure you want to logout?",
-          style: GoogleFonts.workSans(
-              textStyle: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.blackColor,
-                  fontWeight: FontWeight.normal))),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
-          },
-          child: Text("Cancel",
+        return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: AppColors.primaryColor,
+          title: Text("Confirm Logout",
+              style: GoogleFonts.workSans(
+                  textStyle: TextStyle(
+                      fontSize: 28.sp,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700))),
+          content: Text("Are you sure you want to logout?",
               style: GoogleFonts.workSans(
                   textStyle: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.normal))),
-        ),
-        ElevatedButton(
-          clipBehavior: Clip.hardEdge,
-          style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              splashFactory: NoSplash.splashFactory,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16.0)))),
-          onPressed: () async {
-            SharedPreferences preferences =
-                await SharedPreferences.getInstance();
-            preferences.clear();
-            Navigator.pushAndRemoveUntil(
-                context,
-                FadePageRoute(
-                    builder: (context) => const AuthSelectionScreen()),
-                (_) => false);
-          },
-          child: Text("Logout",
-              style: GoogleFonts.workSans(
-                  textStyle: TextStyle(
-                      fontSize: 14.sp,
-                      color: AppColors.whiteColor,
-                      fontWeight: FontWeight.normal))),
-        ),
-      ],
-    );
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel",
+                  style: GoogleFonts.workSans(
+                      textStyle: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.normal))),
+            ),
+            ElevatedButton(
+              clipBehavior: Clip.hardEdge,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  splashFactory: NoSplash.splashFactory,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)))),
+              onPressed: () async {
+                Navigator.pop(context, "logout");
+              },
+              child: Text("Logout",
+                  style: GoogleFonts.workSans(
+                      textStyle: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.normal))),
+            ),
+          ],
+        );
+      },
+    ).then((value) {
+      if(value != null){
+        profileBloc.add(LogoutEvent());
+      }
+    });
   }
 }
+

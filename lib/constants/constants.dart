@@ -45,6 +45,7 @@ class ApiEndPoint {
 
   //PUT API endpoint
   static const String profileUpdate = "user/profile/update";
+  static const String logout = "user/logout";
 
 
 

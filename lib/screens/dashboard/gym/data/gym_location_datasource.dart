@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortfitness/screens/dashboard/gym/model/unlock_request.dart';
 
 import '../../../../constants/constants.dart';
 import '../../../../http_actions/app_http.dart';

@@ -49,8 +49,8 @@ class OpenLockLoading extends GymLocationState {
 }
 
 class OpenLockLoaded extends GymLocationState {
-  KisiResponse kisiResponse;
-  OpenLockLoaded({required this.kisiResponse});
+  UnlockResponse unlockResponse;
+  OpenLockLoaded({required this.unlockResponse});
 }
 
 class OpenLockFailure extends GymLocationState {
