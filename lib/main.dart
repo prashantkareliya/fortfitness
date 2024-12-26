@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,17 @@ import 'screens/dashboard/dashboard_screen.dart';
 ///api/lock/:lockid/unlock
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-      apiKey: "AIzaSyDd7t_fZ9Nx39WHjxK93uZsYiGGssrxIvE",
-      appId: "1:141538630694:android:29342b5d815960145f1ae7",
-      messagingSenderId: "141538630694", projectId: "fortfitnessapp"));
-
+  if(Platform.isIOS){
+    await Firebase.initializeApp();
+  } else {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyDd7t_fZ9Nx39WHjxK93uZsYiGGssrxIvE",
+          appId: "1:141538630694:android:29342b5d815960145f1ae7",
+          messagingSenderId: "141538630694",
+          projectId: "fortfitnessapp",
+        ));
+  }
   await SentryFlutter.init(
         (options) {
           options.dsn = 'https://3dba6b0b270aa0d1403382feef922c48@o4508421010030592.ingest.us.sentry.io/4508455997800448';

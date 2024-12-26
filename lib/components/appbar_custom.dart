@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/components/network_image.dart';
 import 'package:fortfitness/constants/strings.dart';
+import 'package:fortfitness/screens/profile/model/profile_response.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,15 +41,15 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
 
   void _getProfile(BuildContext context) {
-    //profileBloc.add(GetProfileEvent());
+    profileBloc.add(GetProfileEvent());
   }
 
-
+  ProfileResponse? profileResponse;
   @override
   Widget build(BuildContext context) {
-    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _getProfile(context);
-    });*/
+    });
     return SafeArea(
       child: BlocConsumer<ProfileBloc, ProfileState>(
         bloc: profileBloc,
@@ -57,6 +58,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           if (state is ProfileLoading) {}
           if (state is ProfileLoaded) {
             profileImage = state.profileResponse.data!.image.toString();
+           // profileImage = profileResponse!.data!.image.toString();
           }
         },
         builder: (context, state) {

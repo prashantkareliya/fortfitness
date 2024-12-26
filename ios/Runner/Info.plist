@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -24,40 +26,35 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Fort Fitness need to use your camera access to take a photo and upload it.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need access to your location to enhance the app's functionality and provide relevant information.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need access to your location to fetch your current position.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Fort Fitness Plasser need to use your photos access to pick a photos and upload it.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We would like to send you notifications about important updates.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSCameraUsageDescription</key>
-    <string>We need your camera to take pictures</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location for...</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need your location for...</string>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>fetch</string>
-        <string>remote-notification</string>
-    </array>
-    <key>NSUserNotificationUsageDescription</key>
-    <string>We would like to send you notifications about important updates.</string>
-
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>UISupportsDocumentBrowser</key>
 	<true/>
 </dict>
 </plist>

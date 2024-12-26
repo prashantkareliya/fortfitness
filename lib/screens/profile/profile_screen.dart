@@ -192,37 +192,35 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: CustomCachedImage(imageUrl: Uri.parse(profileImage).toString(),
                                   fit: BoxFit.cover))),
                     ),
-                    GestureDetector(
-                        onTap: () {},
-                        child: PopupMenuButton<String>(
-                          offset: const Offset(-30, 50),
-                          onSelected: handleClick,
-                          popUpAnimationStyle: AnimationStyle(reverseCurve: Curves.ease,
-                              curve: Curves.ease,
-                          reverseDuration: const Duration(milliseconds: 500),
-                          duration: const Duration(milliseconds: 500)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          surfaceTintColor: AppColors.primaryColor,
-                          child: SvgPicture.asset(
-                            "assets/icons/image_upload.svg",
-                            height: 60.sp),
-                          itemBuilder: (BuildContext context) {
-                            return {'📸 Camera', '📽️ Gallery', "✖ Remove"}
-                                .map((String choice) {
-                              return PopupMenuItem<String>(
-                                value: choice,
-                                child: Text(choice,
-                                    style: GoogleFonts.workSans(
-                                        textStyle: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: AppColors.blackColor,
-                                            fontWeight: FontWeight.normal)))
-                              );
-                            }).toList();
-                          },
-                        ))
+                    PopupMenuButton<String>(
+                      offset: const Offset(-30, 50),
+                      onSelected: handleClick,
+                      popUpAnimationStyle: AnimationStyle(reverseCurve: Curves.ease,
+                          curve: Curves.ease,
+                      reverseDuration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      surfaceTintColor: AppColors.primaryColor,
+                      child: SvgPicture.asset(
+                        "assets/icons/image_upload.svg",
+                        height: 60.sp),
+                      itemBuilder: (BuildContext context) {
+                        return {'📸 Camera', '📽️ Gallery', "✖ Remove"}
+                            .map((String choice) {
+                          return PopupMenuItem<String>(
+                            value: choice,
+                            child: Text(choice,
+                                style: GoogleFonts.workSans(
+                                    textStyle: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: AppColors.blackColor,
+                                        fontWeight: FontWeight.normal)))
+                          );
+                        }).toList();
+                      },
+                    )
                   ],
                 ),
                 SizedBox(height: 10.sp),
