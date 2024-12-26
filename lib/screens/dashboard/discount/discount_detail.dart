@@ -79,11 +79,11 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                                "${widget.discount.discount.toString().substring(0, 2) ?? ""}% ",
+                                widget.discount.discount ?? "",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.workSans(
                                     textStyle: TextStyle(
-                                        fontSize: 28.sp,
+                                        fontSize: 24.sp,
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold))),
                             Text("OFF",

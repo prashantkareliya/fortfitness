@@ -123,10 +123,10 @@ class _DiscountScreenState extends State<DiscountScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                            "${discount.discount.toString().substring(0, 2)}%",
+                                            discount.discount ?? "",
                                             style: GoogleFonts.workSans(
                                                 textStyle: TextStyle(
-                                                    fontSize: 28.sp,
+                                                    fontSize: 24.sp,
                                                     color: AppColors.whiteColor,
                                                     fontWeight:
                                                         FontWeight.bold))),

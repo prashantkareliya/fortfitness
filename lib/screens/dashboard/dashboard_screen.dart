@@ -46,13 +46,13 @@ class DashboardScreen extends StatelessWidget {
         backgroundColor: AppColors.whiteColor,
         elevation: 0,
         automaticallyImplyLeading: false,
-        leading: from == "main" ? IconButton(
+        leading: /*from == "main" ?*/ IconButton(
             onPressed: () async {
               showLogoutDialog(context);
             },
-            icon: Icon(Icons.logout, color: AppColors.primaryColor)) : IconButton(
+            icon: Icon(Icons.logout, color: AppColors.primaryColor)) /*: IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: SvgPicture.asset("assets/icons/back.svg")),
+            icon: SvgPicture.asset("assets/icons/back.svg"))*/,
         title: Image.asset(ImageString.imgLogo5,
             height: query.height * 0.05),
         centerTitle: true,
