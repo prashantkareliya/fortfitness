@@ -1,12 +1,17 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:fortfitness/constants/constants.dart';
+import 'package:fortfitness/main.dart';
+import 'package:fortfitness/screens/auth/auth_selection.dart';
 import 'package:fortfitness/screens/profile/data/profile_repository.dart';
 import 'package:fortfitness/screens/profile/model/logout_response.dart';
 import 'package:fortfitness/screens/profile/model/profile_response.dart';
 import 'package:fortfitness/screens/profile/model/update_profile_request.dart';
 import 'package:fortfitness/screens/profile/model/update_profile_response.dart';
+import 'package:fortfitness/utils/helpers.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -71,6 +76,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           Map<String, dynamic> responseData = json.decode(response.body);
           LogoutResponse logoutResponse = LogoutResponse.fromJson(responseData);
           emit(LogoutLoaded(logoutResponse: logoutResponse));
+        } else if(response.statusCode == 401) {
+          await logout();
         } else {
           emit(LogoutFailure("Logout failed"));
         }

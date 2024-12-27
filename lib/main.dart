@@ -16,6 +16,9 @@ import 'constants/strings.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 //https://www.figma.com/design/tkmMOGlfPmEGW1z5Iasp35/FortFitness-App?node-id=0-1&node-type=canvas&t=aL3Qf0hxzLNZVQL3-0
 ///api/lock/:lockid/unlock
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if(Platform.isIOS){
@@ -53,6 +56,7 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       child: MaterialApp(
         title: 'Fort Fitness',
+        navigatorKey: navigatorKey,
         theme: ThemeData(
           primarySwatch: Colors.orange,
           useMaterial3: true,
@@ -104,12 +108,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Future checkFirstSeen() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if(preferences.getString(PreferenceString.accessToken) != null){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(from: "main")));
+      Navigator.pushAndRemoveUntil(
+          context, FadePageRoute(builder: (context) => DashboardScreen(from: "main")), (_) => false);
+      //Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(from: "main")));
     } else {
       Navigator.pushAndRemoveUntil(
           context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
     }
-
   }
 
   @override

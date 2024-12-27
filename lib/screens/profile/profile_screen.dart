@@ -582,6 +582,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         if(_formKey.currentState!.validate()){
                                           UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
                                               image: _image1 != null ? _image1!.path : "",
+                                              isChangeImage: _image1 == null ? "1" : "0",
                                               dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
                                           profileBloc.add(UpdateProfileEvent(updateProfileRequest));
                                         }

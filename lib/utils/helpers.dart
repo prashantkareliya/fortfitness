@@ -1,8 +1,20 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fortfitness/main.dart';
+import 'package:fortfitness/screens/auth/auth_selection.dart';
+import 'package:fortfitness/screens/profile/bloc/profile_bloc.dart';
+import 'package:fortfitness/screens/profile/data/profile_datasource.dart';
+import 'package:fortfitness/screens/profile/data/profile_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app_colors.dart';
 
+ProfileBloc profileBloc = ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
+
 class Helpers {
+
+
+
   static PageRoute pageRouteBuilder(widget) {
     return MaterialPageRoute(builder: (context) => widget);
   }
@@ -34,4 +46,16 @@ class Helpers {
         textColor: AppColors.whiteColor,
         fontSize: 16.0);
   }
+
+}
+
+logout() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.clear();
+  await FirebaseMessaging.instance.deleteToken();
+  Navigator.pushAndRemoveUntil(
+      navigatorKey.currentContext!,
+      FadePageRoute(
+          builder: (context) => const AuthSelectionScreen()),
+          (_) => false);
 }

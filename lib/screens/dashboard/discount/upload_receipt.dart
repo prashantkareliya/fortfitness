@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -101,6 +103,7 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                         titleText: "Total Amount",
                         requiredText: "*",
                         controller: totalAmountController,
+                        keyBoardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: kTextFieldDecoration.copyWith(
                           hintText: "Amount",
                           filled: true,
@@ -115,6 +118,8 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "ⓘ Please enter amount";
+                          } else if(int.tryParse(value) == null && double.tryParse(value) == null){
+                            return 'ⓘ Only numbers are allowed';
                           }
                           return null;
                         },
@@ -181,34 +186,40 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                       ],
                     ),
                     SizedBox(height: 10.sp),
-                    if (_image1 != null)
-                      Padding(
-                        padding: EdgeInsets.only(left: 12.sp),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/success.svg"),
-                          SizedBox(width: 5.sp),
-                          Text("File uploaded Successfully",
-                              style: GoogleFonts.workSans(
-                                  textStyle: TextStyle(
-                                      fontSize: 10.sp,
-                                      color: AppColors.blackColor,
-                                      fontWeight: FontWeight.w600))),
-                        ],
-                      ),
-                      )
-                    else
-                      Padding(
-                        padding: EdgeInsets.only(left: 12.sp),
+
+                      Visibility(
+                        visible: _image1 != null,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 12.sp),
                         child: Row(
                           children: [
-                            Text("ⓘ Please upload receipt",
+                            SvgPicture.asset("assets/icons/success.svg"),
+                            SizedBox(width: 5.sp),
+                            Text("File uploaded Successfully",
                                 style: GoogleFonts.workSans(
                                     textStyle: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: AppColors.errorRed,
+                                        fontSize: 10.sp,
+                                        color: AppColors.blackColor,
                                         fontWeight: FontWeight.w600))),
                           ],
+                        ),
+                        ),
+                      ),
+
+                      Visibility(
+                        visible: _image1 == null,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 12.sp),
+                          child: Row(
+                            children: [
+                              Text("ⓘ Please upload receipt",
+                                  style: GoogleFonts.workSans(
+                                      textStyle: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: AppColors.errorRed,
+                                          fontWeight: FontWeight.w600))),
+                            ],
+                          ),
                         ),
                       ),
                     SizedBox(height: query.height * 0.07),
@@ -219,7 +230,8 @@ class _UploadReceiptScreenState extends State<UploadReceiptScreen> {
                             imageName: ImageString.icSignIn,
                             title: ButtonString.btnSubmit,
                             onClick: () {
-                              if(_formKey.currentState!.validate()){
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              if(_formKey.currentState!.validate() && _image1 != null){
                                 DiscountClaimRequest discountClaimRequest =
                                     DiscountClaimRequest(
                                   amount: totalAmountController.text.trim(),

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fortfitness/utils/helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,9 @@ class HttpActions {
       debugPrint(Uri.parse(endPoint + url).toString());
       http.Response response = await http.post(Uri.parse(endPoint + url),
           body: data, headers: headers);
+      if(response.statusCode == 401){
+        logout();
+      }
       return jsonDecode(utf8.decode(response.bodyBytes));
 
     } else {
@@ -37,7 +41,9 @@ class HttpActions {
           headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
       http.Response response = await http.get(Uri.parse(endPoint + url), headers: headers);
-
+      if(response.statusCode == 401){
+        logout();
+      }
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
@@ -73,6 +79,9 @@ class HttpActions {
         http.Response response = await _client.get(Uri.parse(finalUrl), headers: headers);
         log("After Response URl -- $finalUrl");
         log(DateTime.now().microsecondsSinceEpoch.toString());
+        if(response.statusCode == 401){
+          logout();
+        }
         return jsonDecode(utf8.decode(response.bodyBytes));
       } catch (e) {
         return "Please check your internet connection";
@@ -111,6 +120,9 @@ class HttpActions {
         http.Response response = await _client.post(Uri.parse(finalUrl), headers: headers);
         log("After Response URl -- $finalUrl");
         log(DateTime.now().microsecondsSinceEpoch.toString());
+        if(response.statusCode == 401){
+          logout();
+        }
         return jsonDecode(utf8.decode(response.bodyBytes));
       } catch (e) {
         return "Please check your internet connection";
@@ -126,6 +138,9 @@ class HttpActions {
 
       http.Response response =
           await http.patch(Uri.parse(endPoint + url), body: data, headers: headers);
+      if(response.statusCode == 401){
+        logout();
+      }
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
@@ -230,6 +245,9 @@ class HttpActions {
           final apiResponse = await http.Response.fromStream(streamedResponse);
           //Generate response from streamedResponse
           String enCodedStr = utf8.decode(apiResponse.bodyBytes);
+          if(apiResponse.statusCode == 401){
+            logout();
+          }
           return jsonDecode(enCodedStr);
         } catch (e) {
           //Throw error if getting any issue
@@ -283,6 +301,9 @@ class HttpActions {
           final apiResponse = await http.Response.fromStream(streamedResponse);
           //Generate response from streamedResponse
           String enCodedStr = utf8.decode(apiResponse.bodyBytes);
+          if(apiResponse.statusCode == 401){
+            logout();
+          }
           return jsonDecode(enCodedStr);
         } catch (e) {
           //Throw error if getting any issue
