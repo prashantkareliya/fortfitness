@@ -2,61 +2,55 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/components/network_image.dart';
-import 'package:fortfitness/components/progress_indicator.dart';
+import 'package:fortfitness/screens/auth/bloc_user/user_bloc.dart';
 import 'package:fortfitness/utils/app_colors.dart';
 import 'package:fortfitness/utils/helpers.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/strings.dart';
 import '../../main.dart';
 import '../auth/auth_selection.dart';
 import '../profile/bloc/profile_bloc.dart';
-import '../profile/data/profile_datasource.dart';
-import '../profile/data/profile_repository.dart';
 import '../profile/profile_screen.dart';
 import 'discount/discount_screen.dart';
 import 'gym/gyms_screen.dart';
 import 'services/services_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   String? from;
-   DashboardScreen({super.key, this.from});
+  DashboardScreen({super.key, this.from});
 
-  //SharedPreferences? preferences;
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
   String? profileImage;
-  ProfileBloc profileBloc =
-      ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
 
-  void _getProfile(BuildContext context) {
-    profileBloc.add(GetProfileEvent());
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserBloc>().add(GetUserEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getProfile(context);
-    });
     var query = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: /*from == "main" ?*/ IconButton(
-            onPressed: () async {
-              showLogoutDialog(context);
-            },
-            icon: Icon(Icons.logout, color: AppColors.primaryColor)) /*: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: SvgPicture.asset("assets/icons/back.svg"))*/,
-        title: Image.asset(ImageString.imgLogo5,
-            height: query.height * 0.05),
-        centerTitle: true,
-        actions: [
+          backgroundColor: AppColors.whiteColor,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: /*from == "main" ?*/ IconButton(
+              onPressed: () async {
+                showLogoutDialog(context);
+              },
+              icon: Icon(Icons.logout, color: AppColors.primaryColor)),
+          title: Image.asset(ImageString.imgLogo5, height: query.height * 0.05),
+          centerTitle: true,
+          actions: [
             BlocConsumer<ProfileBloc, ProfileState>(
               bloc: profileBloc,
               listener: (context, state) async {
@@ -65,34 +59,37 @@ class DashboardScreen extends StatelessWidget {
                 if (state is ProfileLoaded) {
                   profileImage = state.profileResponse.data!.image.toString();
                 }
-                if(state is LogoutLoading){}
-                if(state is LogoutLoaded) {
-                  SharedPreferences preferences = await SharedPreferences.getInstance();
+                if (state is LogoutLoading) {}
+                if (state is LogoutLoaded) {
+                  SharedPreferences preferences =
+                      await SharedPreferences.getInstance();
                   preferences.clear();
                   await FirebaseMessaging.instance.deleteToken();
                   Navigator.pushAndRemoveUntil(
                       context,
                       FadePageRoute(
                           builder: (context) => const AuthSelectionScreen()),
-                          (_) => false);
+                      (_) => false);
                 }
-                if(state is LogoutFailure){
+                if (state is LogoutFailure) {
                   Helpers.showSnackBar(context, state.error);
                 }
               },
               builder: (context, state) {
                 return IconButton(
-                    onPressed: (){
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => const ProfilePage()));
-                            },
-                            icon: ClipOval(
-                child: SizedBox.fromSize(
-                    size: Size.fromRadius(18.sp),
-                    child: CustomCachedImage(
-                        imageUrl: profileImage ??
-                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-                      fit: BoxFit.cover))));
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProfilePage()));
+                    },
+                    icon: ClipOval(
+                        child: SizedBox.fromSize(
+                            size: Size.fromRadius(18.sp),
+                            child: CustomCachedImage(
+                                imageUrl: profileImage ??
+                                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                                fit: BoxFit.cover))));
               },
             )
           ]),
@@ -104,10 +101,8 @@ class DashboardScreen extends StatelessWidget {
             SizedBox(height: query.height * 0.08),
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => GymScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => GymScreen()));
               },
               child: Container(
                 height: query.height * 0.18,
@@ -119,12 +114,14 @@ class DashboardScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Gym",  style: GoogleFonts.workSans(
-                        textStyle: TextStyle(
-                            fontSize: 28.sp,
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w700))),
-                    Image.asset("assets/images/gym.png", height: query.height * 0.09)
+                    Text("Gym",
+                        style: GoogleFonts.workSans(
+                            textStyle: TextStyle(
+                                fontSize: 28.sp,
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.w700))),
+                    Image.asset("assets/images/gym.png",
+                        height: query.height * 0.09)
                   ],
                 ),
               ),
@@ -135,26 +132,26 @@ class DashboardScreen extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                        const DiscountScreen()));
+                        builder: (context) => const DiscountScreen()));
               },
               child: Container(
                 height: query.height * 0.18,
                 width: query.width / 1.25,
                 decoration: BoxDecoration(
                     color: AppColors.grayTile,
-                    borderRadius: BorderRadius.circular(15.0)
-                ),
+                    borderRadius: BorderRadius.circular(15.0)),
                 padding: EdgeInsets.symmetric(horizontal: 35.sp),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Discount",  style: GoogleFonts.workSans(
-                        textStyle: TextStyle(
-                            fontSize: 28.sp,
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w700))),
-                    Image.asset("assets/images/discount.png", height: query.height * 0.09)
+                    Text("Discount",
+                        style: GoogleFonts.workSans(
+                            textStyle: TextStyle(
+                                fontSize: 28.sp,
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.w700))),
+                    Image.asset("assets/images/discount.png",
+                        height: query.height * 0.09)
                   ],
                 ),
               ),
@@ -165,8 +162,7 @@ class DashboardScreen extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                        const ServicesScreen()));
+                        builder: (context) => const ServicesScreen()));
               },
               child: Container(
                 height: query.height * 0.18,
@@ -174,17 +170,18 @@ class DashboardScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 35.sp),
                 decoration: BoxDecoration(
                     color: AppColors.grayTile,
-                    borderRadius: BorderRadius.circular(15.0)
-                ),
+                    borderRadius: BorderRadius.circular(15.0)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Services",  style: GoogleFonts.workSans(
-                        textStyle: TextStyle(
-                            fontSize: 28.sp,
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w700))),
-                    Image.asset("assets/images/service.png", height: query.height * 0.09)
+                    Text("Services",
+                        style: GoogleFonts.workSans(
+                            textStyle: TextStyle(
+                                fontSize: 28.sp,
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.w700))),
+                    Image.asset("assets/images/service.png",
+                        height: query.height * 0.09)
                   ],
                 ),
               ),
@@ -248,10 +245,9 @@ class DashboardScreen extends StatelessWidget {
         );
       },
     ).then((value) {
-      if(value != null){
+      if (value != null) {
         profileBloc.add(LogoutEvent());
       }
     });
   }
 }
-

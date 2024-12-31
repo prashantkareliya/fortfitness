@@ -38,9 +38,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailController =
-      TextEditingController(/*text: "brandon.azzopardi@axxsky.com"*/);
+      TextEditingController(text: "brandon.azzopardi@axxsky.com");
   TextEditingController passwordController =
-      TextEditingController(/*text: "Admin@1234"*/);
+      TextEditingController(text: "Test1234!!");
 
   AuthBloc authBloc =
       AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
@@ -56,7 +56,23 @@ class _SignInScreenState extends State<SignInScreen> {
   bool password = true;
   //String? deviceToken;
 
+  bool _isButtonDisabled = false;
 
+  Future<void> _onButtonPressed() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+      String? deviceToken = await FirebaseMessaging.instance.getToken();
+      LoginRequest loginRequest = LoginRequest(
+          email: emailController.text.trim(),
+          password: passwordController.text,
+          deviceToken: deviceToken ?? "",
+          deviceType: Platform.isAndroid ? "android" : "ios");
+      authBloc.add(LoginUserEvent(loginRequest));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
         listener: (context, state) {
           if (state is LoginFailure) {
             showSpinner = false;
+            _isButtonDisabled = false;
             Helpers.showSnackBar(context, state.error);
           }
           if (state is LoginLoading) {
@@ -74,10 +91,14 @@ class _SignInScreenState extends State<SignInScreen> {
           }
           if (state is LoginLoaded) {
             showSpinner = false;
-            preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
-            preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
-            preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());
-            preferences.setPreference(PreferenceString.userImage, state.loginResponse.data?.user!.image.toString());
+            preferences.setPreference(PreferenceString.userEmail,
+                state.loginResponse.data?.user!.email.toString());
+            preferences.setPreference(PreferenceString.accessToken,
+                state.loginResponse.data?.token.toString());
+            preferences.setPreference(PreferenceString.userId,
+                state.loginResponse.data?.user!.id.toString());
+            preferences.setPreference(PreferenceString.userImage,
+                state.loginResponse.data?.user!.image.toString());
             Navigator.pushAndRemoveUntil<dynamic>(
                 context,
                 MaterialPageRoute<dynamic>(
@@ -116,16 +137,16 @@ class _SignInScreenState extends State<SignInScreen> {
                               keyBoardType: TextInputType.emailAddress,
                               isSecure: false,
                               decoration: kTextFieldDecoration.copyWith(
-                                hintText: "Email Address",
-                                filled: true,
-                                fillColor: const Color(0xFFF3F3F4),
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  child: Assets.icons.email.svg(
-                                      colorFilter: ColorFilter.mode(
-                                      AppColors.primaryColor,
-                                      BlendMode.srcIn)))),
+                                  hintText: "Email Address",
+                                  filled: true,
+                                  fillColor: const Color(0xFFF3F3F4),
+                                  prefixIcon: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
+                                      child: Assets.icons.email.svg(
+                                          colorFilter: ColorFilter.mode(
+                                              AppColors.primaryColor,
+                                              BlendMode.srcIn)))),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "ⓘ Please enter your email";
@@ -151,8 +172,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                   child: SvgPicture.asset(
                                       "assets/icons/password.svg",
                                       colorFilter: ColorFilter.mode(
-                                          password ? const Color(0xFFBABBBE)
-                                          : AppColors.primaryColor,
+                                          password
+                                              ? const Color(0xFFBABBBE)
+                                              : AppColors.primaryColor,
                                           BlendMode.srcIn)),
                                 ),
                                 suffixIcon: Padding(
@@ -186,19 +208,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                 child: CustomButton(
                                     imageName: ImageString.icSignIn,
                                     title: ButtonString.btnSignIn,
-                                    onClick: () async {
-                                      FocusScope.of(context).requestFocus(FocusNode());
-                                      if (_formKey.currentState!.validate()) {
-                                        String? deviceToken = await FirebaseMessaging.instance.getToken();
-                                        LoginRequest loginRequest = LoginRequest(
-                                                email: emailController.text.trim(),
-                                                password: passwordController.text,
-                                                deviceToken: deviceToken ?? "",
-                                          deviceType: Platform.isAndroid ? "android" : "ios"
-                                        );
-                                        authBloc.add(LoginUserEvent(loginRequest));
-                                      }
-                                    },
+                                    onClick: _isButtonDisabled
+                                        ? null
+                                        : _onButtonPressed,
                                     fontColor: AppColors.whiteColor,
                                     buttonColor: AppColors.primaryColor)),
                             const SizedBox(height: 40),

@@ -10,7 +10,6 @@ import '../data/auth_repository.dart';
 import '../model/regestration_request.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -38,8 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   registrationEvent(RegistrationEvent event, Emitter<AuthState> emit) async {
     emit(RegistrationLoading(true));
-    final response =
-        await authRepository.registerUser(registrationRequest: event.registrationRequest);
+    final response = await authRepository.registerUser(
+        registrationRequest: event.registrationRequest);
     response.when(success: (success) {
       emit(RegistrationLoading(false));
       emit(RegistrationLoaded(registrationResponse: success));
@@ -49,10 +48,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  forgotPasswordEvent(ForgotPasswordEvent event, Emitter<AuthState> emit) async {
+  forgotPasswordEvent(
+      ForgotPasswordEvent event, Emitter<AuthState> emit) async {
     emit(FPLoading(true));
-    final response =
-        await authRepository.forgotPassword(forgotPasswordRequest: event.forgotPasswordRequest);
+    final response = await authRepository.forgotPassword(
+        forgotPasswordRequest: event.forgotPasswordRequest);
     response.when(success: (success) {
       emit(FPLoading(false));
       emit(FPLoaded(forgotPasswordResponse: success));

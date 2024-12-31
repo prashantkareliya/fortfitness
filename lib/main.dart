@@ -4,9 +4,13 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fortfitness/screens/auth/auth_selection.dart';
+import 'package:fortfitness/screens/auth/bloc_user/user_bloc.dart';
+import 'package:fortfitness/screens/profile/data/profile_datasource.dart';
+import 'package:fortfitness/screens/profile/data/profile_repository.dart';
 import 'package:fortfitness/utils/app_colors.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,20 +25,21 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if(Platform.isIOS){
+  if (Platform.isIOS) {
     await Firebase.initializeApp();
   } else {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-          apiKey: "AIzaSyDd7t_fZ9Nx39WHjxK93uZsYiGGssrxIvE",
-          appId: "1:141538630694:android:29342b5d815960145f1ae7",
-          messagingSenderId: "141538630694",
-          projectId: "fortfitnessapp",
-        ));
+      apiKey: "AIzaSyDd7t_fZ9Nx39WHjxK93uZsYiGGssrxIvE",
+      appId: "1:141538630694:android:29342b5d815960145f1ae7",
+      messagingSenderId: "141538630694",
+      projectId: "fortfitnessapp",
+    ));
   }
   await SentryFlutter.init(
-        (options) {
-          options.dsn = 'https://3dba6b0b270aa0d1403382feef922c48@o4508421010030592.ingest.us.sentry.io/4508455997800448';
+    (options) {
+      options.dsn =
+          'https://3dba6b0b270aa0d1403382feef922c48@o4508421010030592.ingest.us.sentry.io/4508455997800448';
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },
@@ -54,24 +59,29 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       useInheritedMediaQuery: true,
-      child: MaterialApp(
-        title: 'Fort Fitness',
-        navigatorKey: navigatorKey,
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-          useMaterial3: true,
-          fontFamily: 'Work Sans',
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          pageTransitionsTheme: const PageTransitionsTheme(builders: {
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          }),
-          scaffoldBackgroundColor: AppColors.whiteColor,
-          colorScheme: ColorScheme.fromSwatch()
-              .copyWith(primary: AppColors.primaryColor, secondary: AppColors.whiteColor),
+      child: BlocProvider(
+        create: (context) =>
+            UserBloc(ProfileRepository(profileDatasource: ProfileDatasource())),
+        child: MaterialApp(
+          title: 'Fort Fitness',
+          navigatorKey: navigatorKey,
+          theme: ThemeData(
+            primarySwatch: Colors.orange,
+            useMaterial3: true,
+            fontFamily: 'Work Sans',
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            pageTransitionsTheme: const PageTransitionsTheme(builders: {
+              TargetPlatform.android: ZoomPageTransitionsBuilder(),
+              TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            }),
+            scaffoldBackgroundColor: AppColors.whiteColor,
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+                primary: AppColors.primaryColor,
+                secondary: AppColors.whiteColor),
+          ),
+          home: const SplashScreen(),
         ),
-        home: const SplashScreen(),
       ),
     );
   }
@@ -107,13 +117,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future checkFirstSeen() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    if(preferences.getString(PreferenceString.accessToken) != null){
+    if (preferences.getString(PreferenceString.accessToken) != null) {
       Navigator.pushAndRemoveUntil(
-          context, FadePageRoute(builder: (context) => DashboardScreen(from: "main")), (_) => false);
+          context,
+          FadePageRoute(builder: (context) => DashboardScreen(from: "main")),
+          (_) => false);
       //Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(from: "main")));
     } else {
       Navigator.pushAndRemoveUntil(
-          context, FadePageRoute(builder: (context) => const AuthSelectionScreen()), (_) => false);
+          context,
+          FadePageRoute(builder: (context) => const AuthSelectionScreen()),
+          (_) => false);
     }
   }
 
@@ -124,8 +138,9 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         height: query.height,
         width: query.width,
-        decoration:  const BoxDecoration(
-            image: DecorationImage(image: AssetImage(ImageString.imgSplash), fit: BoxFit.fill)),
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(ImageString.imgSplash), fit: BoxFit.fill)),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -135,19 +150,21 @@ class _SplashScreenState extends State<SplashScreen> {
                 duration: const Duration(seconds: 1),
                 padding: EdgeInsets.symmetric(vertical: padValue),
                 curve: Curves.easeInOut,
-                child: Image.asset(ImageString.imgLogo, fit: BoxFit.fill, width: 0.6.sw),
+                child: Image.asset(ImageString.imgLogo,
+                    fit: BoxFit.fill, width: 0.6.sw),
               ),
               const Spacer(),
               AnimatedPadding(
-                duration: const Duration(seconds: 1),
-                padding: EdgeInsets.symmetric(vertical: padValue),
-                curve: Curves.easeInOut,
-                child: SpinKitCircle(
-                  color: AppColors.whiteColor,
-                  size: 80.0,
-                )
+                  duration: const Duration(seconds: 1),
+                  padding: EdgeInsets.symmetric(vertical: padValue),
+                  curve: Curves.easeInOut,
+                  child: SpinKitCircle(
+                    color: AppColors.whiteColor,
+                    size: 80.0,
+                  )),
+              SizedBox(
+                height: query.height * 0.03,
               ),
-              SizedBox(height: query.height * 0.03,),
             ],
           ),
         ),
@@ -167,11 +184,11 @@ class FadePageRoute<T> extends MaterialPageRoute<T> {
 
   @override
   Widget buildTransitions(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child,
-      ) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     if (settings.name == "/auth") {
       return child;
     }
@@ -182,4 +199,3 @@ class FadePageRoute<T> extends MaterialPageRoute<T> {
     );
   }
 }
-

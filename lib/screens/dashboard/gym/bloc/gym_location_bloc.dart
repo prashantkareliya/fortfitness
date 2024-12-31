@@ -41,14 +41,16 @@ class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
   }
 
   mapEventToState(KisiLocationEvent event, emit) async {
-   SharedPreferences? preferences = await SharedPreferences.getInstance();
+    SharedPreferences? preferences = await SharedPreferences.getInstance();
 
     if (event is KisiLocationEvent) {
       emit(KisiLocationLoading(true));
       try {
         Map<String, String> headers = {
-          'Content-Type': 'application/json', // Example header, can be customized
-          'Authorization': 'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}', // Optional, if you need auth
+          'Content-Type':
+              'application/json', // Example header, can be customized
+          'Authorization':
+              'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}', // Optional, if you need auth
         };
         final response = await http.get(
             Uri.parse('${endPoint}location/${event.locationId}/locks'),
@@ -69,27 +71,29 @@ class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
   }
 
   openGymLock(OpenLockEvent event, Emitter<GymLocationState> emit) async {
-      SharedPreferences? preferences = await SharedPreferences.getInstance();
+    SharedPreferences? preferences = await SharedPreferences.getInstance();
 
-      emit(OpenLockLoading(true));
-      try {
-        Map<String, String> headers = {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}',
-        };
-        final response = await http.post(body: event.unlockRequest.toString(),
-            Uri.parse('${endPoint}lock/${event.lockId}/unlock'),
-            headers: headers);
+    emit(OpenLockLoading(true));
+    try {
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}',
+      };
+      final response = await http.post(
+          body: event.unlockRequest,
+          Uri.parse('${endPoint}lock/${event.lockId}/unlock'),
+          headers: headers);
 
-        if (response.statusCode == 200) {
-          Map<String, dynamic> responseData = json.decode(response.body);
-          UnlockResponse unlockResponse = UnlockResponse.fromJson(responseData);
-          emit(OpenLockLoaded(unlockResponse: unlockResponse));
-        } else {
-          emit(OpenLockFailure('You are too far away.'));
-        }
-      } catch (e) {
-        emit(OpenLockFailure('An error occurred: $e'));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        UnlockResponse unlockResponse = UnlockResponse.fromJson(responseData);
+        emit(OpenLockLoaded(unlockResponse: unlockResponse));
+      } else {
+        emit(OpenLockFailure('You are too far away.'));
       }
-      }
+    } catch (e) {
+      emit(OpenLockFailure('An error occurred: $e'));
+    }
+  }
 }

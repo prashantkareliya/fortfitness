@@ -14,7 +14,7 @@ InputDecoration kTextFieldDecoration = InputDecoration(
     enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
         borderRadius: BorderRadius.circular(12.0) // Border radius
-    ),
+        ),
     focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
         borderRadius: BorderRadius.circular(12.0)),
@@ -28,7 +28,7 @@ InputDecoration kTextFieldDecoration = InputDecoration(
       padding: const EdgeInsets.all(10.0),
       child: SvgPicture.asset("assets/svg/email.svg",
           colorFilter:
-          ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)),
+              ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)),
     ),
     errorStyle: GoogleFonts.workSans(
         textStyle: TextStyle(
@@ -47,8 +47,20 @@ class CustomTextField extends StatefulWidget {
   final int? length;
   final int? lines;
   bool isSecure;
+  final void Function(String)? onChange;
 
-  CustomTextField({super.key, this.controller, this.decoration, this.validator, this.titleText, this.keyBoardType, this.isSecure = false, this.length, this.lines, this.requiredText});
+  CustomTextField(
+      {super.key,
+      this.controller,
+      this.decoration,
+      this.validator,
+      this.titleText,
+      this.keyBoardType,
+      this.isSecure = false,
+      this.length,
+      this.lines,
+      this.requiredText,
+      this.onChange});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -58,14 +70,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
   late FocusNode _focusNode;
   bool _isFocused = false;
 
-
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(() {
       setState(() {
-       _isFocused = _focusNode.hasFocus;
+        _isFocused = _focusNode.hasFocus;
       });
     });
   }
@@ -74,7 +85,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
   void dispose() {
     super.dispose();
     _focusNode.dispose();
-
   }
 
   @override
@@ -85,15 +95,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
         RichText(
             text: TextSpan(
                 children: <TextSpan>[
-                  TextSpan(
-                      text: widget.titleText ?? "",
-                      style: GoogleFonts.workSans(
-                          textStyle: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.w600))),
-                  TextSpan(text: widget.requiredText ?? ""),
-                ],
+              TextSpan(
+                  text: widget.titleText ?? "",
+                  style: GoogleFonts.workSans(
+                      textStyle: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w600))),
+              TextSpan(text: widget.requiredText ?? ""),
+            ],
                 style: GoogleFonts.workSans(
                     textStyle: TextStyle(
                         fontSize: 14.sp,
@@ -114,12 +124,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
             focusNode: _focusNode,
             keyboardType: widget.keyBoardType,
             obscureText: widget.isSecure,
+            onChanged: widget.onChange,
             style: GoogleFonts.workSans(
                 textStyle: TextStyle(
                     fontSize: 16.sp,
                     color: AppColors.blackColor,
                     fontWeight: FontWeight.w600)),
-
             decoration: widget.decoration,
             validator: widget.validator,
           ),

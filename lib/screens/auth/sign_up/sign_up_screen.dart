@@ -16,7 +16,6 @@ import '../../../constants/strings.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
-
 import '../bloc/auth_bloc.dart';
 import '../data/auth_datasource.dart';
 import '../data/auth_repository.dart';
@@ -34,7 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   AuthBloc authBloc =
       AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
 
-  TextEditingController nameController = TextEditingController();
+  TextEditingController fNameController = TextEditingController();
+  TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
@@ -42,8 +42,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController ddController = TextEditingController();
   TextEditingController mmController = TextEditingController();
   TextEditingController yyyyController = TextEditingController();
-
-
 
   final FocusNode _DDFocusNode = FocusNode();
   final FocusNode _MMFocusNode = FocusNode();
@@ -82,7 +80,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _MMFocusNode.dispose();
     _YYYYFocusNode.dispose();
 
-    nameController.dispose();
+    fNameController.dispose();
+    lNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
@@ -93,6 +92,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool password = true;
   bool confirmPassword = true;
 
+  bool _isButtonDisabled = false;
+
+  Future<void> _onButtonPressed() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+      RegistrationRequest registrationRequest = RegistrationRequest(
+          firstName: fNameController.text,
+          lastName: lNameController.text,
+          email: emailController.text.trim(),
+          password: passwordController.text,
+          dob:
+              "${yyyyController.text}-${mmController.text}-${ddController.text}",
+          role: "receptionist");
+      authBloc.add(RegistrationEvent(registrationRequest));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,22 +120,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
         listener: (context, state) {
           if (state is RegistrationFailure) {
             showSpinner = false;
+            _isButtonDisabled = false;
             Helpers.showSnackBar(context, state.error);
           }
-          if(state is RegistrationLoading) {
+          if (state is RegistrationLoading) {
             showSpinner = true;
           }
           if (state is RegistrationLoaded) {
             showSpinner = false;
-            Helpers.showSnackBar(context, state.registrationResponse.message ?? "");
-            /*preferences.setPreference(PreferenceString.userEmail, state.loginResponse.data?.user!.email.toString());
-            preferences.setPreference(PreferenceString.accessToken, state.loginResponse.data?.token.toString());
-            preferences.setPreference(PreferenceString.userId, state.loginResponse.data?.user!.id.toString());*/
+            Helpers.showSnackBar(
+                context, state.registrationResponse.message ?? "");
             Navigator.pushAndRemoveUntil<dynamic>(
               context,
               MaterialPageRoute<dynamic>(
-                builder: (BuildContext context) =>
-                    const SignInScreen(),
+                builder: (BuildContext context) => const SignInScreen(),
               ),
               (route) => false,
             );
@@ -131,48 +148,73 @@ class _SignUpScreenState extends State<SignUpScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    CommonHeader(text2: "Sign Up now!"),
-                  ],
-                ),
-                SizedBox(height: 15.sp),
-                Image.asset(ImageString.imgLine),
-                SizedBox(height: 20.sp),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CommonHeader(text2: "Sign Up now!"),
+                      ],
+                    ),
+                    SizedBox(height: 10.sp),
+                    Image.asset(ImageString.imgLine),
+                    SizedBox(height: 10.sp),
                     Form(
                       key: _formKey,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         children: [
                           CustomTextField(
-                            titleText: "Name",
-                            controller: nameController,
+                            titleText: "First name",
+                            controller: fNameController,
                             keyBoardType: TextInputType.name,
                             isSecure: false,
                             decoration: kTextFieldDecoration.copyWith(
-                              hintText: "Name",
+                              hintText: "First name",
                               filled: true,
                               fillColor: const Color(0xFFF3F3F4),
                               prefixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: Assets.icons.name.svg(
                                     colorFilter: ColorFilter.mode(
-                                    AppColors.primaryColor, BlendMode.srcIn)),
+                                        AppColors.primaryColor,
+                                        BlendMode.srcIn)),
                               ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "ⓘ Please enter your name";
+                                return "ⓘ Please enter your first name";
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 15),
+                          CustomTextField(
+                            titleText: "Last name",
+                            controller: lNameController,
+                            keyBoardType: TextInputType.name,
+                            isSecure: false,
+                            decoration: kTextFieldDecoration.copyWith(
+                              hintText: "Last name",
+                              filled: true,
+                              fillColor: const Color(0xFFF3F3F4),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Assets.icons.name.svg(
+                                    colorFilter: ColorFilter.mode(
+                                        AppColors.primaryColor,
+                                        BlendMode.srcIn)),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "ⓘ Please enter your last name";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 15),
                           CustomTextField(
                             titleText: "Email Address",
                             controller: emailController,
@@ -183,10 +225,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               filled: true,
                               fillColor: const Color(0xFFF3F3F4),
                               prefixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: Assets.icons.email.svg(colorFilter: ColorFilter.mode(
-                                    AppColors.primaryColor, BlendMode.srcIn)),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Assets.icons.email.svg(
+                                    colorFilter: ColorFilter.mode(
+                                        AppColors.primaryColor,
+                                        BlendMode.srcIn)),
                               ),
                             ),
                             validator: (value) {
@@ -198,27 +242,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 15),
                           CustomTextField(
                             titleText: "Password",
                             controller: passwordController,
                             keyBoardType: TextInputType.text,
                             isSecure: password,
+                            onChange: (v) {
+                              setState(() {});
+                            },
                             decoration: kTextFieldDecoration.copyWith(
                               hintText: "Password",
                               filled: true,
                               fillColor: const Color(0xFFF3F3F4),
                               prefixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: SvgPicture.asset(
                                     "assets/icons/password.svg",
                                     colorFilter: ColorFilter.mode(
-                                        AppColors.primaryColor, BlendMode.srcIn)),
+                                        AppColors.primaryColor,
+                                        BlendMode.srcIn)),
                               ),
                               suffixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -242,7 +290,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 20),
+                          Visibility(
+                              visible: passwordController.text.isNotEmpty,
+                              child: passwordContainsMethod()),
+                          const SizedBox(height: 15),
                           CustomTextField(
                             titleText: "Confirm Password",
                             controller: confirmPasswordController,
@@ -253,16 +304,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               filled: true,
                               fillColor: const Color(0xFFF3F3F4),
                               prefixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: SvgPicture.asset(
                                     "assets/icons/password.svg",
                                     colorFilter: ColorFilter.mode(
-                                        AppColors.primaryColor, BlendMode.srcIn)),
+                                        AppColors.primaryColor,
+                                        BlendMode.srcIn)),
                               ),
                               suffixIcon: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -284,12 +336,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 return "ⓘ Please enter your Confirm password";
                               } else if (passwordController.text !=
                                   confirmPasswordController.text) {
-                                return "ⓘ New Password and Confirm password not matched";
+                                return "ⓘ Password and Confirm password not matched";
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 15),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -327,44 +379,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         maxLength: 2,
                                         decoration: InputDecoration(
                                           counter: const SizedBox.shrink(),
-                                            fillColor: AppColors.whiteColor,
-                                            filled: true,
-                                            hintText: 'DD',
-                                            hintStyle: GoogleFonts.workSans(
-                                                color: const Color(0xFFBABBBE),
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16.sp),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0) // Border radius
-                                                ),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.red,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                                    borderSide: const BorderSide(
-                                                        color: Colors.red,
-                                                        width: 1.5),
-                                                    borderRadius: BorderRadius
-                                                        .circular(12.0)),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                          fillColor: AppColors.whiteColor,
+                                          filled: true,
+                                          hintText: 'DD',
+                                          hintStyle: GoogleFonts.workSans(
+                                              color: const Color(0xFFBABBBE),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0) // Border radius
+                                              ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          errorBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: Colors.red,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red,
+                                                      width: 1.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
                                           errorStyle: GoogleFonts.workSans(
                                               textStyle: TextStyle(
                                                   fontSize: 12.sp,
@@ -374,7 +426,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Date";
-                                          } else if(int.parse(value) > 31){
+                                          } else if (int.parse(value) > 31) {
                                             return "Not valid";
                                           }
                                           return null;
@@ -400,174 +452,173 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         keyboardType: TextInputType.number,
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.workSans(
-                                        textStyle: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: AppColors.blackColor,
-                                            fontWeight: FontWeight.w600)),
+                                            textStyle: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.w600)),
                                         maxLines: 1,
                                         maxLength: 2,
-                                    decoration: InputDecoration(
-                                        counter: const SizedBox.shrink(),
-                                        fillColor: AppColors.whiteColor,
-                                        filled: true,
-                                        hintText: 'MM',
-
-                                        hintStyle: GoogleFonts.workSans(
-                                            color: const Color(0xFFBABBBE),
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16.sp),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryColor,
-                                                width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0) // Border radius
+                                        decoration: InputDecoration(
+                                          counter: const SizedBox.shrink(),
+                                          fillColor: AppColors.whiteColor,
+                                          filled: true,
+                                          hintText: 'MM',
+                                          hintStyle: GoogleFonts.workSans(
+                                              color: const Color(0xFFBABBBE),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0) // Border radius
+                                              ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          errorBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: Colors.red,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red,
+                                                      width: 1.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
+                                          errorStyle: GoogleFonts.workSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.errorRed,
+                                                  fontWeight: FontWeight.w600)),
                                         ),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryColor,
-                                                width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0)),
-                                        errorBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Colors.red, width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Colors.red, width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0)),
-                                        contentPadding: const EdgeInsets
-                                            .symmetric(
-                                            horizontal: 15, vertical: 10),
-                                      errorStyle: GoogleFonts.workSans(
-                                          textStyle: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: AppColors.errorRed,
-                                              fontWeight: FontWeight.w600)),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Enter Month";
+                                          } else if (int.parse(value) > 12) {
+                                            return "Not valid";
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Enter Month";
-                                      } else if(int.parse(value) > 12){
-                                        return "Not valid";
-                                      }
-                                      return null;
-                                    },
                                   ),
-                                ),
-                              ),
-                              SizedBox(width: 8.sp),
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  padding: EdgeInsets.all(4.sp),
-                                  decoration: BoxDecoration(
-                                      color: _isYYYYFocused
-                                          ? AppColors.primaryColor.withOpacity(
-                                          0.2)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(12.0)),
-                                  child: TextFormField(
-                                    controller: yyyyController,
-                                    focusNode: _YYYYFocusNode,
-                                    keyboardType: TextInputType.number,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    maxLength: 4,
-                                    style: GoogleFonts.workSans(
-                                        textStyle: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: AppColors.blackColor,
-                                            fontWeight: FontWeight.w600)),
-                                    decoration: InputDecoration(
-                                        counter: const SizedBox.shrink(),
-                                        fillColor: AppColors.whiteColor,
-                                        filled: true,
-                                        hintText: 'YYYY',
-                                        hintStyle: GoogleFonts.workSans(
-                                            color: const Color(0xFFBABBBE),
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16.sp),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryColor,
-                                                width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0) // Border radius
+                                  SizedBox(width: 8.sp),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(4.sp),
+                                      decoration: BoxDecoration(
+                                          color: _isYYYYFocused
+                                              ? AppColors.primaryColor
+                                                  .withOpacity(0.2)
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12.0)),
+                                      child: TextFormField(
+                                        controller: yyyyController,
+                                        focusNode: _YYYYFocusNode,
+                                        keyboardType: TextInputType.number,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        maxLength: 4,
+                                        style: GoogleFonts.workSans(
+                                            textStyle: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: AppColors.blackColor,
+                                                fontWeight: FontWeight.w600)),
+                                        decoration: InputDecoration(
+                                          counter: const SizedBox.shrink(),
+                                          fillColor: AppColors.whiteColor,
+                                          filled: true,
+                                          hintText: 'YYYY',
+                                          hintStyle: GoogleFonts.workSans(
+                                              color: const Color(0xFFBABBBE),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0) // Border radius
+                                              ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          errorBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: Colors.red,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red,
+                                                      width: 1.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
+                                          errorStyle: GoogleFonts.workSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.errorRed,
+                                                  fontWeight: FontWeight.w600)),
                                         ),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryColor,
-                                                width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0)),
-                                        errorBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Colors.red, width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Colors.red, width: 1.5),
-                                            borderRadius: BorderRadius.circular(
-                                                12.0)),
-                                        contentPadding: const EdgeInsets
-                                            .symmetric(
-                                            horizontal: 15, vertical: 10),
-                                      errorStyle: GoogleFonts.workSans(
-                                          textStyle: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: AppColors.errorRed,
-                                              fontWeight: FontWeight.w600)),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Enter Year";
+                                          } else if (int.parse(value) > 2024) {
+                                            return "Not valid";
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Enter Year";
-                                      } else if(int.parse(value) > 2024){
-                                        return "Not valid";
-                                      }
-                                      return null;
-                                    },
                                   ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
                           SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.072,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.072,
                               width: MediaQuery.of(context).size.width * 0.45,
                               child: CustomButton(
                                   imageName: ImageString.icSignIn,
                                   title: ButtonString.btnSubmit,
-                                  onClick: () {
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                    if (_formKey.currentState!.validate()) {
-                                      RegistrationRequest registrationRequest =
-                                          RegistrationRequest(
-                                              name: nameController.text,
-                                              email: emailController.text.trim(),
-                                              password: passwordController.text,
-                                              dob:
-                                                  "${yyyyController.text}-${mmController.text}-${ddController.text}",
-                                              role: "receptionist");
-                                      authBloc.add(
-                                          RegistrationEvent(registrationRequest));
-                                    }
-                                  },
+                                  onClick: _isButtonDisabled
+                                      ? null
+                                      : _onButtonPressed,
                                   fontColor: AppColors.whiteColor,
                                   buttonColor: AppColors.primaryColor)),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
                     RichText(
-                    text: TextSpan(
+                        text: TextSpan(
                       children: <TextSpan>[
                         TextSpan(
                             text: LabelString.alreadyAccount,
@@ -585,7 +636,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                      const SignInScreen()));
+                                          const SignInScreen()));
                             },
                         ),
                       ],
@@ -596,13 +647,118 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               fontWeight: FontWeight.w500,
                               decoration: TextDecoration.underline)),
                     )),
-                const SizedBox(height: 20),
-              ],
-            ),
-                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Column passwordContainsMethod() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Text("Your password must contain:",
+              style: GoogleFonts.workSans(
+                  textStyle: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
+                      color: AppColors.blackColor))),
+        ),
+
+        //This condition for check length
+        if (passwordController.text.length <= 8)
+          PasswordContains(
+              icon: Icons.close,
+              textMsg: "Must be at 8 characters long",
+              iconColor: AppColors.blackColor.withOpacity(0.4),
+              textColor: AppColors.blackColor.withOpacity(0.4))
+        else
+          PasswordContains(
+              icon: Icons.done,
+              textMsg: "Must be at 8 characters long",
+              iconColor: AppColors.primaryColor,
+              textColor: AppColors.blackColor),
+
+        //This condition for check lowercase
+        if (!passwordController.text.contains(RegExp(r'[a-z]')))
+          PasswordContains(
+              icon: Icons.close,
+              textMsg: "Should contain lowercase",
+              iconColor: AppColors.blackColor.withOpacity(0.4),
+              textColor: AppColors.blackColor.withOpacity(0.4))
+        else
+          PasswordContains(
+              icon: Icons.done,
+              textMsg: "Should contain lowercase",
+              iconColor: AppColors.primaryColor,
+              textColor: AppColors.blackColor),
+
+        //This condition for check numbers
+        if (!passwordController.text.contains(RegExp(r'[0-9]')))
+          PasswordContains(
+            icon: Icons.close,
+            textMsg: "Should contain numbers",
+            iconColor: AppColors.blackColor.withOpacity(0.4),
+            textColor: AppColors.blackColor.withOpacity(0.4),
+          )
+        else
+          PasswordContains(
+              icon: Icons.done,
+              textMsg: "Should contain numbers",
+              iconColor: AppColors.primaryColor,
+              textColor: AppColors.blackColor),
+
+        //This condition for check special character
+        if (!passwordController.text.contains(RegExp(r'[!@#%^&*(),.?":{}|<>]')))
+          PasswordContains(
+              icon: Icons.close,
+              textMsg: "Should contain special characters",
+              iconColor: AppColors.blackColor.withOpacity(0.4),
+              textColor: AppColors.blackColor.withOpacity(0.4))
+        else
+          PasswordContains(
+              icon: Icons.done,
+              textMsg: "Should contain special characters",
+              iconColor: AppColors.primaryColor,
+              textColor: AppColors.blackColor),
+      ],
+    );
+  }
+}
+
+class PasswordContains extends StatelessWidget {
+  IconData? icon;
+  String? textMsg;
+  Color? textColor;
+  Color? iconColor;
+
+  PasswordContains(
+      {this.icon, this.textMsg, this.textColor, this.iconColor, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 3.sp, horizontal: 12.sp),
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 18.sp),
+          SizedBox(width: 8.sp),
+          Text(
+            textMsg ?? "",
+            style: GoogleFonts.workSans(
+                textStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12.sp,
+                    color: textColor)),
+          ),
+        ],
       ),
     );
   }

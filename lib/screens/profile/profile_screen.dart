@@ -1,4 +1,4 @@
-import'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/screens/auth/bloc_user/user_bloc.dart';
 import 'package:fortfitness/screens/profile/bloc/profile_bloc.dart';
 import 'package:fortfitness/screens/profile/data/profile_datasource.dart';
 import 'package:fortfitness/screens/profile/data/profile_repository.dart';
@@ -16,20 +17,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/cutom_textfield.dart';
 import '../../components/headerText.dart';
 import '../../components/network_image.dart';
 import '../../components/progress_indicator.dart';
-import '../../constants/constants.dart';
 import '../../constants/strings.dart';
-import '../../http_actions/app_http.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helpers.dart';
-import '../../utils/progress_dialog_utils.dart';
 import '../dashboard/dashboard_screen.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -40,7 +36,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   ProfileBloc profileBloc =
       ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
 
@@ -48,23 +43,21 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-
   TextEditingController ddController = TextEditingController();
   TextEditingController mmController = TextEditingController();
   TextEditingController yyyyController = TextEditingController();
-  String profileImage = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+  String profileImage =
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
   final FocusNode _DDFocusNode = FocusNode();
   final FocusNode _MMFocusNode = FocusNode();
   final FocusNode _YYYYFocusNode = FocusNode();
-
 
   bool _isDDFocused = false;
   bool _isMMFocused = false;
   bool _isYYYYFocused = false;
 
   final _formKey = GlobalKey<FormState>();
-
 
   @override
   void initState() {
@@ -129,9 +122,11 @@ class _ProfilePageState extends State<ProfilePage> {
           emailController.text = state.profileResponse.data!.email ?? "";
           ddController.text = state.profileResponse.data!.dob!.substring(8, 10);
           mmController.text = state.profileResponse.data!.dob!.substring(5, 7);
-          yyyyController.text = state.profileResponse.data!.dob!.substring(0, 4);
+          yyyyController.text =
+              state.profileResponse.data!.dob!.substring(0, 4);
           profileImage = state.profileResponse.data!.image!.toString();
-          preferences.setPreference(PreferenceString.userImage, state.profileResponse.data!.image.toString());
+          preferences.setPreference(PreferenceString.userImage,
+              state.profileResponse.data!.image.toString());
         }
 
         if (state is UpdateProfileFailure) {
@@ -142,24 +137,24 @@ class _ProfilePageState extends State<ProfilePage> {
           showSpinner = true;
         }
         if (state is UpdateProfileLoaded) {
-
           /*Helpers.showSnackBar(
               context, state.updateProfileResponse.message ?? "");*/
-          profileBloc.add(GetProfileEvent());
 
+          context.read<UserBloc>().add(GetUserEvent());
           Future.delayed(const Duration(seconds: 2), () {
             showSpinner = false;
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => DashboardScreen(from: "main")));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DashboardScreen(from: "main")));
           });
         }
       },
       builder: (context, state) {
         return ModalProgressHUD(
           inAsyncCall: showSpinner,
-          progressIndicator: SpinKitCircle(
-              color: AppColors.primaryColor,
-              size: 60.0),
+          progressIndicator:
+              SpinKitCircle(color: AppColors.primaryColor, size: 60.0),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.sp),
               child: SingleChildScrollView(
@@ -175,49 +170,52 @@ class _ProfilePageState extends State<ProfilePage> {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    _image1 != null ?
-                Padding(
-                padding: EdgeInsets.only(bottom: 10.sp, right: 15.sp),
-            child: ClipOval(
-                child: SizedBox.fromSize(
-                    size: Size.fromRadius(60.sp),
-                    child: Image.file(_image1!,
-                        fit: BoxFit.cover))),
-          )
-                    : Padding(
-                      padding: EdgeInsets.only(bottom: 10.sp, right: 15.sp),
-                      child: ClipOval(
-                          child: SizedBox.fromSize(
-                              size: Size.fromRadius(60.sp),
-                              child: CustomCachedImage(imageUrl: Uri.parse(profileImage).toString(),
-                                  fit: BoxFit.cover))),
-                    ),
+                    _image1 != null
+                        ? Padding(
+                            padding:
+                                EdgeInsets.only(bottom: 10.sp, right: 15.sp),
+                            child: ClipOval(
+                                child: SizedBox.fromSize(
+                                    size: Size.fromRadius(60.sp),
+                                    child: Image.file(_image1!,
+                                        fit: BoxFit.cover))),
+                          )
+                        : Padding(
+                            padding:
+                                EdgeInsets.only(bottom: 10.sp, right: 15.sp),
+                            child: ClipOval(
+                                child: SizedBox.fromSize(
+                                    size: Size.fromRadius(60.sp),
+                                    child: CustomCachedImage(
+                                        imageUrl:
+                                            Uri.parse(profileImage).toString(),
+                                        fit: BoxFit.cover))),
+                          ),
                     PopupMenuButton<String>(
                       offset: const Offset(-30, 50),
                       onSelected: handleClick,
-                      popUpAnimationStyle: AnimationStyle(reverseCurve: Curves.ease,
+                      popUpAnimationStyle: AnimationStyle(
+                          reverseCurve: Curves.ease,
                           curve: Curves.ease,
-                      reverseDuration: const Duration(milliseconds: 500),
-                      duration: const Duration(milliseconds: 500)),
+                          reverseDuration: const Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                       surfaceTintColor: AppColors.primaryColor,
-                      child: SvgPicture.asset(
-                        "assets/icons/image_upload.svg",
-                        height: 60.sp),
+                      child: SvgPicture.asset("assets/icons/image_upload.svg",
+                          height: 60.sp),
                       itemBuilder: (BuildContext context) {
                         return {'📸 Camera', '📽️ Gallery', "✖ Remove"}
                             .map((String choice) {
                           return PopupMenuItem<String>(
-                            value: choice,
-                            child: Text(choice,
-                                style: GoogleFonts.workSans(
-                                    textStyle: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: AppColors.blackColor,
-                                        fontWeight: FontWeight.normal)))
-                          );
+                              value: choice,
+                              child: Text(choice,
+                                  style: GoogleFonts.workSans(
+                                      textStyle: TextStyle(
+                                          fontSize: 16.sp,
+                                          color: AppColors.blackColor,
+                                          fontWeight: FontWeight.normal))));
                         }).toList();
                       },
                     )
@@ -237,7 +235,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           filled: true,
                           fillColor: const Color(0xFFF3F3F4),
                           prefixIcon: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
                             child: SvgPicture.asset("assets/icons/name.svg",
                                 colorFilter: ColorFilter.mode(
                                     AppColors.primaryColor, BlendMode.srcIn)),
@@ -256,12 +255,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           titleText: "Email Address",
                           controller: emailController,
                           decoration: kTextFieldDecoration.copyWith(
-
                             hintText: "Email Address",
                             filled: true,
                             fillColor: const Color(0xFFF3F3F4),
                             prefixIcon: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15.0),
                               child: SvgPicture.asset("assets/icons/email.svg",
                                   colorFilter: ColorFilter.mode(
                                       AppColors.primaryColor, BlendMode.srcIn)),
@@ -349,54 +348,55 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 color: AppColors.blackColor,
                                                 fontWeight: FontWeight.w600)),
                                         decoration: InputDecoration(
-                                            counter: const SizedBox.shrink(),
-                                            fillColor: AppColors.whiteColor,
-                                            filled: true,
-                                            hintText: 'DD',
-                                            hintStyle: GoogleFonts.workSans(
-                                                color: const Color(0xFFBABBBE),
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16.sp),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0) // Border radius
-                                                ),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.red,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                                    borderSide: const BorderSide(
-                                                        color: Colors.red,
-                                                        width: 1.5),
-                                                    borderRadius: BorderRadius
-                                                        .circular(12.0)),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                          counter: const SizedBox.shrink(),
+                                          fillColor: AppColors.whiteColor,
+                                          filled: true,
+                                          hintText: 'DD',
+                                          hintStyle: GoogleFonts.workSans(
+                                              color: const Color(0xFFBABBBE),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0) // Border radius
+                                              ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          errorBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: Colors.red,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red,
+                                                      width: 1.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
                                           errorStyle: GoogleFonts.workSans(
                                               textStyle: TextStyle(
                                                   fontSize: 12.sp,
                                                   color: AppColors.errorRed,
-                                                  fontWeight: FontWeight.w600)),),
+                                                  fontWeight: FontWeight.w600)),
+                                        ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Date";
-                                          } else if(int.parse(value) > 31){
+                                          } else if (int.parse(value) > 31) {
                                             return "Not valid";
                                           }
                                           return null;
@@ -428,56 +428,56 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 fontWeight: FontWeight.w600)),
                                         maxLines: 1,
                                         maxLength: 2,
-
                                         decoration: InputDecoration(
-                                            counter: const SizedBox.shrink(),
-                                            fillColor: AppColors.whiteColor,
-                                            filled: true,
-                                            hintText: 'MM',
-                                            hintStyle: GoogleFonts.workSans(
-                                                color: const Color(0xFFBABBBE),
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16.sp),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0) // Border radius
-                                                ),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.red,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                                    borderSide: const BorderSide(
-                                                        color: Colors.red,
-                                                        width: 1.5),
-                                                    borderRadius: BorderRadius
-                                                        .circular(12.0)),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                          counter: const SizedBox.shrink(),
+                                          fillColor: AppColors.whiteColor,
+                                          filled: true,
+                                          hintText: 'MM',
+                                          hintStyle: GoogleFonts.workSans(
+                                              color: const Color(0xFFBABBBE),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0) // Border radius
+                                              ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          errorBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: Colors.red,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red,
+                                                      width: 1.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
                                           errorStyle: GoogleFonts.workSans(
                                               textStyle: TextStyle(
                                                   fontSize: 12.sp,
                                                   color: AppColors.errorRed,
-                                                  fontWeight: FontWeight.w600)),),
+                                                  fontWeight: FontWeight.w600)),
+                                        ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Month";
-                                          } else if(int.parse(value) > 12){
+                                          } else if (int.parse(value) > 12) {
                                             return "Not valid";
                                           }
                                           return null;
@@ -511,53 +511,54 @@ class _ProfilePageState extends State<ProfilePage> {
                                         maxLength: 4,
                                         decoration: InputDecoration(
                                           counter: const SizedBox.shrink(),
-                                            fillColor: AppColors.whiteColor,
-                                            filled: true,
-                                            hintText: 'YYYY',
-                                            hintStyle: GoogleFonts.workSans(
-                                                color: const Color(0xFFBABBBE),
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16.sp),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0) // Border radius
-                                                ),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.red,
-                                                    width: 1.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0)),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                                    borderSide: const BorderSide(
-                                                        color: Colors.red,
-                                                        width: 1.5),
-                                                    borderRadius: BorderRadius
-                                                        .circular(12.0)),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                          fillColor: AppColors.whiteColor,
+                                          filled: true,
+                                          hintText: 'YYYY',
+                                          hintStyle: GoogleFonts.workSans(
+                                              color: const Color(0xFFBABBBE),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0) // Border radius
+                                              ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryColor,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          errorBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: Colors.red,
+                                                  width: 1.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0)),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red,
+                                                      width: 1.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
                                           errorStyle: GoogleFonts.workSans(
                                               textStyle: TextStyle(
                                                   fontSize: 12.sp,
                                                   color: AppColors.errorRed,
-                                                  fontWeight: FontWeight.w600)),),
+                                                  fontWeight: FontWeight.w600)),
+                                        ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Year";
-                                          } else if(int.parse(value) > 2024){
+                                          } else if (int.parse(value) > 2024) {
                                             return "Not valid";
                                           }
                                           return null;
@@ -579,15 +580,23 @@ class _ProfilePageState extends State<ProfilePage> {
                                     imageName: ImageString.icSignIn,
                                     title: ButtonString.btnSubmit,
                                     onClick: () async {
-                                        if(_formKey.currentState!.validate()){
-                                          UpdateProfileRequest updateProfileRequest = UpdateProfileRequest(
-                                              image: _image1 != null ? _image1!.path : "",
-                                              isChangeImage: _image1 == null ? "1" : "0",
-                                              dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
-                                          profileBloc.add(UpdateProfileEvent(updateProfileRequest));
-                                        }
-                                      FocusScope.of(context).requestFocus(FocusNode());
-                                      },
+                                      if (_formKey.currentState!.validate()) {
+                                        UpdateProfileRequest
+                                            updateProfileRequest =
+                                            UpdateProfileRequest(
+                                                image: _image1 != null
+                                                    ? _image1!.path
+                                                    : "",
+                                                isChangeImage:
+                                                    _image1 == null ? "1" : "0",
+                                                dob:
+                                                    "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                        profileBloc.add(UpdateProfileEvent(
+                                            updateProfileRequest));
+                                      }
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                    },
                                     fontColor: AppColors.whiteColor,
                                     buttonColor: AppColors.primaryColor)),
                           ),

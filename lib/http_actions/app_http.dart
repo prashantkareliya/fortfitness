@@ -10,25 +10,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/constants.dart';
 import '../constants/strings.dart';
 
-
 class HttpActions {
   String endPoint = Constants.of().endpoint;
   http.Client _client = http.Client();
 
-  Future<dynamic> postMethod(String url, {dynamic data, Map<String, String>? headers}) async {
+  Future<dynamic> postMethod(String url,
+      {dynamic data, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
-      headers = getSessionData(headers ?? {}, preferences.getString(PreferenceString.accessToken));
+      headers = getSessionData(
+          headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
       debugPrint("data $data");
       debugPrint(Uri.parse(endPoint + url).toString());
       http.Response response = await http.post(Uri.parse(endPoint + url),
           body: data, headers: headers);
-      if(response.statusCode == 401){
+      if (response.statusCode == 401) {
         logout();
       }
       return jsonDecode(utf8.decode(response.bodyBytes));
-
     } else {
       Future.error(ErrorString.noInternet);
     }
@@ -40,8 +40,9 @@ class HttpActions {
       headers = getSessionData(
           headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
-      http.Response response = await http.get(Uri.parse(endPoint + url), headers: headers);
-      if(response.statusCode == 401){
+      http.Response response =
+          await http.get(Uri.parse(endPoint + url), headers: headers);
+      if (response.statusCode == 401) {
         logout();
       }
       return jsonDecode(utf8.decode(response.bodyBytes));
@@ -51,11 +52,11 @@ class HttpActions {
   }
 
   Future<dynamic> getMethodWithQueryParam(
-      String url, {
-        Map<String, String>? headers,
-        Map<String, dynamic>? queryParams,
-        bool shouldCancelRequest = false,
-      }) async {
+    String url, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParams,
+    bool shouldCancelRequest = false,
+  }) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(headers ?? {});
 
@@ -76,10 +77,11 @@ class HttpActions {
         _client = http.Client();
       }
       try {
-        http.Response response = await _client.get(Uri.parse(finalUrl), headers: headers);
+        http.Response response =
+            await _client.get(Uri.parse(finalUrl), headers: headers);
         log("After Response URl -- $finalUrl");
         log(DateTime.now().microsecondsSinceEpoch.toString());
-        if(response.statusCode == 401){
+        if (response.statusCode == 401) {
           logout();
         }
         return jsonDecode(utf8.decode(response.bodyBytes));
@@ -92,11 +94,11 @@ class HttpActions {
   }
 
   Future<dynamic> postMethodWithQueryParam(
-      String url, {
-        Map<String, String>? headers,
-        Map<String, dynamic>? queryParams,
-        bool shouldCancelRequest = false,
-      }) async {
+    String url, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParams,
+    bool shouldCancelRequest = false,
+  }) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(headers ?? {});
 
@@ -117,10 +119,11 @@ class HttpActions {
         _client = http.Client();
       }
       try {
-        http.Response response = await _client.post(Uri.parse(finalUrl), headers: headers);
+        http.Response response =
+            await _client.post(Uri.parse(finalUrl), headers: headers);
         log("After Response URl -- $finalUrl");
         log(DateTime.now().microsecondsSinceEpoch.toString());
-        if(response.statusCode == 401){
+        if (response.statusCode == 401) {
           logout();
         }
         return jsonDecode(utf8.decode(response.bodyBytes));
@@ -132,13 +135,14 @@ class HttpActions {
     }
   }
 
-  Future<dynamic> patchMethod(String url, {dynamic data, Map<String, String>? headers}) async {
+  Future<dynamic> patchMethod(String url,
+      {dynamic data, Map<String, String>? headers}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(headers ?? {});
 
-      http.Response response =
-          await http.patch(Uri.parse(endPoint + url), body: data, headers: headers);
-      if(response.statusCode == 401){
+      http.Response response = await http.patch(Uri.parse(endPoint + url),
+          body: data, headers: headers);
+      if (response.statusCode == 401) {
         logout();
       }
       return jsonDecode(utf8.decode(response.bodyBytes));
@@ -147,26 +151,28 @@ class HttpActions {
     }
   }
 
-  Future<dynamic> putMethod(String url, {dynamic data, Map<String, String>? headers}) async {
+  Future<dynamic> putMethod(String url,
+      {dynamic data, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(
           headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
-      http.Response response =
-          await http.put(Uri.parse(endPoint + url), body: data, headers: headers);
+      http.Response response = await http.put(Uri.parse(endPoint + url),
+          body: data, headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
     }
   }
 
-  Future<dynamic> deleteMethod(String url, {dynamic data, Map<String, String>? headers}) async {
+  Future<dynamic> deleteMethod(String url,
+      {dynamic data, Map<String, String>? headers}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(headers ?? {});
 
-      http.Response response =
-          await http.delete(Uri.parse(endPoint + url), body: data, headers: headers);
+      http.Response response = await http.delete(Uri.parse(endPoint + url),
+          body: data, headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
@@ -174,11 +180,11 @@ class HttpActions {
   }
 
   Future<dynamic> deleteMethodWithQueryParam(
-      String url, {
-        Map<String, String>? headers,
-        Map<String, dynamic>? queryParams,
-        bool shouldCancelRequest = false,
-      }) async {
+    String url, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParams,
+    bool shouldCancelRequest = false,
+  }) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(headers ?? {});
 
@@ -199,7 +205,8 @@ class HttpActions {
         _client = http.Client();
       }
       try {
-        http.Response response = await _client.delete(Uri.parse(finalUrl), headers: headers);
+        http.Response response =
+            await _client.delete(Uri.parse(finalUrl), headers: headers);
         log("After Response URl -- $finalUrl");
         log(DateTime.now().microsecondsSinceEpoch.toString());
         return jsonDecode(utf8.decode(response.bodyBytes));
@@ -215,17 +222,18 @@ class HttpActions {
       {data, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
-      headers = getSessionData(headers ?? {}, preferences.getString(PreferenceString.accessToken));
+      headers = getSessionData(
+          headers ?? {}, preferences.getString(PreferenceString.accessToken));
 
       debugPrint("data $data");
-          debugPrint(Uri.parse(endPoint + url).toString());
-          var request = http.MultipartRequest('POST', Uri.parse(endPoint + url));
+      debugPrint(Uri.parse(endPoint + url).toString());
+      var request = http.MultipartRequest('POST', Uri.parse(endPoint + url));
 
       data.forEach((key, value) async {
-
         if (key.toString().contains("receipt")) {
-          if(value != ""){
-            request.files.add(await http.MultipartFile.fromPath('receipt', value));
+          if (value != "") {
+            request.files
+                .add(await http.MultipartFile.fromPath('receipt', value));
           }
         } else {
           request.fields["$key"] = value.toString();
@@ -236,8 +244,9 @@ class HttpActions {
 
       try {
         //Send request
-        var streamedResponse =
-            await request.send().timeout(const Duration(seconds: 1400), onTimeout: () {
+        var streamedResponse = await request
+            .send()
+            .timeout(const Duration(seconds: 1400), onTimeout: () {
           // ignore: null_argument_to_non_null_type
           return Future.value(null);
         });
@@ -245,7 +254,7 @@ class HttpActions {
           final apiResponse = await http.Response.fromStream(streamedResponse);
           //Generate response from streamedResponse
           String enCodedStr = utf8.decode(apiResponse.bodyBytes);
-          if(apiResponse.statusCode == 401){
+          if (apiResponse.statusCode == 401) {
             logout();
           }
           return jsonDecode(enCodedStr);
@@ -264,17 +273,18 @@ class HttpActions {
       {data, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if ((await checkConnection()) != ConnectivityResult.none) {
-      headers = getSessionData(headers ?? {}, preferences.getString(PreferenceString.accessToken));
-
+      headers = getSessionData(
+          headers ?? {}, preferences.getString(PreferenceString.accessToken));
+      log(headers.toString());
       debugPrint("data $data");
       debugPrint(Uri.parse(endPoint + url).toString());
       var request = http.MultipartRequest('PUT', Uri.parse(endPoint + url));
 
       data.forEach((key, value) async {
-
         if (key.toString().contains("image")) {
-          if(value != ""){
-            request.files.add(await http.MultipartFile.fromPath('image', value));
+          if (value != "") {
+            request.files
+                .add(await http.MultipartFile.fromPath('image', value));
           }
         } else {
           request.fields["$key"] = value.toString();
@@ -292,8 +302,9 @@ class HttpActions {
 
       try {
         //Send request
-        var streamedResponse =
-        await request.send().timeout(const Duration(seconds: 1400), onTimeout: () {
+        var streamedResponse = await request
+            .send()
+            .timeout(const Duration(seconds: 1400), onTimeout: () {
           // ignore: null_argument_to_non_null_type
           return Future.value(null);
         });
@@ -301,7 +312,7 @@ class HttpActions {
           final apiResponse = await http.Response.fromStream(streamedResponse);
           //Generate response from streamedResponse
           String enCodedStr = utf8.decode(apiResponse.bodyBytes);
-          if(apiResponse.statusCode == 401){
+          if (apiResponse.statusCode == 401) {
             logout();
           }
           return jsonDecode(enCodedStr);
@@ -316,9 +327,10 @@ class HttpActions {
     }
   }
 
-  Map<String, String> getSessionData(Map<String, String> headers, [String? token]) {
-
-    headers["content-type"] = "application/x-www-form-urlencoded; charset=utf-8";
+  Map<String, String> getSessionData(Map<String, String> headers,
+      [String? token]) {
+    headers["content-type"] =
+        "application/x-www-form-urlencoded; charset=utf-8";
     headers["Authorization"] = "Bearer $token";
     return headers;
   }

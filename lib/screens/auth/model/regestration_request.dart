@@ -1,15 +1,17 @@
 class RegistrationRequest {
-  String? name;
+  String? firstName;
+  String? lastName;
   String? email;
   String? password;
   String? dob;
   String? role;
 
   RegistrationRequest(
-      {this.name, this.email, this.password, this.dob, this.role});
+      {this.firstName, this.lastName, this.email, this.password, this.dob, this.role});
 
   RegistrationRequest.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
     email = json['email'];
     password = json['password'];
     dob = json['dob'];
@@ -18,7 +20,8 @@ class RegistrationRequest {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
     data['email'] = this.email;
     data['password'] = this.password;
     data['dob'] = this.dob;
