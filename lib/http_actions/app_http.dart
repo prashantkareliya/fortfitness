@@ -275,27 +275,17 @@ class HttpActions {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = getSessionData(
           headers ?? {}, preferences.getString(PreferenceString.accessToken));
-      log(headers.toString());
       debugPrint("data $data");
       debugPrint(Uri.parse(endPoint + url).toString());
       var request = http.MultipartRequest('PUT', Uri.parse(endPoint + url));
 
       data.forEach((key, value) async {
-        if (key.toString().contains("image")) {
-          if (value != "") {
-            request.files
-                .add(await http.MultipartFile.fromPath('image', value));
-          }
+        if (value.runtimeType == http.MultipartFile) {
+          request.files.add(value);
         } else {
           request.fields["$key"] = value.toString();
         }
       });
-
-      /* if (data.image != "") {
-              request.files.add(await http.MultipartFile.fromPath('image', data.image));
-            } else {
-              request.fields["dob"] = data.dob.toString();
-        }*/
 
       print(request);
       request.headers.addAll(headers);

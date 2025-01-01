@@ -1,18 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fortfitness/screens/dashboard/gym/model/gym_location_response.dart';
-import 'package:fortfitness/screens/dashboard/gym/model/unlock_request.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:geolocator/geolocator.dart';
-
 import 'package:fortfitness/components/appbar_custom.dart';
 import 'package:fortfitness/components/progress_indicator.dart';
+import 'package:fortfitness/screens/dashboard/gym/model/gym_location_response.dart';
+import 'package:fortfitness/screens/dashboard/gym/model/unlock_request.dart';
 import 'package:fortfitness/utils/app_colors.dart';
 import 'package:fortfitness/utils/helpers.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'bloc/gym_location_bloc.dart';
 import 'data/gym_location_datasource.dart';
 import 'data/gym_location_repository.dart';
@@ -40,7 +38,6 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
     super.initState();
     gymLocationBloc.add(KisiLocationEvent(widget.location!.placeId.toString()));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,14 +79,12 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
             print(state.unlockResponse);
             Navigator.pop(context);
           }
-
         },
         builder: (context, state) {
           return ModalProgressHUD(
             inAsyncCall: showSpinner,
-            progressIndicator: SpinKitCircle(
-                color: AppColors.primaryColor,
-                size: 60.0),
+            progressIndicator:
+                SpinKitCircle(color: AppColors.primaryColor, size: 60.0),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 35.sp),
               child: SizedBox(
@@ -107,16 +102,19 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                               setState(() {
                                 showSpinner = true;
                               });
-                              LocationPermission permission = await Geolocator.requestPermission();
-                              if (permission == LocationPermission.whileInUse
-                                  || permission == LocationPermission.always) {
-                                Position position = await Geolocator.getCurrentPosition(
-                                    desiredAccuracy: LocationAccuracy.high);
+                              LocationPermission permission =
+                                  await Geolocator.requestPermission();
+                              if (permission == LocationPermission.whileInUse ||
+                                  permission == LocationPermission.always) {
+                                Position position =
+                                    await Geolocator.getCurrentPosition(
+                                        desiredAccuracy: LocationAccuracy.high);
                                 UnlockRequest unlockRequest = UnlockRequest(
                                   long: position.longitude.toString(),
                                   lat: position.latitude.toString(),
                                 );
-                                gymLocationBloc.add(OpenLockEvent(locks.id.toString(), unlockRequest));
+                                gymLocationBloc.add(OpenLockEvent(
+                                    locks.id.toString(), unlockRequest));
                                 //print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
                                 //Helpers.showSnackBar(context, "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
                               } else {
@@ -124,7 +122,8 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                                   showSpinner = false;
                                 });
                                 print("Permission denied");
-                                Helpers.showSnackBar(context, "permission denied");
+                                Helpers.showSnackBar(
+                                    context, "permission denied");
                               }
                             },
                             child: Padding(
@@ -154,10 +153,11 @@ class _GymDetailScreenState extends State<GymDetailScreen> {
                                       child: Text("Open - ${locks.name}",
                                           maxLines: 2,
                                           style: GoogleFonts.workSans(
-                                          textStyle: TextStyle(
+                                              textStyle: TextStyle(
                                                   fontSize: 22.sp,
-                                                  color:  AppColors.primaryColor,
-                                                  fontWeight: FontWeight.w700))),
+                                                  color: AppColors.primaryColor,
+                                                  fontWeight:
+                                                      FontWeight.w700))),
                                     )
                                   ],
                                 ),

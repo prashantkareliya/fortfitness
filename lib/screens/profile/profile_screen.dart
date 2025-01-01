@@ -39,7 +39,8 @@ class _ProfilePageState extends State<ProfilePage> {
   ProfileBloc profileBloc =
       ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
 
-  TextEditingController nameController = TextEditingController();
+  TextEditingController fNameController = TextEditingController();
+  TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -58,6 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isYYYYFocused = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  bool imageRemove = false;
 
   @override
   void initState() {
@@ -88,7 +91,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _MMFocusNode.dispose();
     _YYYYFocusNode.dispose();
 
-    nameController.dispose();
+    fNameController.dispose();
+    lNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -118,7 +122,9 @@ class _ProfilePageState extends State<ProfilePage> {
         if (state is ProfileLoaded) {
           showSpinner = false;
           //Helpers.showSnackBar(context, state.profileResponse.message ?? "");
-          nameController.text = state.profileResponse.data!.name ?? "";
+
+          fNameController.text = state.profileResponse.data!.firstName ?? "";
+          lNameController.text = state.profileResponse.data!.lastName ?? "";
           emailController.text = state.profileResponse.data!.email ?? "";
           ddController.text = state.profileResponse.data!.dob!.substring(8, 10);
           mmController.text = state.profileResponse.data!.dob!.substring(5, 7);
@@ -228,10 +234,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
-                        titleText: "Name",
-                        controller: nameController,
+                        titleText: "First name",
+                        controller: fNameController,
                         decoration: kTextFieldDecoration.copyWith(
-                          hintText: "Name",
+                          hintText: "First name",
                           filled: true,
                           fillColor: const Color(0xFFF3F3F4),
                           prefixIcon: Padding(
@@ -244,7 +250,30 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "ⓘ Please enter your name";
+                            return "ⓘ Please enter your First name";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextField(
+                        titleText: "Last name",
+                        controller: lNameController,
+                        decoration: kTextFieldDecoration.copyWith(
+                          hintText: "Last name",
+                          filled: true,
+                          fillColor: const Color(0xFFF3F3F4),
+                          prefixIcon: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: SvgPicture.asset("assets/icons/name.svg",
+                                colorFilter: ColorFilter.mode(
+                                    AppColors.primaryColor, BlendMode.srcIn)),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "ⓘ Please enter your last name";
                           }
                           return null;
                         },
@@ -280,38 +309,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /* IgnorePointer(
-                            child: CustomTextField(
-                              titleText: "Change Password",
-                              controller: passwordController,
-                              decoration: kTextFieldDecoration.copyWith(
-                                hintText: "******** ",
-                                filled: true,
-                                fillColor: const Color(0xFFF3F3F4),
-                                prefixIcon: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 15.0),
-                                  child: SvgPicture.asset(
-                                      "assets/icons/password.svg",
-                                      colorFilter: ColorFilter.mode(
-                                          AppColors.primaryColor, BlendMode.srcIn)),
-                                ),
-                                suffixIcon: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 15.0),
-                                  child: SvgPicture.asset("assets/icons/eye.svg",
-                                      colorFilter: const ColorFilter.mode(
-                                          Color(0xFFBABBBE), BlendMode.srcIn)),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "ⓘ Please enter your password";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),*/
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -584,11 +581,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                         UpdateProfileRequest
                                             updateProfileRequest =
                                             UpdateProfileRequest(
+                                                firstName: fNameController.text,
+                                                lastName: lNameController.text,
                                                 image: _image1 != null
                                                     ? _image1!.path
                                                     : "",
                                                 isChangeImage:
-                                                    _image1 == null ? "1" : "0",
+                                                    _image1 != null ||
+                                                            imageRemove
+                                                        ? "1"
+                                                        : "0",
                                                 dob:
                                                     "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
                                         profileBloc.add(UpdateProfileEvent(
@@ -638,7 +640,9 @@ class _ProfilePageState extends State<ProfilePage> {
         _image1 = null;
         profileImage =
             "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-        setState(() {});
+        setState(() {
+          imageRemove = true;
+        });
       }
 
       if (image != null) {

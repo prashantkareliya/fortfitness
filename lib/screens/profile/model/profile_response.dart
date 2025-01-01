@@ -24,7 +24,8 @@ class ProfileResponse {
 
 class Data {
   int? id;
-  String? name;
+  String? firstName;
+  String? lastName;
   String? email;
   String? image;
   String? dob;
@@ -36,29 +37,37 @@ class Data {
   int? accessEnabled;
   String? lastAccessedAt;
   int? kisiUserId;
+  String? deviceType;
+  String? deviceToken;
+  String? validToken;
   String? createdAt;
   String? updatedAt;
 
   Data(
       {this.id,
-        this.name,
-        this.email,
-        this.image,
-        this.dob,
-        this.role,
-        this.isActive,
-        this.isSuperAdmin,
-        this.confirmed,
-        this.organizationId,
-        this.accessEnabled,
-        this.lastAccessedAt,
-        this.kisiUserId,
-        this.createdAt,
-        this.updatedAt});
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.image,
+      this.dob,
+      this.role,
+      this.isActive,
+      this.isSuperAdmin,
+      this.confirmed,
+      this.organizationId,
+      this.accessEnabled,
+      this.lastAccessedAt,
+      this.kisiUserId,
+      this.deviceType,
+      this.deviceToken,
+      this.validToken,
+      this.createdAt,
+      this.updatedAt});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
     email = json['email'];
     image = json['image'];
     dob = json['dob'];
@@ -70,6 +79,9 @@ class Data {
     accessEnabled = json['access_enabled'];
     lastAccessedAt = json['last_accessed_at'];
     kisiUserId = json['kisi_user_id'];
+    deviceType = json['device_type'];
+    deviceToken = json['device_token'];
+    validToken = json['valid_token'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
@@ -77,7 +89,8 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['name'] = this.name;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
     data['email'] = this.email;
     data['image'] = this.image;
     data['dob'] = this.dob;
@@ -89,6 +102,9 @@ class Data {
     data['access_enabled'] = this.accessEnabled;
     data['last_accessed_at'] = this.lastAccessedAt;
     data['kisi_user_id'] = this.kisiUserId;
+    data['device_type'] = this.deviceType;
+    data['device_token'] = this.deviceToken;
+    data['valid_token'] = this.validToken;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     return data;

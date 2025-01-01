@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fortfitness/screens/profile/model/update_profile_request.dart';
 
@@ -16,9 +14,8 @@ class ProfileDatasource extends HttpActions {
   Future<dynamic> updateProfile(
       {required UpdateProfileRequest updateProfileRequest}) async {
     final response = await putMultiPartMethod(ApiEndPoint.profileUpdate,
-        data: updateProfileRequest.toJson());
+        data: await updateProfileRequest.toJson());
     debugPrint("Update User -  $response");
     return response;
   }
 }
-

@@ -37,15 +37,17 @@ class AuthRepository {
   Future<ApiResult<RegistrationResponse>> registerUser(
       {required RegistrationRequest registrationRequest}) async {
     try {
-      final result =
-          await _authDatasource.registerUser(registrationRequest: registrationRequest);
+      final result = await _authDatasource.registerUser(
+          registrationRequest: registrationRequest);
 
-      RegistrationResponse registrationResponse = RegistrationResponse.fromJson(result);
+      RegistrationResponse registrationResponse =
+          RegistrationResponse.fromJson(result);
 
       if (registrationResponse.error == ResponseStatus.success) {
         return ApiResult.success(data: registrationResponse);
       } else {
-        return ApiResult.failure(error: registrationResponse.message.toString());
+        return ApiResult.failure(
+            error: registrationResponse.message.toString());
       }
     } catch (e) {
       final message = HandleAPI.handleAPIError(e);
@@ -56,15 +58,17 @@ class AuthRepository {
   Future<ApiResult<ForgotPasswordResponse>> forgotPassword(
       {required ForgotPasswordRequest forgotPasswordRequest}) async {
     try {
-      final result =
-          await _authDatasource.forgotPassword(forgotPasswordRequest: forgotPasswordRequest);
+      final result = await _authDatasource.forgotPassword(
+          forgotPasswordRequest: forgotPasswordRequest);
 
-      ForgotPasswordResponse forgotPasswordResponse = ForgotPasswordResponse.fromJson(result);
+      ForgotPasswordResponse forgotPasswordResponse =
+          ForgotPasswordResponse.fromJson(result);
 
       if (forgotPasswordResponse.error == ResponseStatus.success) {
         return ApiResult.success(data: forgotPasswordResponse);
       } else {
-        return ApiResult.failure(error: forgotPasswordResponse.message.toString());
+        return ApiResult.failure(
+            error: forgotPasswordResponse.message.toString());
       }
     } catch (e) {
       final message = HandleAPI.handleAPIError(e);

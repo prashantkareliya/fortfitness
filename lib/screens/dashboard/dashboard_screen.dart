@@ -20,6 +20,7 @@ import 'services/services_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   String? from;
+
   DashboardScreen({super.key, this.from});
 
   @override
@@ -76,20 +77,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 }
               },
               builder: (context, state) {
-                return IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ProfilePage()));
-                    },
-                    icon: ClipOval(
-                        child: SizedBox.fromSize(
-                            size: Size.fromRadius(18.sp),
-                            child: CustomCachedImage(
-                                imageUrl: profileImage ??
-                                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-                                fit: BoxFit.cover))));
+                return BlocBuilder<UserBloc, UserState>(
+                  builder: (context, state) {
+                    return IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ProfilePage()));
+                        },
+                        icon: ClipOval(
+                            child: SizedBox.fromSize(
+                                size: Size.fromRadius(18.sp),
+                                child: CustomCachedImage(
+                                    imageUrl: state
+                                            .profileResponse?.data?.image ??
+                                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                                    fit: BoxFit.cover))));
+                  },
+                );
               },
             )
           ]),

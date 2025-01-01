@@ -128,15 +128,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           }
           if (state is RegistrationLoaded) {
             showSpinner = false;
+
             Helpers.showSnackBar(
-                context, state.registrationResponse.message ?? "");
-            Navigator.pushAndRemoveUntil<dynamic>(
-              context,
-              MaterialPageRoute<dynamic>(
-                builder: (BuildContext context) => const SignInScreen(),
-              ),
-              (route) => false,
-            );
+                context, state.registrationResponse.errorMessage ?? "");
+            if (state.registrationResponse.error == false) {
+              Navigator.pushAndRemoveUntil<dynamic>(
+                context,
+                MaterialPageRoute<dynamic>(
+                  builder: (BuildContext context) => const SignInScreen(),
+                ),
+                (route) => false,
+              );
+            }
           }
         },
         builder: (context, state) {
@@ -608,9 +611,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: CustomButton(
                                   imageName: ImageString.icSignIn,
                                   title: ButtonString.btnSubmit,
-                                  onClick: _isButtonDisabled
-                                      ? null
-                                      : _onButtonPressed,
+                                  onClick: _onButtonPressed,
                                   fontColor: AppColors.whiteColor,
                                   buttonColor: AppColors.primaryColor)),
                           const SizedBox(height: 10),

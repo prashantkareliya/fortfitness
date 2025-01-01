@@ -7,14 +7,13 @@ import 'package:fortfitness/screens/profile/bloc/profile_bloc.dart';
 import 'package:fortfitness/screens/profile/data/profile_datasource.dart';
 import 'package:fortfitness/screens/profile/data/profile_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'app_colors.dart';
 
-ProfileBloc profileBloc = ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
+ProfileBloc profileBloc =
+    ProfileBloc(ProfileRepository(profileDatasource: ProfileDatasource()));
 
 class Helpers {
-
-
-
   static PageRoute pageRouteBuilder(widget) {
     return MaterialPageRoute(builder: (context) => widget);
   }
@@ -35,7 +34,6 @@ class Helpers {
       );
   }
 
-
   static void showToast(String msg) {
     Fluttertoast.showToast(
         msg: msg,
@@ -46,7 +44,6 @@ class Helpers {
         textColor: AppColors.whiteColor,
         fontSize: 16.0);
   }
-
 }
 
 logout() async {
@@ -55,7 +52,6 @@ logout() async {
   await FirebaseMessaging.instance.deleteToken();
   Navigator.pushAndRemoveUntil(
       navigatorKey.currentContext!,
-      FadePageRoute(
-          builder: (context) => const AuthSelectionScreen()),
-          (_) => false);
+      FadePageRoute(builder: (context) => const AuthSelectionScreen()),
+      (_) => false);
 }

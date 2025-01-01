@@ -4,20 +4,33 @@ class UpdateProfileRequest {
   String? dob;
   String? image;
   String? isChangeImage;
+  String? firstName;
+  String? lastName;
 
-  UpdateProfileRequest({this.dob, this.image, this.isChangeImage});
+  UpdateProfileRequest(
+      {this.dob,
+      this.image,
+      this.isChangeImage,
+      this.firstName,
+      this.lastName});
 
   UpdateProfileRequest.fromJson(Map<String, dynamic> json) {
     dob = json['dob'];
     image = json['image'];
     isChangeImage = json['is_change_image'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
   }
 
-  Map<String, dynamic> toJson() {
+  Future<Map<String, dynamic>> toJson() async {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['dob'] = this.dob;
-    data['image'] = this.image;
+    if (image != null && image?.isNotEmpty == true) {
+      data['image'] = await http.MultipartFile.fromPath("image", image!);
+    }
     data['is_change_image'] = this.isChangeImage;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
     return data;
   }
 }

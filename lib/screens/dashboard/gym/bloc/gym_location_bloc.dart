@@ -76,17 +76,16 @@ class GymLocationBloc extends Bloc<GymLocationEvent, GymLocationState> {
     emit(OpenLockLoading(true));
     try {
       Map<String, String> headers = {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
         'Authorization':
             'Bearer ${preferences.getString(PreferenceString.accessToken).toString()}',
       };
       final response = await http.post(
-          body: event.unlockRequest,
+          body: event.unlockRequest.toJson(),
           Uri.parse('${endPoint}lock/${event.lockId}/unlock'),
           headers: headers);
-
+      Map<String, dynamic> responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        Map<String, dynamic> responseData = json.decode(response.body);
         UnlockResponse unlockResponse = UnlockResponse.fromJson(responseData);
         emit(OpenLockLoaded(unlockResponse: unlockResponse));
       } else {

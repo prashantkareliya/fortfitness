@@ -7,7 +7,12 @@ class RegistrationRequest {
   String? role;
 
   RegistrationRequest(
-      {this.firstName, this.lastName, this.email, this.password, this.dob, this.role});
+      {this.firstName,
+      this.lastName,
+      this.email,
+      this.password,
+      this.dob,
+      this.role});
 
   RegistrationRequest.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];

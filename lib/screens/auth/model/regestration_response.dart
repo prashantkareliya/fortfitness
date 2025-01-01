@@ -25,6 +25,15 @@ class RegistrationResponse {
     }
     return data;
   }
+
+  String get errorMessage {
+    if (message != null && message?.isNotEmpty == true) {
+      return message!;
+    } else if (errors?.isNotEmpty == true) {
+      return errors?[0].msg ?? "Something went wrong";
+    }
+    return "Something went wrong";
+  }
 }
 
 class Errors {
