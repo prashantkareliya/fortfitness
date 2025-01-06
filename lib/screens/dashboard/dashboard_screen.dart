@@ -55,7 +55,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BlocConsumer<ProfileBloc, ProfileState>(
               bloc: profileBloc,
               listener: (context, state) async {
-                if (state is ProfileFailure) {}
+                if (state is ProfileFailure) {
+                  logout();
+                }
                 if (state is ProfileLoading) {}
                 if (state is ProfileLoaded) {
                   profileImage = state.profileResponse.data!.image.toString();
