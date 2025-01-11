@@ -56,6 +56,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               bloc: profileBloc,
               listener: (context, state) async {
                 if (state is ProfileFailure) {
+                  Helpers.showSnackBar(context, state.error);
+                  print("########################## ${state.error}");
                   logout();
                 }
                 if (state is ProfileLoading) {}

@@ -43,8 +43,6 @@ class UpdateProfileFailure extends ProfileState {
   UpdateProfileFailure(this.error);
 }
 
-
-
 //Logout states
 class LogoutLoading extends ProfileState {
   final bool isBusy;

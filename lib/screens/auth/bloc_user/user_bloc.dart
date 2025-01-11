@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:fortfitness/screens/auth/model/login_response.dart';
 import 'package:fortfitness/screens/profile/data/profile_repository.dart';
 import 'package:fortfitness/screens/profile/model/profile_response.dart';
 import 'package:meta/meta.dart';
@@ -15,12 +14,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<GetUserEvent>(getUserProfile);
   }
 
-
   getUserProfile(GetUserEvent event, Emitter<UserState> emit) async {
     final response = await profileRepository.getProfile();
     response.when(success: (success) {
       emit(state.copyWith(profileResponse: success));
     }, failure: (failure) {
+      emit(state.copyWith(error: failure));
     });
   }
 }

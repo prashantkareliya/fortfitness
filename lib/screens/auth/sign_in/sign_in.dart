@@ -38,9 +38,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailController =
-      TextEditingController(/*text: "brandon.azzopardi@axxsky.com"*/);
+      TextEditingController(text: "brandon.azzopardi@axxsky.com");
   TextEditingController passwordController =
-      TextEditingController(/*text: "Test1234!!"*/);
+      TextEditingController(text: "Test1234!!");
 
   AuthBloc authBloc =
       AuthBloc(AuthRepository(authDatasource: AuthDatasource()));
