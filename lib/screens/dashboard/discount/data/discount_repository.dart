@@ -1,6 +1,7 @@
 import 'package:fortfitness/screens/dashboard/discount/data/discount_datasource.dart';
 import 'package:fortfitness/screens/dashboard/discount/model/discount_claim_request.dart';
 import 'package:fortfitness/screens/dashboard/discount/model/discount_claim_response.dart';
+import 'package:fortfitness/screens/dashboard/discount/model/get_discount_claim_detail_response.dart';
 import 'package:fortfitness/screens/dashboard/discount/model/get_discount_response.dart';
 
 import '../../../../components/handle_api_error.dart';
@@ -43,6 +44,23 @@ class DiscountRepository {
       } else {
         return ApiResult.failure(
             error: discountClaimResponse.message.toString());
+      }
+    } catch (e) {
+      final message = HandleAPI.handleAPIError(e);
+      return ApiResult.failure(error: message);
+    }
+  }
+
+  Future<ApiResult<GetDiscountClaimResponse>> getDiscountClaimRepo() async {
+    try {
+      final result = await _discountDatasource.getDiscountClaim();
+
+      GetDiscountClaimResponse getDiscountClaimResponse = GetDiscountClaimResponse.fromJson(result);
+
+      if (getDiscountClaimResponse.error == ResponseStatus.success) {
+        return ApiResult.success(data: getDiscountClaimResponse);
+      } else {
+        return ApiResult.failure(error: getDiscountClaimResponse.message.toString());
       }
     } catch (e) {
       final message = HandleAPI.handleAPIError(e);

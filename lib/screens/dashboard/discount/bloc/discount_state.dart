@@ -39,3 +39,20 @@ class ClaimDiscountFailure extends DiscountState {
   final String error;
   ClaimDiscountFailure(this.error);
 }
+
+
+//Get Claim discount detail
+class GetClaimDiscountLoading extends DiscountState {
+  final bool isBusy;
+  GetClaimDiscountLoading(this.isBusy);
+}
+
+class GetClaimDiscountLoaded extends DiscountState {
+  GetDiscountClaimResponse getDiscountClaimResponse;
+  GetClaimDiscountLoaded({required this.getDiscountClaimResponse});
+}
+
+class GetClaimDiscountFailure extends DiscountState {
+  final String error;
+  GetClaimDiscountFailure(this.error);
+}

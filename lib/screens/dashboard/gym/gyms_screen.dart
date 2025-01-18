@@ -37,6 +37,11 @@ class _GymScreenState extends State<GymScreen> {
   }
 
   List<Locations> gymLocation = [];
+  List staticLocation = [
+    {"active_members": 1},
+    {"active_members": 1},
+  ];
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -62,6 +67,8 @@ class _GymScreenState extends State<GymScreen> {
             if (state is GetGymLocationLoaded) {
               showSpinner = false;
               gymLocation = state.gymLocationResponse.data!.locations!;
+
+              //combineList = []..addAll(gymLocation)..addAll(staticLocation);
             }
           },
           builder: (context, state) {

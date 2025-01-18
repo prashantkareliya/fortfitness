@@ -122,4 +122,14 @@ class Locations {
     data['isClaimed'] = this.isClaimed;
     return data;
   }
+
+  factory Locations.fromMap(Map<String, dynamic> map) {
+    return Locations(
+      activeMembers: map['active_members'] as int, // Ensure you access the map with the correct key
+      startTime: map['start_time'] as String,
+      endTime: map['end_time'] as String,
+      name: map['name'] as String,
+      description: map['description'] as String,
+    );
+  }
 }

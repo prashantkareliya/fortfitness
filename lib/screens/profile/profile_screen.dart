@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/cutom_textfield.dart';
@@ -43,6 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController ppController = TextEditingController(text: "Privacy policy");
 
   TextEditingController ddController = TextEditingController();
   TextEditingController mmController = TextEditingController();
@@ -95,6 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
     lNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    ppController.dispose();
     super.dispose();
   }
 
@@ -567,11 +571,36 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 30),
+                          GestureDetector(
+                            onTap: () async {
+                              const url = 'https://fortfitness.com.mt/';
+                              if (!await launchUrl(Uri.parse(url))) {
+                              throw Exception('Could not launch $url');
+                              }
+                              print("Could not launch");
+                            },
+                            child: CustomTextField(
+                              titleText: "",
+                              controller: ppController,
+                              decoration: kTextFieldDecoration.copyWith(
+                                border: InputBorder.none,
+                                enabled: false,
+                                hintText: "Privacy policy",
+                                filled: true,
+                                fillColor: const Color(0xFFF3F3F4),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: Icon(Icons.privacy_tip_outlined, color: AppColors.primaryColor),
+                                ),
+                                suffixIcon: Icon(Icons.arrow_forward_ios,
+                                    color: AppColors.primaryColor, size: 18.sp)
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
                           Center(
                             child: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.072,
+                                height: MediaQuery.of(context).size.height * 0.072,
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: CustomButton(
                                     imageName: ImageString.icSignIn,
@@ -579,29 +608,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onClick: () async {
                                       if (_formKey.currentState!.validate()) {
                                         UpdateProfileRequest
-                                            updateProfileRequest =
-                                            UpdateProfileRequest(
+                                            updateProfileRequest = UpdateProfileRequest(
                                                 firstName: fNameController.text,
                                                 lastName: lNameController.text,
-                                                image: _image1 != null
-                                                    ? _image1!.path
-                                                    : "",
-                                                isChangeImage:
-                                                    _image1 != null ||
-                                                            imageRemove
-                                                        ? "1"
-                                                        : "0",
-                                                dob:
-                                                    "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
+                                                image: _image1 != null ? _image1!.path : "",
+                                                isChangeImage: _image1 != null || imageRemove ? "1" : "0",
+                                                dob: "${yyyyController.text.trim()}-${mmController.text.trim()}-${ddController.text.trim()}");
                                         profileBloc.add(UpdateProfileEvent(
                                             updateProfileRequest));
                                       }
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode());
+                                      FocusScope.of(context).requestFocus(FocusNode());
                                     },
                                     fontColor: AppColors.whiteColor,
                                     buttonColor: AppColors.primaryColor)),
                           ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ],

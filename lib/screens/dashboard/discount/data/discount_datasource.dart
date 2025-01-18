@@ -18,4 +18,10 @@ class DiscountDatasource extends HttpActions {
     debugPrint("claim discount -  $response");
     return response;
   }
+
+  Future<dynamic> getDiscountClaim() async {
+    final response = await getMethod(ApiEndPoint.discount);
+    debugPrint("get Discount Claim Detail -  $response");
+    return response;
+  }
 }
