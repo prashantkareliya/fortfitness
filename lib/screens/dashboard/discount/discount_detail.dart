@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +20,7 @@ import '../../../components/custom_button.dart';
 import '../../../components/network_image.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
+
 class DiscountDetailScreen extends StatefulWidget {
   Data discount;
 
@@ -153,6 +155,49 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                           data: widget.discount.description ?? "",
                         ),
                       ),
+                    SizedBox(height: 25.sp),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                                width: 35,
+                                child: Icon(Icons.tag_outlined,
+                                    color: AppColors.primaryColor)),
+                            SizedBox(width: 15.sp),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Discount code",
+                                    style: GoogleFonts.workSans(
+                                        textStyle: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: AppColors.blackColor,
+                                            fontWeight: FontWeight.w400))),
+                                InkWell(
+                                  onDoubleTap: () {
+                                    Clipboard.setData(
+                                        const ClipboardData(text: "ABCD@123"));
+                                  },
+                                  child: Text(" ABCD@123",
+                                      style: GoogleFonts.workSans(
+                                          textStyle: TextStyle(
+                                              height: 0.8,
+                                              fontSize: 14.sp,
+                                              color: AppColors.blackColor,
+                                              fontWeight: FontWeight.w400))),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 5.sp),
+                        const Divider(color: Color(0xFFD9D9DA)),
+                      ],
+                    ),
                     SizedBox(height: 30.sp),
                     SizedBox(
                         height: query.height * 0.072,
@@ -160,16 +205,17 @@ class _DiscountDetailScreenState extends State<DiscountDetailScreen> {
                         child: CustomButton(
                             imageName: ImageString.icClaimNow,
                             title: ButtonString.btnClaimNow,
-                            onClick: getDiscountClaimResponse?.data?.locked == true
-                                ? null
-                                : () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UploadReceiptScreen(
-                                                    widget.discount)));
-                                  },
+                            onClick:
+                                getDiscountClaimResponse?.data?.locked == true
+                                    ? null
+                                    : () {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UploadReceiptScreen(
+                                                        widget.discount)));
+                                      },
                             fontColor: AppColors.whiteColor,
                             buttonColor: AppColors.primaryColor)),
                   ],

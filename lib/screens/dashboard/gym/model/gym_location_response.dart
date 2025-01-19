@@ -70,20 +70,20 @@ class Locations {
 
   Locations(
       {this.id,
-        this.placeId,
-        this.name,
-        this.description,
-        this.latitude,
-        this.longitude,
-        this.logo,
-        this.isPublic,
-        this.isBookable,
-        this.createdAt,
-        this.updatedAt,
-        this.activeMembers,
-        this.startTime,
-        this.endTime,
-        this.isClaimed});
+      this.placeId,
+      this.name,
+      this.description,
+      this.latitude,
+      this.longitude,
+      this.logo,
+      this.isPublic,
+      this.isBookable,
+      this.createdAt,
+      this.updatedAt,
+      this.activeMembers,
+      this.startTime,
+      this.endTime,
+      this.isClaimed});
 
   Locations.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -123,13 +123,5 @@ class Locations {
     return data;
   }
 
-  factory Locations.fromMap(Map<String, dynamic> map) {
-    return Locations(
-      activeMembers: map['active_members'] as int, // Ensure you access the map with the correct key
-      startTime: map['start_time'] as String,
-      endTime: map['end_time'] as String,
-      name: map['name'] as String,
-      description: map['description'] as String,
-    );
-  }
+  bool get isAllowToInGym => (activeMembers ?? 0) <= 50;
 }

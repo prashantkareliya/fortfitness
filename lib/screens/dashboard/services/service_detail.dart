@@ -146,7 +146,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         ),
                         SizedBox(height: 5.sp),
                         const Divider(color: Color(0xFFD9D9DA)),
-                        SizedBox(height: 25.sp),
                       ],
                     )
                   : const SizedBox.shrink(),

@@ -47,9 +47,12 @@ class Helpers {
 }
 
 logout() async {
+  Helpers.showSnackBar(navigatorKey.currentContext!,
+      "You’re logged in on another device, so you’ve been logged out here");
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.clear();
   await FirebaseMessaging.instance.deleteToken();
+
   Navigator.pushAndRemoveUntil(
       navigatorKey.currentContext!,
       FadePageRoute(builder: (context) => const AuthSelectionScreen()),

@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fortfitness/components/cutom_textfield.dart';
 import 'package:fortfitness/constants/strings.dart';
 import 'package:fortfitness/gen/assets.gen.dart';
@@ -74,6 +73,8 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+  final ValueNotifier<bool> _obscureTextNotifier = ValueNotifier<bool>(true);
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -132,12 +133,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                 height: query.height * 0.12),
                             const SizedBox(height: 40),
                             CustomTextField(
-                              titleText: "Email Address",
+                              titleText: LabelString.emailAddress,
                               controller: emailController,
                               keyBoardType: TextInputType.emailAddress,
                               isSecure: false,
                               decoration: kTextFieldDecoration.copyWith(
-                                  hintText: "Email Address",
+                                  hintText: LabelString.emailAddress,
                                   filled: true,
                                   fillColor: const Color(0xFFF3F3F4),
                                   prefixIcon: Padding(
@@ -149,56 +150,61 @@ class _SignInScreenState extends State<SignInScreen> {
                                               BlendMode.srcIn)))),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return "ⓘ Please enter your email";
+                                  return ErrorString.enterEmail;
                                 } else if (!emailController.text.isValidEmail) {
-                                  return "ⓘ Enter valid email address";
+                                  return ErrorString.enterValidEmail;
                                 }
                                 return null;
                               },
                             ),
                             const SizedBox(height: 20),
-                            CustomTextField(
-                              titleText: "Password",
-                              controller: passwordController,
-                              keyBoardType: TextInputType.text,
-                              isSecure: password,
-                              decoration: kTextFieldDecoration.copyWith(
-                                hintText: "Password",
-                                filled: true,
-                                fillColor: const Color(0xFFF3F3F4),
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  child: SvgPicture.asset(
-                                      "assets/icons/password.svg",
-                                      colorFilter: ColorFilter.mode(
-                                          password
-                                              ? const Color(0xFFBABBBE)
-                                              : AppColors.primaryColor,
-                                          BlendMode.srcIn)),
-                                ),
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        password = !password;
-                                      });
-                                    },
-                                    child: SvgPicture.asset(
-                                        "assets/icons/eye.svg",
-                                        colorFilter: const ColorFilter.mode(
-                                            Color(0xFFBABBBE),
-                                            BlendMode.srcIn)),
+                            ValueListenableBuilder<bool>(
+                              valueListenable: _obscureTextNotifier,
+                              builder: (BuildContext context, bool isObscured,
+                                  Widget? child) {
+                                return CustomTextField(
+                                  titleText: LabelString.password,
+                                  controller: passwordController,
+                                  keyBoardType: TextInputType.text,
+                                  isSecure: isObscured,
+                                  decoration: kTextFieldDecoration.copyWith(
+                                    hintText: LabelString.password,
+                                    filled: true,
+                                    fillColor: const Color(0xFFF3F3F4),
+                                    prefixIcon: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
+                                      child: Assets.icons.passwordSvg.svg(
+                                          colorFilter: ColorFilter.mode(
+                                              password
+                                                  ? const Color(0xFFBABBBE)
+                                                  : AppColors.primaryColor,
+                                              BlendMode.srcIn)),
+                                    ),
+                                    suffixIcon: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _obscureTextNotifier.value =
+                                              !isObscured;
+                                        },
+                                        child: Assets.icons.eye.svg(
+                                            colorFilter: ColorFilter.mode(
+                                                isObscured
+                                                    ? Color(0xFFBABBBE)
+                                                    : AppColors.primaryColor,
+                                                BlendMode.srcIn)),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "ⓘ Please enter your password";
-                                }
-                                return null;
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return ErrorString.enterPassword;
+                                    }
+                                    return null;
+                                  },
+                                );
                               },
                             ),
                             const SizedBox(height: 40),

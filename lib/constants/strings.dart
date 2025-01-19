@@ -1,13 +1,20 @@
 //Error messages
 class ErrorString {
   static const String internalSeverError = "Internal sever error";
-  static const String somethingWentWrong = "Something is wrong, please try again";
+  static const String somethingWentWrong =
+      "Something is wrong, please try again";
   static const String noInternet = "Internet is not available";
-
+  static const String enterPassword = "ⓘ Please enter your password";
+  static const String enterConfirmPassword =
+      "ⓘ Please enter your Confirm password";
+  static const String notMatchedPassword =
+      "ⓘ New Password and Confirm password not matched";
+  static const String enterEmail = "ⓘ Please enter your email";
+  static const String enterValidEmail = "ⓘ Enter valid email address";
 }
 
 class Message {
-
+  static const String checkEmailMsg = "Check your inbox to confirm your email!";
 }
 
 //Label Strings
@@ -17,7 +24,11 @@ class LabelString {
   static const String labelNotAc1 = "Don’t have an account? ";
   static const String labelForgotPassword = "Forgot Password";
   static const String alreadyAccount = "Already have a account? ";
-
+  static const String newPassword = "New Password";
+  static const String confirmPassword = "Confirm Password";
+  static const String password = "Password";
+  static const String resetPassword = "Password Reset Successfully";
+  static const String emailAddress = "Email Address";
 }
 
 //Button Strings
@@ -44,20 +55,16 @@ class ImageString {
   static const String imgPassword = "assets/images/password.png";
   static const String imgProfile = "assets/images/profile.png";
 
-
   //icons directory
   static const String icSignIn = "assets/icons/signin.png";
   static const String icSignUp = "assets/icons/signup.png";
   static const String icClaimNow = "assets/icons/claim.png";
 }
 
-class LottieString {
-
-}
+class LottieString {}
 
 class SvgImageString {
   static const String icPassword = "assets/icons/password.png";
-
 }
 
 //Shared Preference Strings(Save data in local DB)

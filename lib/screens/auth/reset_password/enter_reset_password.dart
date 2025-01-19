@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/gen/assets.gen.dart';
 import 'package:fortfitness/screens/auth/sign_in/sign_in.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -42,15 +42,15 @@ class _EnterNewPasswordState extends State<EnterNewPassword> {
               RichText(
                   text: TextSpan(
                       children: <TextSpan>[
-                        TextSpan(
-                            text: "Reset your password and",
-                            style: GoogleFonts.workSans(
-                                textStyle: TextStyle(
-                                    fontSize: 24.sp,
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.w400))),
-                        const TextSpan(text: "\nget back on track!"),
-                      ],
+                    TextSpan(
+                        text: "Reset your password and",
+                        style: GoogleFonts.workSans(
+                            textStyle: TextStyle(
+                                fontSize: 24.sp,
+                                color: AppColors.blackColor,
+                                fontWeight: FontWeight.w400))),
+                    const TextSpan(text: "\nget back on track!"),
+                  ],
                       style: GoogleFonts.workSans(
                           textStyle: TextStyle(
                               fontSize: 36.sp,
@@ -66,68 +66,62 @@ class _EnterNewPasswordState extends State<EnterNewPassword> {
                         height: query.height * 0.12),
                     const SizedBox(height: 40),
                     CustomTextField(
-                      titleText: "New Password",
+                      titleText: LabelString.newPassword,
                       controller: newPasswordController,
                       isSecure: true,
                       keyBoardType: TextInputType.text,
                       decoration: kTextFieldDecoration.copyWith(
-                        hintText: "New Password",
+                        hintText: LabelString.newPassword,
                         filled: true,
                         fillColor: const Color(0xFFF3F3F4),
                         prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/password.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Assets.icons.passwordSvg.svg(
+                                colorFilter: ColorFilter.mode(
+                                    AppColors.primaryColor, BlendMode.srcIn))),
                         suffixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/eye.svg",
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Assets.icons.eye.svg(
                               colorFilter: const ColorFilter.mode(
                                   Color(0xFFBABBBE), BlendMode.srcIn)),
                         ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your password";
+                          return ErrorString.enterPassword;
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
-                      titleText: "Confirm Password",
+                      titleText: LabelString.confirmPassword,
                       controller: confirmPasswordController,
                       isSecure: true,
                       keyBoardType: TextInputType.text,
                       decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Confirm Password",
+                        hintText: LabelString.confirmPassword,
                         filled: true,
                         fillColor: const Color(0xFFF3F3F4),
                         prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: SvgPicture.asset(
-                              "assets/icons/password.svg",
-                              colorFilter: ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn)),
-                        ),
+                            padding: EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Assets.icons.passwordSvg.svg(
+                                colorFilter: ColorFilter.mode(
+                                    AppColors.primaryColor, BlendMode.srcIn))),
                         suffixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0),
-                          child: SvgPicture.asset("assets/icons/eye.svg",
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Assets.icons.eye.svg(
                               colorFilter: const ColorFilter.mode(
                                   Color(0xFFBABBBE), BlendMode.srcIn)),
                         ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "ⓘ Please enter your Confirm password";
-                        } else if(newPasswordController.text != confirmPasswordController.text){
-                          return "ⓘ New Password and Confirm password not matched";
+                          return ErrorString.enterConfirmPassword;
+                        } else if (newPasswordController.text !=
+                            confirmPasswordController.text) {
+                          return ErrorString.notMatchedPassword;
                         }
                         return null;
                       },
@@ -140,24 +134,28 @@ class _EnterNewPasswordState extends State<EnterNewPassword> {
                             imageName: SvgImageString.icPassword,
                             title: ButtonString.btnResetPassword,
                             onClick: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=> const SignInScreen()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignInScreen()));
                             },
                             fontColor: AppColors.whiteColor,
                             buttonColor: AppColors.primaryColor)),
                     SizedBox(height: query.height * 0.09),
-                    SvgPicture.asset("assets/icons/success.svg", height: 40.sp),
+                    Assets.icons.success.svg(height: 40.sp),
                     SizedBox(height: 5.sp),
-                    Text("Password Reset Successfully",
-                    style: GoogleFonts.workSans(
-                        textStyle: TextStyle(
-                            fontSize: 20.sp,
-                            color: AppColors.blackColor,
-                            fontWeight: FontWeight.w600)),)
-
+                    Text(
+                      LabelString.resetPassword,
+                      style: GoogleFonts.workSans(
+                          textStyle: TextStyle(
+                              fontSize: 20.sp,
+                              color: AppColors.blackColor,
+                              fontWeight: FontWeight.w600)),
+                    )
                   ],
                 ),
               ),
-
             ],
           ),
         ),

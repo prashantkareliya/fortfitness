@@ -14,8 +14,8 @@ class Constants {
     return const Constants(
       ///Base URl
       endpoint: 'http://143.110.244.228:8082/api/', //  staging server
-        //   endpoint: '', // live server
-);
+      //   endpoint: '', // live server
+    );
   }
 
   static Constants? _instance;
@@ -46,10 +46,4 @@ class ApiEndPoint {
   //PUT API endpoint
   static const String profileUpdate = "user/profile/update";
   static const String logout = "user/logout";
-
-
-
-
-
-
 }

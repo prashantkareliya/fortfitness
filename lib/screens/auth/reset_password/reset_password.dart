@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:fortfitness/gen/assets.gen.dart';
 import 'package:fortfitness/screens/auth/model/forgot_password_request.dart';
 import 'package:fortfitness/screens/auth/sign_in/sign_in.dart';
 import 'package:fortfitness/utils/extention_text.dart';
@@ -79,9 +79,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         builder: (context, state) {
           return ModalProgressHUD(
             inAsyncCall: showSpinner,
-            progressIndicator: SpinKitCircle(
-                color: AppColors.primaryColor,
-                size: 60.0),
+            progressIndicator:
+                SpinKitCircle(color: AppColors.primaryColor, size: 60.0),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.sp),
               child: SingleChildScrollView(
@@ -118,19 +117,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 height: query.height * 0.12),
                             const SizedBox(height: 50),
                             CustomTextField(
-                              titleText: "Email Address",
+                              titleText: LabelString.emailAddress,
                               controller: emailController,
                               isSecure: false,
                               keyBoardType: TextInputType.emailAddress,
                               decoration: kTextFieldDecoration.copyWith(
-                                hintText: "Email Address",
+                                hintText: LabelString.emailAddress,
                                 filled: true,
                                 fillColor: const Color(0xFFF3F3F4),
                                 prefixIcon: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15.0),
-                                  child: SvgPicture.asset(
-                                      "assets/icons/email.svg",
+                                  child: Assets.icons.email.svg(
                                       colorFilter: ColorFilter.mode(
                                           AppColors.primaryColor,
                                           BlendMode.srcIn)),
@@ -138,9 +136,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return "ⓘ Please enter your email";
+                                  return ErrorString.enterEmail;
                                 } else if (!emailController.text.isValidEmail) {
-                                  return "ⓘ Enter valid email address";
+                                  return ErrorString.enterValidEmail;
                                 }
                                 return null;
                               },
@@ -153,7 +151,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     imageName: ImageString.icSignIn,
                                     title: ButtonString.btnSubmit,
                                     onClick: () {
-                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
                                       if (_formKey.currentState!.validate()) {
                                         ForgotPasswordRequest
                                             forgotPasswordRequest =
@@ -167,15 +166,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     fontColor: AppColors.whiteColor,
                                     buttonColor: AppColors.primaryColor)),
                             SizedBox(height: query.height * 0.12),
-                            SvgPicture.asset("assets/icons/confirm_email.svg",
+                            Assets.icons.confirmEmail.svg(
                                 height: query.height * 0.04,
                                 colorFilter: ColorFilter.mode(
                                     AppColors.primaryColor, BlendMode.srcIn)),
                             const SizedBox(height: 10),
                             SizedBox(
                               width: MediaQuery.of(context).size.width / 1.4,
-                              child: Text(
-                                  "Check your inbox to confirm your email!",
+                              child: Text(Message.checkEmailMsg,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.workSans(
                                       color: AppColors.blackColor,
